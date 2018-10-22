@@ -1,0 +1,26 @@
+RAM Allocation
+Variable                                                          Address   Size
+--------------------------------------------------------------------------------
+data                                                              0x0500     100
+sensor                                                            0x0564      20
+
+EEPROM Allocation
+Variable                                                          Address   Size
+--------------------------------------------------------------------------------
+
+Register Allocation
+Variable                                                          Register  Size
+--------------------------------------------------------------------------------
+m_idx                                                             R5           1
+tc                                                                R4           1
+data_bit                                                          R2.0      1bit
+jumlah_sensor                                                     R7           1
+t_value                                                           R8,R9        2
+adc_buff                                                          R10,R11      2
+t_value2                                                          R12,R13      2
+buff                                                              R2.1      1bit
+b1                                                                R2.2      1bit
+b2                                                                R2.3      1bit
+b3                                                                R2.4      1bit
+t0c                                                               R6           1
+mode                                                              R2.5      1bit

@@ -1,0 +1,18 @@
+RAM Allocation
+Variable                                                          Address   Size
+--------------------------------------------------------------------------------
+clk_freq                                                          0x00A0       4
+_base_y                                                           0x00A4       4
+_seed                                                             0x00A8       4
+
+EEPROM Allocation
+Variable                                                          Address   Size
+--------------------------------------------------------------------------------
+in_freq                                                           0x0000       4
+
+Register Allocation
+Variable                                                          Register  Size
+--------------------------------------------------------------------------------
+_lcd_x                                                            R3           1
+_lcd_y                                                            R2           1
+_lcd_maxx                                                         R5           1

@@ -1,0 +1,544 @@
+/*****************************************************
+This program was produced by the
+CodeWizardAVR V2.05.0 Professional
+Automatic Program Generator
+© Copyright 1998-2010 Pavel Haiduc, HP InfoTech s.r.l.
+http://www.hpinfotech.com
+
+Project : 
+Version : 
+Date    : 9/30/2013
+Author  : 
+Company : 
+Comments: 
+
+
+Chip type               : ATmega128
+Program type            : Application
+AVR Core Clock frequency: 11.059200 MHz
+Memory model            : Small
+External RAM size       : 0
+Data Stack size         : 1024
+*****************************************************/
+
+#include <mega128.h>
+#include <delay.h>
+#include <stdlib.h>
+#include <string.h>
+#include <math.h>
+
+#define SENSOR_0        0
+#define SENSOR_1        1
+#define SENSOR_2        2
+#define SENSOR_3        3
+#define SENSOR_4        4
+#define SENSOR_5        5
+#define SENSOR_EXP      6
+#define FSK_IN          7
+
+#define ADCMUX0         PORTA.3
+#define ADCMUX1         PORTA.4
+#define ADCMUX2         PORTA.5
+
+#define STATUS_0        PORTC.3
+#define STATUS_1        PORTC.2
+#define STATUS_2        PORTC.1
+#define STATUS_3        PORTC.0
+#define STATUS_4        PORTG.1
+#define STATUS_5        PORTG.0
+
+#define TXD_USART_0     PORTE.1
+#define RXD_USART_0     PINE.0
+
+#define PTT             PORTD.7
+#define TXD_USART_1     PORTD.3
+#define RXD_USART_1     PIND.2
+
+#define DEBUG_1         PIND.1
+#define DEBUG_2         PIND.0
+
+#define DAC_0           PORTE.4
+#define DAC_1           PORTE.5
+#define DAC_2           PORTE.6
+#define DAC_3           PORTE.7
+
+#define TONE_1200       1
+#define TONE_2400       0
+
+#define OK              1
+#define STOP            0
+
+#ifdef        _OPTIMIZE_SIZE_
+        #define CONST_1200      46
+        #define CONST_2200      25  // 22-25    22-->2400Hz   25-->2200Hz
+
+        // Konstanta untuk kompilasi dalam mode optimasi kecepatan
+#else
+        #define CONST_1200      50
+        #define CONST_2200      25
+#endif
+
+unsigned int read_adc(unsigned char adc_input);
+void init_port_all(void);
+void init_porta(void);
+void init_portc(void);
+void init_portd(void);
+void init_porte(void);
+void init_portf(void);
+void init_portg(void);
+void init_timer_0(void);
+void clr_timer_0(void);
+void init_timer_3(void);
+void init_usart0_600(void);
+void clr_usart0(void);
+void init_usart1_600(void);
+void init_adc(void);
+void init_port_all(void);
+void baca_sensor(char number);
+void kirim_data(void);
+void kirim_word(unsigned int data);
+void kirim_karakter(unsigned int in_byte);
+void kirim_string(char *str);
+void set_dac(char value);
+
+eeprom unsigned int sensor[14];
+eeprom char jumlah_sensor = 14;
+
+// Standard Input/Output functions
+#include <stdio.h>
+
+// Timer 0 overflow interrupt service routine
+
+#define DETECTED        1
+#define LOST            0
+
+flash char matrix[16] = {10,12,13,14,13,12,10,7,4,2,1,0,1,2,4,7};
+char t0 = 0;
+char tone = 0;
+char t01 = 0;
+char t02 = 0;
+bit data_bit = 0;
+
+interrupt [TIM0_OVF] void timer0_ovf_isr(void)
+{
+        // Reinitialize Timer 0 value
+        TCNT0=0xB8;
+        // Place your code here 
+        
+        if(data_bit)
+        {           
+                if((t0%2)==0)
+                {
+                        if(tone)
+                        {
+                                DAC_0 = 1;
+                                DAC_1 = 1;
+                                DAC_2 = 1;
+                                DAC_3 = 1;
+                                
+                                tone = 0;     
+                        }  
+                        else
+                        {
+                                DAC_0 = 1;
+                                DAC_1 = 1;
+                                DAC_2 = 1;
+                                DAC_3 = 1;
+                                
+                                tone = 1;
+                        }
+                }
+        } 
+        else if(data_bit == 0)
+        {
+                if(tone)
+                {
+                        DAC_0 = 1;
+                        DAC_1 = 1;
+                        DAC_2 = 1;
+                        DAC_3 = 1;
+                        
+                        tone = 0;     
+                }  
+                else
+                {
+                        DAC_0 = 1;
+                        DAC_1 = 1;
+                        DAC_2 = 1;
+                        DAC_3 = 1;
+                                
+                        tone = 1;
+                }   
+        }    
+        
+        t0++;
+        if(t0>254)      t0 = 0;
+}  
+
+// Timer1 overflow interrupt service routine
+interrupt [TIM1_OVF] void timer1_ovf_isr(void)
+{
+
+kirim_karakter('D');
+kirim_karakter('D');
+kirim_karakter('D');
+kirim_karakter('D');
+kirim_karakter('D');
+kirim_karakter('D');
+kirim_karakter('D');
+kirim_karakter('D');
+kirim_karakter('D');
+kirim_karakter('D');
+kirim_karakter('D');
+kirim_karakter('D');
+kirim_karakter('D');
+kirim_karakter('D');
+kirim_karakter('D');
+kirim_karakter('D');
+kirim_karakter('D');
+kirim_karakter('D');
+kirim_karakter('A');
+kirim_karakter('A');
+kirim_karakter('A');
+kirim_karakter('A');
+kirim_karakter('A');
+kirim_karakter('A');
+kirim_karakter('A');
+kirim_karakter('A');
+kirim_karakter('A');
+kirim_karakter('A');
+kirim_karakter('A');
+kirim_karakter('A');
+kirim_karakter('A');
+kirim_karakter('A');
+kirim_karakter('A');
+kirim_karakter('A');
+kirim_karakter('Z');
+kirim_karakter('Z');
+kirim_karakter('Z');
+kirim_karakter('Z');
+kirim_karakter('Z');
+kirim_karakter('Z');
+kirim_karakter('Z');
+kirim_karakter('Z');
+kirim_karakter('Z');
+kirim_karakter('Z');
+kirim_karakter('Z');
+kirim_karakter('Z');
+kirim_karakter('Z');
+kirim_karakter('Z');
+kirim_karakter('Z');
+kirim_karakter('Z');
+kirim_karakter('Z');
+kirim_karakter('Z');
+kirim_karakter('Z');
+kirim_karakter('Z');
+kirim_karakter('Z');
+kirim_karakter('Z');
+
+// Reinitialize Timer1 value
+TCNT1H=0x2D10 >> 8;
+TCNT1L=0x2D10 & 0xff;
+// Place your code here 
+}
+
+#define ADC_VREF_TYPE 0x00
+
+// Read the AD conversion result
+unsigned int read_adc(unsigned char adc_input)
+{
+        ADMUX=adc_input | (ADC_VREF_TYPE & 0xff);
+        // Delay needed for the stabilization of the ADC input voltage
+        delay_us(10);
+        // Start the AD conversion
+        ADCSRA|=0x40;
+        // Wait for the AD conversion to complete
+        while ((ADCSRA & 0x10)==0);
+        ADCSRA|=0x10;
+        return ADCW;
+}
+
+// Declare your global variables here
+
+void init_porta(void)
+{
+        PORTA=0x00;
+        DDRA=0x38;
+}
+
+void init_portc(void)
+{
+        PORTC=0x00;
+        DDRC=0x0F;
+}
+
+void init_portd(void)
+{
+        PORTD=0x0F;
+        DDRD=0x88;
+}
+
+void init_porte(void)
+{
+        PORTE=0x03;
+        DDRE=0xF2;
+}
+
+void init_portf(void)
+{
+        PORTF=0x00;
+        DDRF=0x00;
+}
+
+void init_portg(void)
+{
+        PORTG=0x00;
+        DDRG=0x03;
+}
+
+void init_timer_0(void)
+{
+// Timer/Counter 0 initialization
+// Clock source: System Clock
+// Clock value: 345.600 kHz
+// Mode: Normal top=0xFF
+// OC0 output: Disconnected
+ASSR=0x00;
+TCCR0=0x03;
+TCNT0=0xB8;
+OCR0=0x00;        
+}
+
+void init_timer_1(void)
+{
+TCCR1A=0x00;
+TCCR1B=0x05;
+TCNT1H=0x2D;
+TCNT1L=0x10;
+
+// Reinitialize Timer1 value
+TCNT1H=0x2D10 >> 8;
+TCNT1L=0x2D10 & 0xff;
+// Place your code here       
+}
+
+void init_usart0_600(void)
+{
+        // USART0 initialization
+// Communication Parameters: 8 Data, 1 Stop, No Parity
+// USART0 Receiver: On
+// USART0 Transmitter: On
+// USART0 Mode: Asynchronous
+// USART0 Baud Rate: 9600
+UCSR0A=0x00;
+UCSR0B=0x18;
+UCSR0C=0x06;
+UBRR0H=0x00;
+UBRR0L=0x47;
+}
+
+void clr_usart0(void)
+{
+        UCSR0A=0;
+        UCSR0B=0;
+        UCSR0C=0;
+        UBRR0H=0;
+        UBRR0L=0;
+}
+
+void init_adc(void)
+{
+        ADMUX=ADC_VREF_TYPE & 0xff;
+        ADCSRA=0x84;
+}
+
+void baca_sensor(char number)
+{
+        char i;
+        
+        for(i=0;i<number;i++)
+        {
+                if(i<6)
+                {
+                        sensor[i] = read_adc(i); 
+                }
+                else 
+                {
+                        ADCMUX0 = (i - 6) & 0x01;
+                        ADCMUX1 = ((i - 6) >> 1) & 0x01; 
+                        ADCMUX2 = ((i - 6) >> 2) & 0x01; 
+                        
+                        delay_us(2);
+                        
+                        sensor[i] = read_adc(SENSOR_EXP);
+                        
+                        ADCMUX0 = 0;
+                        ADCMUX1 = 0;
+                        ADCMUX2 = 0;
+                }
+        }
+}
+
+void kirim_data(void)
+{
+        char i;
+        
+        for(i=0;i<jumlah_sensor;i++)
+        {
+                kirim_word(sensor[i]); 
+                kirim_karakter(',');
+        }                             
+}
+
+void kirim_word(unsigned int data)
+{
+        char rib;
+        char rat;
+        char pul;
+        char sat;  
+        
+        rib = data / 1000;
+        data = data % 1000;
+        
+        rat = data / 100;
+        data = data % 100;
+        
+        pul = data / 10;
+        
+        sat = data % 10;    
+        
+        kirim_karakter((rib + '1')-1);
+        kirim_karakter((rat + '1')-1);
+        kirim_karakter((pul + '1')-1);
+        kirim_karakter((sat + '1')-1);   
+}
+
+void set_dac(char value)
+{
+        DAC_0 = value & 0x01;
+        DAC_1 = (value >> 1) & 0x01;
+        DAC_2 = (value >> 2) & 0x01;
+        DAC_3 = (value >> 3) & 0x01;
+}
+
+// Konstanta untuk kompilasi dalam mode optimasi ukuran
+#ifdef	_OPTIMIZE_SIZE_
+	#define CONST_1200      46
+	#define CONST_2200      25  // 22-25    22-->2400Hz   25-->2200Hz
+
+        // Konstanta untuk kompilasi dalam mode optimasi kecepatan
+#else
+	#define CONST_1200      52
+	#define CONST_2200      26
+#endif
+
+/***************************************************************************************/
+	void 			set_nada(char i_nada)
+/***************************************************************************************
+*	ABSTRAKSI  	: 	Membentuk baudrate serta frekensi tone 1200Hz dan 2200Hz
+*				dari konstanta waktu. Men-setting nilai DAC. Lakukan fine
+*				tuning pada jumlah masing - masing perulangan for dan
+*				konstanta waktu untuk meng-adjust parameter baudrate dan
+*				frekuensi tone.
+*
+*      	INPUT		:	nilai frekuensi tone yang akan ditransmisikan
+*	OUTPUT		:       nilai DAC
+*	RETURN		:       tak ada
+*/
+{
+	char i;
+
+        // jika frekuensi tone yang akan segera dipancarkan adalah :
+        // 1200Hz
+	if(i_nada)
+    	{
+        	// jika ya
+        	for(i=0; i<16; i++)
+        	{
+                	// set nilai DAC sesuai urutan matrix rekonstruksi gelombang sinus
+                		// dan urutan perulangan for 0 - 15
+                	set_dac(matrix[i]);
+
+                        // bangkitkan frekuensi 1200Hz dari konstanta waktu
+        		delay_us(CONST_1200);
+        	}
+    	}
+        // 2200Hz
+    	else
+    	{
+        	// jika ya
+        	for(i=0; i<16; i++)
+        	{
+                	// set nilai DAC sesuai urutan matrix rekonstruksi gelombang sinus
+                		// dan urutan perulangan for 0 - 15
+                	set_dac(matrix[i]);
+
+                        // bangkitkan frekuensi 2200Hz dari konstanta waktu
+                	delay_us(CONST_2200);
+                }
+                // sekali lagi, untuk mengatur baudrate lakukan fine tune pada jumlah for
+                for(i=0; i<16; i++)
+                {
+                	// set nilai DAC sesuai urutan matrix rekonstruksi gelombang sinus
+                		// dan urutan perulangan for
+                	set_dac(matrix[i]);
+
+                        // bangkitkan frekuensi 2200Hz dari konstanta waktu
+                	delay_us(CONST_2200);
+                }
+    	}
+
+} 	// EndOf void set_nada(char i_nada)
+
+void kirim_karakter(unsigned int in_byte)
+{
+        char h=0;   
+        bit in_bit;
+        
+        in_byte = (1 << 9) + (in_byte << 1);
+        
+        for(h=0;h<10;h++)
+        {
+                data_bit = (in_byte >> h) & 0x01;
+                t0 = 0;
+                while(t0<4);  
+        }   
+        data_bit = 1; 
+}
+
+void kirim_string(char *str)
+{
+        char k;
+        while (k=*str++) kirim_karakter(k);
+        kirim_karakter(10);
+}
+
+void init_port_all(void)
+{
+        init_porta();
+        init_portc();
+        init_portd();
+        init_porte();
+        init_portf();
+        init_portg();       
+}
+
+void main(void)
+{
+        init_port_all();
+        
+        init_timer_0(); 
+        init_timer_1();
+
+        ACSR=0x80;
+        SFIOR=0x00;
+        
+        TIMSK=0x05; 
+
+        #asm("sei")
+        
+        while (1)
+        { 
+                
+        }
+}

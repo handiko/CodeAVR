@@ -1,0 +1,40 @@
+RAM Allocation
+Variable                                                          Address   Size
+--------------------------------------------------------------------------------
+rx_buffer0                                                        0x051B       8
+tx_buffer0                                                        0x0523       8
+rx_buffer1                                                        0x052B       8
+tx_buffer1                                                        0x0533       8
+adc_buff                                                          0x053B       2
+bit_count                                                         0x053D       1
+flag                                                              0x053E       1
+data_byte                                                         0x053F       1
+v                                                                 0x0540       2
+_seed                                                             0x0542       4
+
+EEPROM Allocation
+Variable                                                          Address   Size
+--------------------------------------------------------------------------------
+sensor                                                            0x0000      28
+jumlah_sensor                                                     0x001C       1
+
+Register Allocation
+Variable                                                          Register  Size
+--------------------------------------------------------------------------------
+rx_rd_index0                                                      R5           1
+rx_counter0                                                       R4           1
+tx_wr_index0                                                      R7           1
+tx_counter0                                                       R6           1
+rx_rd_index1                                                      R9           1
+rx_counter1                                                       R8           1
+tx_wr_index1                                                      R11          1
+tx_counter1                                                       R10          1
+ttt                                                               R12,R13      2
+data_bit                                                          R2.0      1bit
+data_bit7                                                         R2.1      1bit
+data_bit6                                                         R2.2      1bit
+data_bit5                                                         R2.3      1bit
+data_bit4                                                         R2.4      1bit
+data_bit3                                                         R2.5      1bit
+data_bit2                                                         R2.6      1bit
+data_bit1                                                         R2.7      1bit

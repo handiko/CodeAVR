@@ -1,0 +1,6 @@
+main DSTACK_USAGE:0 DSTACK_LEVEL:0 FILE:"init slave.c" LINE:801
+read_adc DSTACK_USAGE:1 DSTACK_LEVEL:1 FILE:"init slave.c" LINE:492
+timer3_ovf_isr DSTACK_USAGE:13 DSTACK_LEVEL:14 FILE:"init slave.c" LINE:424
+kirim_data DSTACK_USAGE:1 DSTACK_LEVEL:15 FILE:"init slave.c" LINE:656
+kirim_word DSTACK_USAGE:6 DSTACK_LEVEL:21 FILE:"init slave.c" LINE:667
+kirim_karakter DSTACK_USAGE:2 DSTACK_LEVEL:23 FILE:"init slave.c" LINE:690

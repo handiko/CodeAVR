@@ -1,0 +1,28 @@
+RAM Allocation
+Variable                                                          Address   Size
+--------------------------------------------------------------------------------
+lcd_buff                                                          0x0160      32
+d_in_freq                                                         0x0180       4
+kilo                                                              0x0184       2
+rat                                                               0x0186       2
+pul                                                               0x0188       2
+sat                                                               0x018A       2
+_base_y                                                           0x018C       4
+_lcd_y                                                            0x0190       1
+_lcd_maxx                                                         0x0191       1
+
+EEPROM Allocation
+Variable                                                          Address   Size
+--------------------------------------------------------------------------------
+in_freq                                                           0x0000       4
+
+Register Allocation
+Variable                                                          Register  Size
+--------------------------------------------------------------------------------
+adc                                                               R5           1
+i_menu                                                            R2.0      1bit
+p_mega                                                            R6,R7        2
+mega                                                              R8,R9        2
+r_kilo                                                            R10,R11      2
+p_kilo                                                            R12,R13      2
+_lcd_x                                                            R4           1

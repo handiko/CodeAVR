@@ -1,0 +1,19 @@
+RAM Allocation
+Variable                                                          Address   Size
+--------------------------------------------------------------------------------
+_seed                                                             0x0500       4
+
+EEPROM Allocation
+Variable                                                          Address   Size
+--------------------------------------------------------------------------------
+sensor                                                            0x0000      28
+jumlah_sensor                                                     0x001C       1
+
+Register Allocation
+Variable                                                          Register  Size
+--------------------------------------------------------------------------------
+t0                                                                R5           1
+tone                                                              R4           1
+t01                                                               R7           1
+t02                                                               R6           1
+data_bit                                                          R2.0      1bit

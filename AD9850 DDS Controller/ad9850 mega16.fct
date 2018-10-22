@@ -1,0 +1,5 @@
+main DSTACK_USAGE:0 DSTACK_LEVEL:0 FILE:"ad9850 mega16.c" LINE:183
+display_freq DSTACK_USAGE:4 DSTACK_LEVEL:4 FILE:"ad9850 mega16.c" LINE:121
+sprintf DSTACK_USAGE:14 DSTACK_LEVEL:18 FILE:"C:\cvavreval\lib\stdio.lib" LINE:1410
+_print DSTACK_USAGE:20 DSTACK_LEVEL:38 FILE:"C:\cvavreval\lib\stdio.lib" LINE:503
+strlen DSTACK_USAGE:2 DSTACK_LEVEL:40 FILE:"C:\cvavreval\lib\string.lib" LINE:1707

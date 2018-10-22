@@ -1,0 +1,17 @@
+RAM Allocation
+Variable                                                          Address   Size
+--------------------------------------------------------------------------------
+
+EEPROM Allocation
+Variable                                                          Address   Size
+--------------------------------------------------------------------------------
+
+Register Allocation
+Variable                                                          Register  Size
+--------------------------------------------------------------------------------
+adc_buff                                                          R5           1
+buff                                                              R2.0      1bit
+b1                                                                R2.1      1bit
+b2                                                                R2.2      1bit
+b3                                                                R2.3      1bit
+t0c                                                               R4           1

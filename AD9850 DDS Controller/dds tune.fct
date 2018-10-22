@@ -1,0 +1,5 @@
+main DSTACK_USAGE:0 DSTACK_LEVEL:0 FILE:"dds tune.c" LINE:279
+display DSTACK_USAGE:42 DSTACK_LEVEL:42 FILE:"dds tune.c" LINE:103
+sprintf DSTACK_USAGE:14 DSTACK_LEVEL:56 FILE:"C:\cvavreval\lib\stdio.lib" LINE:1410
+_print DSTACK_USAGE:26 DSTACK_LEVEL:82 FILE:"C:\cvavreval\lib\stdio.lib" LINE:871
+strlen DSTACK_USAGE:2 DSTACK_LEVEL:84 FILE:"C:\cvavreval\lib\string.lib" LINE:1707

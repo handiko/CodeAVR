@@ -1,0 +1,20 @@
+RAM Allocation
+Variable                                                          Address   Size
+--------------------------------------------------------------------------------
+koordinat                                                         0x0080      20
+bit_stuff                                                         0x0094       1
+crc_lo                                                            0x0095       1
+crc_hi                                                            0x0096       1
+xor                                                               0x0097       2
+
+EEPROM Allocation
+Variable                                                          Address   Size
+--------------------------------------------------------------------------------
+
+Register Allocation
+Variable                                                          Register  Size
+--------------------------------------------------------------------------------
+nada                                                              GPIOR0.0  1bit
+flag_s                                                            GPIOR0.1  1bit
+n                                                                 R3           1
+crc                                                               R4,R5        2

@@ -1,0 +1,23 @@
+RAM Allocation
+Variable                                                          Address   Size
+--------------------------------------------------------------------------------
+data_perintah                                                     0x0397     150
+_base_y                                                           0x042D       4
+
+EEPROM Allocation
+Variable                                                          Address   Size
+--------------------------------------------------------------------------------
+data_petir                                                        0x0000    1000
+sys_mode                                                          0x03E8       1
+chn_omega1                                                        0x03E9       1
+chn_omega2                                                        0x03EA       1
+chn_omega3                                                        0x03EB       1
+chn_petir                                                         0x03EC       1
+xcount                                                            0x03ED       2
+
+Register Allocation
+Variable                                                          Register  Size
+--------------------------------------------------------------------------------
+_lcd_x                                                            R5           1
+_lcd_y                                                            R4           1
+_lcd_maxx                                                         R7           1

@@ -1,0 +1,3452 @@
+
+AVRASM ver. 2.1.30  F:\Data - Penting\DATA\Punya Koko\LPKTA\Copy of Tracker2\final.asm Fri Jan 23 16:54:25 2015
+
+F:\Data - Penting\DATA\Punya Koko\LPKTA\Copy of Tracker2\final.asm(961): warning: Register r3 already defined by the .DEF directive
+F:\Data - Penting\DATA\Punya Koko\LPKTA\Copy of Tracker2\final.asm(962): warning: Register r4 already defined by the .DEF directive
+                 
+                 
+                 ;CodeVisionAVR C Compiler V2.05.0 Professional
+                 ;(C) Copyright 1998-2010 Pavel Haiduc, HP InfoTech s.r.l.
+                 ;http://www.hpinfotech.com
+                 
+                 ;Chip type                : ATtiny2313
+                 ;Program type             : Application
+                 ;Clock frequency          : 11.059200 MHz
+                 ;Memory model             : Tiny
+                 ;Optimize for             : Size
+                 ;(s)printf features       : int, width
+                 ;(s)scanf features        : int, width
+                 ;External RAM size        : 0
+                 ;Data Stack size          : 32 byte(s)
+                 ;Heap size                : 0 byte(s)
+                 ;Promote 'char' to 'int'  : No
+                 ;'char' is unsigned       : No
+                 ;8 bit enums              : Yes
+                 ;global 'const' stored in FLASH: No
+                 ;Enhanced core instructions    : On
+                 ;Smart register allocation     : On
+                 ;Automatic register allocation : On
+                 
+                 	#pragma AVRPART ADMIN PART_NAME ATtiny2313
+                 	#pragma AVRPART MEMORY PROG_FLASH 2048
+                 	#pragma AVRPART MEMORY EEPROM 128
+                 	#pragma AVRPART MEMORY INT_SRAM SIZE 223
+                 	#pragma AVRPART MEMORY INT_SRAM START_ADDR 0x60
+                 
+                 	.LISTMAC
+                 	.EQU UDRE=0x5
+                 	.EQU RXC=0x7
+                 	.EQU USR=0xB
+                 	.EQU UDR=0xC
+                 	.EQU EERE=0x0
+                 	.EQU EEWE=0x1
+                 	.EQU EEMWE=0x2
+                 	.EQU EECR=0x1C
+                 	.EQU EEDR=0x1D
+                 	.EQU EEARL=0x1E
+                 	.EQU WDTCR=0x21
+                 	.EQU MCUSR=0x34
+                 	.EQU MCUCR=0x35
+                 	.EQU SPL=0x3D
+                 	.EQU SREG=0x3F
+                 	.EQU GPIOR0=0x13
+                 	.EQU GPIOR1=0x14
+                 	.EQU GPIOR2=0x15
+                 
+                 	.DEF R0X0=R0
+                 	.DEF R0X1=R1
+                 	.DEF R0X2=R2
+                 	.DEF R0X3=R3
+                 	.DEF R0X4=R4
+                 	.DEF R0X5=R5
+                 	.DEF R0X6=R6
+                 	.DEF R0X7=R7
+                 	.DEF R0X8=R8
+                 	.DEF R0X9=R9
+                 	.DEF R0XA=R10
+                 	.DEF R0XB=R11
+                 	.DEF R0XC=R12
+                 	.DEF R0XD=R13
+                 	.DEF R0XE=R14
+                 	.DEF R0XF=R15
+                 	.DEF R0X10=R16
+                 	.DEF R0X11=R17
+                 	.DEF R0X12=R18
+                 	.DEF R0X13=R19
+                 	.DEF R0X14=R20
+                 	.DEF R0X15=R21
+                 	.DEF R0X16=R22
+                 	.DEF R0X17=R23
+                 	.DEF R0X18=R24
+                 	.DEF R0X19=R25
+                 	.DEF R0X1A=R26
+                 	.DEF R0X1B=R27
+                 	.DEF R0X1C=R28
+                 	.DEF R0X1D=R29
+                 	.DEF R0X1E=R30
+                 	.DEF R0X1F=R31
+                 
+                 	.EQU __SRAM_START=0x0060
+                 	.EQU __SRAM_END=0x00DF
+                 	.EQU __DSTACK_SIZE=0x0020
+                 	.EQU __HEAP_SIZE=0x0000
+                 	.EQU __CLEAR_SRAM_SIZE=__SRAM_END-__SRAM_START+1
+                 
+                 	.MACRO __CPD1N
+                 	CPI  R30,LOW(@0)
+                 	LDI  R26,HIGH(@0)
+                 	CPC  R31,R26
+                 	LDI  R26,BYTE3(@0)
+                 	CPC  R22,R26
+                 	LDI  R26,BYTE4(@0)
+                 	CPC  R23,R26
+                 	.ENDM
+                 
+                 	.MACRO __CPD2N
+                 	CPI  R26,LOW(@0)
+                 	LDI  R30,HIGH(@0)
+                 	CPC  R27,R30
+                 	LDI  R30,BYTE3(@0)
+                 	CPC  R24,R30
+                 	LDI  R30,BYTE4(@0)
+                 	CPC  R25,R30
+                 	.ENDM
+                 
+                 	.MACRO __CPWRR
+                 	CP   R@0,R@2
+                 	CPC  R@1,R@3
+                 	.ENDM
+                 
+                 	.MACRO __CPWRN
+                 	CPI  R@0,LOW(@2)
+                 	LDI  R30,HIGH(@2)
+                 	CPC  R@1,R30
+                 	.ENDM
+                 
+                 	.MACRO __ADDB1MN
+                 	SUBI R30,LOW(-@0-(@1))
+                 	.ENDM
+                 
+                 	.MACRO __ADDB2MN
+                 	SUBI R26,LOW(-@0-(@1))
+                 	.ENDM
+                 
+                 	.MACRO __ADDW1MN
+                 	SUBI R30,LOW(-@0-(@1))
+                 	SBCI R31,HIGH(-@0-(@1))
+                 	.ENDM
+                 
+                 	.MACRO __ADDW2MN
+                 	SUBI R26,LOW(-@0-(@1))
+                 	SBCI R27,HIGH(-@0-(@1))
+                 	.ENDM
+                 
+                 	.MACRO __ADDW1FN
+                 	SUBI R30,LOW(-2*@0-(@1))
+                 	SBCI R31,HIGH(-2*@0-(@1))
+                 	.ENDM
+                 
+                 	.MACRO __ADDD1FN
+                 	SUBI R30,LOW(-2*@0-(@1))
+                 	SBCI R31,HIGH(-2*@0-(@1))
+                 	SBCI R22,BYTE3(-2*@0-(@1))
+                 	.ENDM
+                 
+                 	.MACRO __ADDD1N
+                 	SUBI R30,LOW(-@0)
+                 	SBCI R31,HIGH(-@0)
+                 	SBCI R22,BYTE3(-@0)
+                 	SBCI R23,BYTE4(-@0)
+                 	.ENDM
+                 
+                 	.MACRO __ADDD2N
+                 	SUBI R26,LOW(-@0)
+                 	SBCI R27,HIGH(-@0)
+                 	SBCI R24,BYTE3(-@0)
+                 	SBCI R25,BYTE4(-@0)
+                 	.ENDM
+                 
+                 	.MACRO __SUBD1N
+                 	SUBI R30,LOW(@0)
+                 	SBCI R31,HIGH(@0)
+                 	SBCI R22,BYTE3(@0)
+                 	SBCI R23,BYTE4(@0)
+                 	.ENDM
+                 
+                 	.MACRO __SUBD2N
+                 	SUBI R26,LOW(@0)
+                 	SBCI R27,HIGH(@0)
+                 	SBCI R24,BYTE3(@0)
+                 	SBCI R25,BYTE4(@0)
+                 	.ENDM
+                 
+                 	.MACRO __ANDBMNN
+                 	LDS  R30,@0+(@1)
+                 	ANDI R30,LOW(@2)
+                 	STS  @0+(@1),R30
+                 	.ENDM
+                 
+                 	.MACRO __ANDWMNN
+                 	LDS  R30,@0+(@1)
+                 	ANDI R30,LOW(@2)
+                 	STS  @0+(@1),R30
+                 	LDS  R30,@0+(@1)+1
+                 	ANDI R30,HIGH(@2)
+                 	STS  @0+(@1)+1,R30
+                 	.ENDM
+                 
+                 	.MACRO __ANDD1N
+                 	ANDI R30,LOW(@0)
+                 	ANDI R31,HIGH(@0)
+                 	ANDI R22,BYTE3(@0)
+                 	ANDI R23,BYTE4(@0)
+                 	.ENDM
+                 
+                 	.MACRO __ANDD2N
+                 	ANDI R26,LOW(@0)
+                 	ANDI R27,HIGH(@0)
+                 	ANDI R24,BYTE3(@0)
+                 	ANDI R25,BYTE4(@0)
+                 	.ENDM
+                 
+                 	.MACRO __ORBMNN
+                 	LDS  R30,@0+(@1)
+                 	ORI  R30,LOW(@2)
+                 	STS  @0+(@1),R30
+                 	.ENDM
+                 
+                 	.MACRO __ORWMNN
+                 	LDS  R30,@0+(@1)
+                 	ORI  R30,LOW(@2)
+                 	STS  @0+(@1),R30
+                 	LDS  R30,@0+(@1)+1
+                 	ORI  R30,HIGH(@2)
+                 	STS  @0+(@1)+1,R30
+                 	.ENDM
+                 
+                 	.MACRO __ORD1N
+                 	ORI  R30,LOW(@0)
+                 	ORI  R31,HIGH(@0)
+                 	ORI  R22,BYTE3(@0)
+                 	ORI  R23,BYTE4(@0)
+                 	.ENDM
+                 
+                 	.MACRO __ORD2N
+                 	ORI  R26,LOW(@0)
+                 	ORI  R27,HIGH(@0)
+                 	ORI  R24,BYTE3(@0)
+                 	ORI  R25,BYTE4(@0)
+                 	.ENDM
+                 
+                 	.MACRO __DELAY_USB
+                 	LDI  R24,LOW(@0)
+                 __DELAY_USB_LOOP:
+                 	DEC  R24
+                 	BRNE __DELAY_USB_LOOP
+                 	.ENDM
+                 
+                 	.MACRO __DELAY_USW
+                 	LDI  R24,LOW(@0)
+                 	LDI  R25,HIGH(@0)
+                 __DELAY_USW_LOOP:
+                 	SBIW R24,1
+                 	BRNE __DELAY_USW_LOOP
+                 	.ENDM
+                 
+                 	.MACRO __GETD1S
+                 	LDD  R30,Y+@0
+                 	LDD  R31,Y+@0+1
+                 	LDD  R22,Y+@0+2
+                 	LDD  R23,Y+@0+3
+                 	.ENDM
+                 
+                 	.MACRO __GETD2S
+                 	LDD  R26,Y+@0
+                 	LDD  R27,Y+@0+1
+                 	LDD  R24,Y+@0+2
+                 	LDD  R25,Y+@0+3
+                 	.ENDM
+                 
+                 	.MACRO __PUTD1S
+                 	STD  Y+@0,R30
+                 	STD  Y+@0+1,R31
+                 	STD  Y+@0+2,R22
+                 	STD  Y+@0+3,R23
+                 	.ENDM
+                 
+                 	.MACRO __PUTD2S
+                 	STD  Y+@0,R26
+                 	STD  Y+@0+1,R27
+                 	STD  Y+@0+2,R24
+                 	STD  Y+@0+3,R25
+                 	.ENDM
+                 
+                 	.MACRO __PUTDZ2
+                 	STD  Z+@0,R26
+                 	STD  Z+@0+1,R27
+                 	STD  Z+@0+2,R24
+                 	STD  Z+@0+3,R25
+                 	.ENDM
+                 
+                 	.MACRO __CLRD1S
+                 	STD  Y+@0,R30
+                 	STD  Y+@0+1,R30
+                 	STD  Y+@0+2,R30
+                 	STD  Y+@0+3,R30
+                 	.ENDM
+                 
+                 	.MACRO __POINTB1MN
+                 	LDI  R30,LOW(@0+(@1))
+                 	.ENDM
+                 
+                 	.MACRO __POINTW1MN
+                 	LDI  R30,LOW(@0+(@1))
+                 	LDI  R31,HIGH(@0+(@1))
+                 	.ENDM
+                 
+                 	.MACRO __POINTD1M
+                 	LDI  R30,LOW(@0)
+                 	LDI  R31,HIGH(@0)
+                 	LDI  R22,BYTE3(@0)
+                 	LDI  R23,BYTE4(@0)
+                 	.ENDM
+                 
+                 	.MACRO __POINTW1FN
+                 	LDI  R30,LOW(2*@0+(@1))
+                 	LDI  R31,HIGH(2*@0+(@1))
+                 	.ENDM
+                 
+                 	.MACRO __POINTD1FN
+                 	LDI  R30,LOW(2*@0+(@1))
+                 	LDI  R31,HIGH(2*@0+(@1))
+                 	LDI  R22,BYTE3(2*@0+(@1))
+                 	LDI  R23,BYTE4(2*@0+(@1))
+                 	.ENDM
+                 
+                 	.MACRO __POINTB2MN
+                 	LDI  R26,LOW(@0+(@1))
+                 	.ENDM
+                 
+                 	.MACRO __POINTW2MN
+                 	LDI  R26,LOW(@0+(@1))
+                 	LDI  R27,HIGH(@0+(@1))
+                 	.ENDM
+                 
+                 	.MACRO __POINTBRM
+                 	LDI  R@0,LOW(@1)
+                 	.ENDM
+                 
+                 	.MACRO __POINTWRM
+                 	LDI  R@0,LOW(@2)
+                 	LDI  R@1,HIGH(@2)
+                 	.ENDM
+                 
+                 	.MACRO __POINTBRMN
+                 	LDI  R@0,LOW(@1+(@2))
+                 	.ENDM
+                 
+                 	.MACRO __POINTWRMN
+                 	LDI  R@0,LOW(@2+(@3))
+                 	LDI  R@1,HIGH(@2+(@3))
+                 	.ENDM
+                 
+                 	.MACRO __POINTWRFN
+                 	LDI  R@0,LOW(@2*2+(@3))
+                 	LDI  R@1,HIGH(@2*2+(@3))
+                 	.ENDM
+                 
+                 	.MACRO __GETD1N
+                 	LDI  R30,LOW(@0)
+                 	LDI  R31,HIGH(@0)
+                 	LDI  R22,BYTE3(@0)
+                 	LDI  R23,BYTE4(@0)
+                 	.ENDM
+                 
+                 	.MACRO __GETD2N
+                 	LDI  R26,LOW(@0)
+                 	LDI  R27,HIGH(@0)
+                 	LDI  R24,BYTE3(@0)
+                 	LDI  R25,BYTE4(@0)
+                 	.ENDM
+                 
+                 	.MACRO __GETB1MN
+                 	LDS  R30,@0+(@1)
+                 	.ENDM
+                 
+                 	.MACRO __GETB1HMN
+                 	LDS  R31,@0+(@1)
+                 	.ENDM
+                 
+                 	.MACRO __GETW1MN
+                 	LDS  R30,@0+(@1)
+                 	LDS  R31,@0+(@1)+1
+                 	.ENDM
+                 
+                 	.MACRO __GETD1MN
+                 	LDS  R30,@0+(@1)
+                 	LDS  R31,@0+(@1)+1
+                 	LDS  R22,@0+(@1)+2
+                 	LDS  R23,@0+(@1)+3
+                 	.ENDM
+                 
+                 	.MACRO __GETBRMN
+                 	LDS  R@0,@1+(@2)
+                 	.ENDM
+                 
+                 	.MACRO __GETWRMN
+                 	LDS  R@0,@2+(@3)
+                 	LDS  R@1,@2+(@3)+1
+                 	.ENDM
+                 
+                 	.MACRO __GETWRZ
+                 	LDD  R@0,Z+@2
+                 	LDD  R@1,Z+@2+1
+                 	.ENDM
+                 
+                 	.MACRO __GETD2Z
+                 	LDD  R26,Z+@0
+                 	LDD  R27,Z+@0+1
+                 	LDD  R24,Z+@0+2
+                 	LDD  R25,Z+@0+3
+                 	.ENDM
+                 
+                 	.MACRO __GETB2MN
+                 	LDS  R26,@0+(@1)
+                 	.ENDM
+                 
+                 	.MACRO __GETW2MN
+                 	LDS  R26,@0+(@1)
+                 	LDS  R27,@0+(@1)+1
+                 	.ENDM
+                 
+                 	.MACRO __GETD2MN
+                 	LDS  R26,@0+(@1)
+                 	LDS  R27,@0+(@1)+1
+                 	LDS  R24,@0+(@1)+2
+                 	LDS  R25,@0+(@1)+3
+                 	.ENDM
+                 
+                 	.MACRO __PUTB1MN
+                 	STS  @0+(@1),R30
+                 	.ENDM
+                 
+                 	.MACRO __PUTW1MN
+                 	STS  @0+(@1),R30
+                 	STS  @0+(@1)+1,R31
+                 	.ENDM
+                 
+                 	.MACRO __PUTD1MN
+                 	STS  @0+(@1),R30
+                 	STS  @0+(@1)+1,R31
+                 	STS  @0+(@1)+2,R22
+                 	STS  @0+(@1)+3,R23
+                 	.ENDM
+                 
+                 	.MACRO __PUTB1EN
+                 	LDI  R26,LOW(@0+(@1))
+                 	LDI  R27,HIGH(@0+(@1))
+                 	RCALL __EEPROMWRB
+                 	.ENDM
+                 
+                 	.MACRO __PUTW1EN
+                 	LDI  R26,LOW(@0+(@1))
+                 	LDI  R27,HIGH(@0+(@1))
+                 	RCALL __EEPROMWRW
+                 	.ENDM
+                 
+                 	.MACRO __PUTD1EN
+                 	LDI  R26,LOW(@0+(@1))
+                 	LDI  R27,HIGH(@0+(@1))
+                 	RCALL __EEPROMWRD
+                 	.ENDM
+                 
+                 	.MACRO __PUTBR0MN
+                 	STS  @0+(@1),R0
+                 	.ENDM
+                 
+                 	.MACRO __PUTBMRN
+                 	STS  @0+(@1),R@2
+                 	.ENDM
+                 
+                 	.MACRO __PUTWMRN
+                 	STS  @0+(@1),R@2
+                 	STS  @0+(@1)+1,R@3
+                 	.ENDM
+                 
+                 	.MACRO __PUTBZR
+                 	STD  Z+@1,R@0
+                 	.ENDM
+                 
+                 	.MACRO __PUTWZR
+                 	STD  Z+@2,R@0
+                 	STD  Z+@2+1,R@1
+                 	.ENDM
+                 
+                 	.MACRO __GETW1R
+                 	MOV  R30,R@0
+                 	MOV  R31,R@1
+                 	.ENDM
+                 
+                 	.MACRO __GETW2R
+                 	MOV  R26,R@0
+                 	MOV  R27,R@1
+                 	.ENDM
+                 
+                 	.MACRO __GETWRN
+                 	LDI  R@0,LOW(@2)
+                 	LDI  R@1,HIGH(@2)
+                 	.ENDM
+                 
+                 	.MACRO __PUTW1R
+                 	MOV  R@0,R30
+                 	MOV  R@1,R31
+                 	.ENDM
+                 
+                 	.MACRO __PUTW2R
+                 	MOV  R@0,R26
+                 	MOV  R@1,R27
+                 	.ENDM
+                 
+                 	.MACRO __ADDWRN
+                 	SUBI R@0,LOW(-@2)
+                 	SBCI R@1,HIGH(-@2)
+                 	.ENDM
+                 
+                 	.MACRO __ADDWRR
+                 	ADD  R@0,R@2
+                 	ADC  R@1,R@3
+                 	.ENDM
+                 
+                 	.MACRO __SUBWRN
+                 	SUBI R@0,LOW(@2)
+                 	SBCI R@1,HIGH(@2)
+                 	.ENDM
+                 
+                 	.MACRO __SUBWRR
+                 	SUB  R@0,R@2
+                 	SBC  R@1,R@3
+                 	.ENDM
+                 
+                 	.MACRO __ANDWRN
+                 	ANDI R@0,LOW(@2)
+                 	ANDI R@1,HIGH(@2)
+                 	.ENDM
+                 
+                 	.MACRO __ANDWRR
+                 	AND  R@0,R@2
+                 	AND  R@1,R@3
+                 	.ENDM
+                 
+                 	.MACRO __ORWRN
+                 	ORI  R@0,LOW(@2)
+                 	ORI  R@1,HIGH(@2)
+                 	.ENDM
+                 
+                 	.MACRO __ORWRR
+                 	OR   R@0,R@2
+                 	OR   R@1,R@3
+                 	.ENDM
+                 
+                 	.MACRO __EORWRR
+                 	EOR  R@0,R@2
+                 	EOR  R@1,R@3
+                 	.ENDM
+                 
+                 	.MACRO __GETWRS
+                 	LDD  R@0,Y+@2
+                 	LDD  R@1,Y+@2+1
+                 	.ENDM
+                 
+                 	.MACRO __PUTBSR
+                 	STD  Y+@1,R@0
+                 	.ENDM
+                 
+                 	.MACRO __PUTWSR
+                 	STD  Y+@2,R@0
+                 	STD  Y+@2+1,R@1
+                 	.ENDM
+                 
+                 	.MACRO __MOVEWRR
+                 	MOV  R@0,R@2
+                 	MOV  R@1,R@3
+                 	.ENDM
+                 
+                 	.MACRO __INWR
+                 	IN   R@0,@2
+                 	IN   R@1,@2+1
+                 	.ENDM
+                 
+                 	.MACRO __OUTWR
+                 	OUT  @2+1,R@1
+                 	OUT  @2,R@0
+                 	.ENDM
+                 
+                 	.MACRO __CALL1MN
+                 	LDS  R30,@0+(@1)
+                 	LDS  R31,@0+(@1)+1
+                 	ICALL
+                 	.ENDM
+                 
+                 	.MACRO __CALL1FN
+                 	LDI  R30,LOW(2*@0+(@1))
+                 	LDI  R31,HIGH(2*@0+(@1))
+                 	RCALL __GETW1PF
+                 	ICALL
+                 	.ENDM
+                 
+                 	.MACRO __CALL2EN
+                 	LDI  R26,LOW(@0+(@1))
+                 	LDI  R27,HIGH(@0+(@1))
+                 	RCALL __EEPROMRDW
+                 	ICALL
+                 	.ENDM
+                 
+                 	.MACRO __GETW1STACK
+                 	IN   R26,SPL
+                 	IN   R27,SPH
+                 	ADIW R26,@0+1
+                 	LD   R30,X+
+                 	LD   R31,X
+                 	.ENDM
+                 
+                 	.MACRO __GETD1STACK
+                 	IN   R26,SPL
+                 	IN   R27,SPH
+                 	ADIW R26,@0+1
+                 	LD   R30,X+
+                 	LD   R31,X+
+                 	LD   R22,X
+                 	.ENDM
+                 
+                 	.MACRO __NBST
+                 	BST  R@0,@1
+                 	IN   R30,SREG
+                 	LDI  R31,0x40
+                 	EOR  R30,R31
+                 	OUT  SREG,R30
+                 	.ENDM
+                 
+                 
+                 	.MACRO __PUTB1SN
+                 	LDD  R26,Y+@0
+                 	SUBI R26,-@1
+                 	ST   X,R30
+                 	.ENDM
+                 
+                 	.MACRO __PUTW1SN
+                 	LDD  R26,Y+@0
+                 	SUBI R26,-@1
+                 	ST   X+,R30
+                 	ST   X,R31
+                 	.ENDM
+                 
+                 	.MACRO __PUTD1SN
+                 	LDD  R26,Y+@0
+                 	SUBI R26,-@1
+                 	RCALL __PUTDP1
+                 	.ENDM
+                 
+                 	.MACRO __PUTB1SNS
+                 	LDD  R26,Y+@0
+                 	SUBI R26,-@1
+                 	ST   X,R30
+                 	.ENDM
+                 
+                 	.MACRO __PUTW1SNS
+                 	LDD  R26,Y+@0
+                 	SUBI R26,-@1
+                 	ST   X+,R30
+                 	ST   X,R31
+                 	.ENDM
+                 
+                 	.MACRO __PUTD1SNS
+                 	LDD  R26,Y+@0
+                 	SUBI R26,-@1
+                 	RCALL __PUTDP1
+                 	.ENDM
+                 
+                 	.MACRO __PUTB1RN
+                 	MOV  R26,R@0
+                 	SUBI R26,-@1
+                 	ST   X,R30
+                 	.ENDM
+                 
+                 	.MACRO __PUTW1RN
+                 	MOV  R26,R@0
+                 	SUBI R26,-@1
+                 	ST   X+,R30
+                 	ST   X,R31
+                 	.ENDM
+                 
+                 	.MACRO __PUTD1RN
+                 	MOV  R26,R@0
+                 	SUBI R26,-@1
+                 	RCALL __PUTDP1
+                 	.ENDM
+                 
+                 	.MACRO __PUTB1RNS
+                 	MOV  R26,R@0
+                 	SUBI R26,-@1
+                 	ST   X,R30
+                 	.ENDM
+                 
+                 	.MACRO __PUTW1RNS
+                 	MOV  R26,R@0
+                 	SUBI R26,-@1
+                 	ST   X+,R30
+                 	ST   X,R31
+                 	.ENDM
+                 
+                 	.MACRO __PUTD1RNS
+                 	MOV  R26,R@0
+                 	SUBI R26,-@1
+                 	RCALL __PUTDP1
+                 	.ENDM
+                 
+                 	.MACRO __PUTB1PMN
+                 	LDS  R26,@0
+                 	SUBI R26,-@1
+                 	ST   X,R30
+                 	.ENDM
+                 
+                 	.MACRO __PUTW1PMN
+                 	LDS  R26,@0
+                 	SUBI R26,-@1
+                 	ST   X+,R30
+                 	ST   X,R31
+                 	.ENDM
+                 
+                 	.MACRO __PUTD1PMN
+                 	LDS  R26,@0
+                 	SUBI R26,-@1
+                 	RCALL __PUTDP1
+                 	.ENDM
+                 
+                 	.MACRO __PUTB1PMNS
+                 	LDS  R26,@0
+                 	SUBI R26,-@1
+                 	ST   X,R30
+                 	.ENDM
+                 
+                 	.MACRO __PUTW1PMNS
+                 	LDS  R26,@0
+                 	SUBI R26,-@1
+                 	ST   X+,R30
+                 	ST   X,R31
+                 	.ENDM
+                 
+                 	.MACRO __PUTD1PMNS
+                 	LDS  R26,@0
+                 	SUBI R26,-@1
+                 	RCALL __PUTDP1
+                 	.ENDM
+                 
+                 	.MACRO __GETB1SX
+                 	MOVW R30,R28
+                 	SUBI R30,LOW(-@0)
+                 	SBCI R31,HIGH(-@0)
+                 	LD   R30,Z
+                 	.ENDM
+                 
+                 	.MACRO __GETB1HSX
+                 	MOVW R30,R28
+                 	SUBI R30,LOW(-@0)
+                 	SBCI R31,HIGH(-@0)
+                 	LD   R31,Z
+                 	.ENDM
+                 
+                 	.MACRO __GETW1SX
+                 	MOVW R30,R28
+                 	SUBI R30,LOW(-@0)
+                 	SBCI R31,HIGH(-@0)
+                 	LD   R0,Z+
+                 	LD   R31,Z
+                 	MOV  R30,R0
+                 	.ENDM
+                 
+                 	.MACRO __GETD1SX
+                 	MOVW R30,R28
+                 	SUBI R30,LOW(-@0)
+                 	SBCI R31,HIGH(-@0)
+                 	LD   R0,Z+
+                 	LD   R1,Z+
+                 	LD   R22,Z+
+                 	LD   R23,Z
+                 	MOVW R30,R0
+                 	.ENDM
+                 
+                 	.MACRO __GETB2SX
+                 	MOVW R26,R28
+                 	SUBI R26,LOW(-@0)
+                 	SBCI R27,HIGH(-@0)
+                 	LD   R26,X
+                 	.ENDM
+                 
+                 	.MACRO __GETW2SX
+                 	MOVW R26,R28
+                 	SUBI R26,LOW(-@0)
+                 	SBCI R27,HIGH(-@0)
+                 	LD   R0,X+
+                 	LD   R27,X
+                 	MOV  R26,R0
+                 	.ENDM
+                 
+                 	.MACRO __GETD2SX
+                 	MOVW R26,R28
+                 	SUBI R26,LOW(-@0)
+                 	SBCI R27,HIGH(-@0)
+                 	LD   R0,X+
+                 	LD   R1,X+
+                 	LD   R24,X+
+                 	LD   R25,X
+                 	MOVW R26,R0
+                 	.ENDM
+                 
+                 	.MACRO __GETBRSX
+                 	MOVW R30,R28
+                 	SUBI R30,LOW(-@1)
+                 	SBCI R31,HIGH(-@1)
+                 	LD   R@0,Z
+                 	.ENDM
+                 
+                 	.MACRO __GETWRSX
+                 	MOVW R30,R28
+                 	SUBI R30,LOW(-@2)
+                 	SBCI R31,HIGH(-@2)
+                 	LD   R@0,Z+
+                 	LD   R@1,Z
+                 	.ENDM
+                 
+                 	.MACRO __GETBRSX2
+                 	MOVW R26,R28
+                 	SUBI R26,LOW(-@1)
+                 	SBCI R27,HIGH(-@1)
+                 	LD   R@0,X
+                 	.ENDM
+                 
+                 	.MACRO __GETWRSX2
+                 	MOVW R26,R28
+                 	SUBI R26,LOW(-@2)
+                 	SBCI R27,HIGH(-@2)
+                 	LD   R@0,X+
+                 	LD   R@1,X
+                 	.ENDM
+                 
+                 	.MACRO __LSLW8SX
+                 	MOVW R30,R28
+                 	SUBI R30,LOW(-@0)
+                 	SBCI R31,HIGH(-@0)
+                 	LD   R31,Z
+                 	CLR  R30
+                 	.ENDM
+                 
+                 	.MACRO __PUTB1SX
+                 	MOVW R26,R28
+                 	SUBI R26,LOW(-@0)
+                 	SBCI R27,HIGH(-@0)
+                 	ST   X,R30
+                 	.ENDM
+                 
+                 	.MACRO __PUTW1SX
+                 	MOVW R26,R28
+                 	SUBI R26,LOW(-@0)
+                 	SBCI R27,HIGH(-@0)
+                 	ST   X+,R30
+                 	ST   X,R31
+                 	.ENDM
+                 
+                 	.MACRO __PUTD1SX
+                 	MOVW R26,R28
+                 	SUBI R26,LOW(-@0)
+                 	SBCI R27,HIGH(-@0)
+                 	ST   X+,R30
+                 	ST   X+,R31
+                 	ST   X+,R22
+                 	ST   X,R23
+                 	.ENDM
+                 
+                 	.MACRO __CLRW1SX
+                 	MOVW R26,R28
+                 	SUBI R26,LOW(-@0)
+                 	SBCI R27,HIGH(-@0)
+                 	ST   X+,R30
+                 	ST   X,R30
+                 	.ENDM
+                 
+                 	.MACRO __CLRD1SX
+                 	MOVW R26,R28
+                 	SUBI R26,LOW(-@0)
+                 	SBCI R27,HIGH(-@0)
+                 	ST   X+,R30
+                 	ST   X+,R30
+                 	ST   X+,R30
+                 	ST   X,R30
+                 	.ENDM
+                 
+                 	.MACRO __PUTB2SX
+                 	MOVW R30,R28
+                 	SUBI R30,LOW(-@0)
+                 	SBCI R31,HIGH(-@0)
+                 	ST   Z,R26
+                 	.ENDM
+                 
+                 	.MACRO __PUTW2SX
+                 	MOVW R30,R28
+                 	SUBI R30,LOW(-@0)
+                 	SBCI R31,HIGH(-@0)
+                 	ST   Z+,R26
+                 	ST   Z,R27
+                 	.ENDM
+                 
+                 	.MACRO __PUTD2SX
+                 	MOVW R30,R28
+                 	SUBI R30,LOW(-@0)
+                 	SBCI R31,HIGH(-@0)
+                 	ST   Z+,R26
+                 	ST   Z+,R27
+                 	ST   Z+,R24
+                 	ST   Z,R25
+                 	.ENDM
+                 
+                 	.MACRO __PUTBSRX
+                 	MOVW R30,R28
+                 	SUBI R30,LOW(-@1)
+                 	SBCI R31,HIGH(-@1)
+                 	ST   Z,R@0
+                 	.ENDM
+                 
+                 	.MACRO __PUTWSRX
+                 	MOVW R30,R28
+                 	SUBI R30,LOW(-@2)
+                 	SBCI R31,HIGH(-@2)
+                 	ST   Z+,R@0
+                 	ST   Z,R@1
+                 	.ENDM
+                 
+                 	.MACRO __PUTB1SNX
+                 	MOVW R26,R28
+                 	SUBI R26,LOW(-@0)
+                 	SBCI R27,HIGH(-@0)
+                 	LD   R0,X+
+                 	LD   R27,X
+                 	MOV  R26,R0
+                 	SUBI R26,LOW(-@1)
+                 	SBCI R27,HIGH(-@1)
+                 	ST   X,R30
+                 	.ENDM
+                 
+                 	.MACRO __PUTW1SNX
+                 	MOVW R26,R28
+                 	SUBI R26,LOW(-@0)
+                 	SBCI R27,HIGH(-@0)
+                 	LD   R0,X+
+                 	LD   R27,X
+                 	MOV  R26,R0
+                 	SUBI R26,LOW(-@1)
+                 	SBCI R27,HIGH(-@1)
+                 	ST   X+,R30
+                 	ST   X,R31
+                 	.ENDM
+                 
+                 	.MACRO __PUTD1SNX
+                 	MOVW R26,R28
+                 	SUBI R26,LOW(-@0)
+                 	SBCI R27,HIGH(-@0)
+                 	LD   R0,X+
+                 	LD   R27,X
+                 	MOV  R26,R0
+                 	SUBI R26,LOW(-@1)
+                 	SBCI R27,HIGH(-@1)
+                 	ST   X+,R30
+                 	ST   X+,R31
+                 	ST   X+,R22
+                 	ST   X,R23
+                 	.ENDM
+                 
+                 ;NAME DEFINITIONS FOR GLOBAL VARIABLES ALLOCATED TO REGISTERS
+                 	.DEF _xcount=R3
+                 	.DEF _crc=R4
+                 
+                 ;GPIOR0-GPIOR2 INITIALIZATION VALUES
+                 	.EQU __GPIOR0_INIT=0x00
+                 	.EQU __GPIOR1_INIT=0x00
+                 	.EQU __GPIOR2_INIT=0x00
+                 
+                 	.CSEG
+                 	.ORG 0x00
+                 
+                 ;START OF CODE MARKER
+                 __START_OF_CODE:
+                 
+                 ;INTERRUPT VECTORS
+000000 c028      	RJMP __RESET
+000001 cffe      	RJMP 0x00
+000002 c054      	RJMP _ext_int1_isr
+000003 cffc      	RJMP 0x00
+000004 cffb      	RJMP 0x00
+000005 c056      	RJMP _timer1_ovf_isr
+000006 cff9      	RJMP 0x00
+000007 cff8      	RJMP 0x00
+000008 cff7      	RJMP 0x00
+000009 cff6      	RJMP 0x00
+00000a cff5      	RJMP 0x00
+00000b cff4      	RJMP 0x00
+00000c cff3      	RJMP 0x00
+00000d cff2      	RJMP 0x00
+00000e cff1      	RJMP 0x00
+00000f cff0      	RJMP 0x00
+000010 cfef      	RJMP 0x00
+000011 cfee      	RJMP 0x00
+000012 cfed      	RJMP 0x00
+                 
+                 _matrix:
+000013 0a07
+000014 0e0d
+000015 0e0f
+000016 0a0d      	.DB  0x7,0xA,0xD,0xE,0xF,0xE,0xD,0xA
+000017 0507
+000018 0102
+000019 0100
+00001a 0502      	.DB  0x7,0x5,0x2,0x1,0x0,0x1,0x2,0x5
+                 _tbl10_G100:
+00001b 2710
+00001c 03e8
+00001d 0064
+00001e 000a      	.DB  0x10,0x27,0xE8,0x3,0x64,0x0,0xA,0x0
+00001f 0001      	.DB  0x1,0x0
+                 _tbl16_G100:
+000020 1000
+000021 0100
+000022 0010
+000023 0001      	.DB  0x0,0x10,0x0,0x1,0x10,0x0,0x1,0x0
+                 
+                 _0x85:
+F:\Data - Penting\DATA\Punya Koko\LPKTA\Copy of Tracker2\final.asm(1006): warning: .cseg .db misalignment - padding zero byte
+000024 0000      	.DB  0x0
+                 
+                 __GLOBAL_INI_TBL:
+000025 0001      	.DW  0x01
+000026 0003      	.DW  0x03
+000027 0048      	.DW  _0x85*2
+                 
+                 _0xFFFFFFFF:
+000028 0000      	.DW  0
+                 
+                 __RESET:
+000029 94f8      	CLI
+00002a 27ee      	CLR  R30
+00002b bbec      	OUT  EECR,R30
+00002c bfe5      	OUT  MCUCR,R30
+                 
+                 ;DISABLE WATCHDOG
+00002d e1f8      	LDI  R31,0x18
+00002e b7a4      	IN   R26,MCUSR
+00002f 7fa7      	CBR  R26,8
+000030 bfa4      	OUT  MCUSR,R26
+000031 bdf1      	OUT  WDTCR,R31
+000032 bde1      	OUT  WDTCR,R30
+                 
+                 ;CLEAR R2-R14
+000033 e08d      	LDI  R24,(14-2)+1
+000034 e0a2      	LDI  R26,2
+                 __CLEAR_REG:
+000035 93ed      	ST   X+,R30
+000036 958a      	DEC  R24
+000037 f7e9      	BRNE __CLEAR_REG
+                 
+                 ;CLEAR SRAM
+000038 e880      	LDI  R24,__CLEAR_SRAM_SIZE
+000039 e6a0      	LDI  R26,__SRAM_START
+                 __CLEAR_SRAM:
+00003a 93ed      	ST   X+,R30
+00003b 958a      	DEC  R24
+00003c f7e9      	BRNE __CLEAR_SRAM
+                 
+                 ;GLOBAL VARIABLES INITIALIZATION
+00003d e4ea      	LDI  R30,LOW(__GLOBAL_INI_TBL*2)
+00003e e0f0      	LDI  R31,HIGH(__GLOBAL_INI_TBL*2)
+                 __GLOBAL_INI_NEXT:
+00003f 9185      	LPM  R24,Z+
+000040 9195      	LPM  R25,Z+
+000041 9700      	SBIW R24,0
+000042 f061      	BREQ __GLOBAL_INI_END
+000043 91a5      	LPM  R26,Z+
+000044 91b5      	LPM  R27,Z+
+000045 9005      	LPM  R0,Z+
+000046 9015      	LPM  R1,Z+
+000047 01bf      	MOVW R22,R30
+000048 01f0      	MOVW R30,R0
+                 __GLOBAL_INI_LOOP:
+000049 9005      	LPM  R0,Z+
+00004a 920d      	ST   X+,R0
+00004b 9701      	SBIW R24,1
+00004c f7e1      	BRNE __GLOBAL_INI_LOOP
+00004d 01fb      	MOVW R30,R22
+00004e cff0      	RJMP __GLOBAL_INI_NEXT
+                 __GLOBAL_INI_END:
+                 
+                 ;GPIOR0-GPIOR2 INITIALIZATION
+00004f e0e0      	LDI  R30,__GPIOR0_INIT
+000050 bbe3      	OUT  GPIOR0,R30
+                 	;__GPIOR1_INIT = __GPIOR0_INIT
+000051 bbe4      	OUT  GPIOR1,R30
+                 	;__GPIOR2_INIT = __GPIOR0_INIT
+000052 bbe5      	OUT  GPIOR2,R30
+                 
+                 ;HARDWARE STACK POINTER INITIALIZATION
+000053 edef      	LDI  R30,LOW(__SRAM_END-__HEAP_SIZE)
+000054 bfed      	OUT  SPL,R30
+                 
+                 ;DATA STACK POINTER INITIALIZATION
+000055 e8c0      	LDI  R28,LOW(__SRAM_START+__DSTACK_SIZE)
+                 
+000056 c248      	RJMP _main
+                 
+                 	.ESEG
+                 	.ORG 0
+                 
+                 	.DSEG
+                 	.ORG 0x80
+                 
+                 	.CSEG
+                 ;/***************************************************************************************
+                 ;*
+                 ;*				HANYA UNTUK TUJUAN EDUKASIONAL
+                 ;*				FOR EDUCATION PURPOSE ONLY
+                 ;*
+                 ;*				COPYRIGHT (c)2012, HANDIKO GESANG ANUGRAH SEJATI
+                 ;*				(handikogesang@gmail.com)
+                 ;*
+                 ;*				2 FEBRUARY 2012
+                 ;*
+                 ;*				BASIC APRS BEACON, GPS PARSER, & APRS ENCODER ONLY
+                 ;*				TANPA FITUR SMART BEACONING(TM), TELEMETRY, DAN PC CONFIG
+                 ;*
+                 ;*				LAST REVISION 30 SEPTEMBER 2012
+                 ;*
+                 ;*				DOKUMEN INI BEBAS UNTUK DISEBARLUASKAN.
+                 ;*				HARAP TIDAK MELAKUKAN PERUBAHAN APAPUN ATAS ISI DOKUMEN INI
+                 ;*				DAN MENCANTUMKAN NAMA DAN EMAIL PENULIS JIKA INGIN MENYEBAR-
+                 ;*				LUASKAN DOKUMEN INI.
+                 ;*
+                 ;* Project 		: 	APRS BEACON
+                 ;* Version 		: 	GPS SUPPORTED, EEPROM DATA PROTECTOR SUPPORTED
+                 ;* Date    		: 	02/02/2012
+                 ;* Author  		: 	HANDIKO GESANG ANUGRAH S.
+                 ;* Company 		: 	TIM INSTRUMENTASI TELEMETRI DAN TELEKONTROL
+                 ;* 	  			LABORATORIUM SENSOR DAN SISTEM TELEKONTROL
+                 ;* 	  			JURUSAN TEKNIK FISIKA
+                 ;*           			FAKULTAS TEKNIK
+                 ;*           			UNIVERSITAS GADJAH MADA
+                 ;*
+                 ;* Chip type           	: 	ATtiny2313
+                 ;* Program type        	: 	Application
+                 ;* Clock frequency     	: 	11.059200 MHz
+                 ;* Memory model        	: 	Tiny
+                 ;* External SRAM size  	: 	0
+                 ;* Data Stack size     	: 	32
+                 ;*
+                 ;* File			:	final.c
+                 ;*
+                 ;* Fungsi - fungsi	: 	void set_dac(char value)
+                 ;* 				void set_nada(char i_nada)
+                 ;* 				void kirim_karakter(unsigned char input)
+                 ;* 				void kirim_paket(void)
+                 ;* 				void ubah_nada(void)
+                 ;* 				void hitung_crc(char in_crc)
+                 ;* 				void kirim_crc(void)
+                 ;* 				void ekstrak_gps(void)
+                 ;*
+                 ;* Variabel global	:	char rx_buffer[RX_BUFFER_SIZE]
+                 ;* 				bit rx_buffer_overflow
+                 ;*                               flash char matrix[ ]
+                 ;*				eeprom char data_1[ ]
+                 ;*				eeprom char posisi_lat[ ]
+                 ;*				eeprom char posisi_long[ ]
+                 ;*				eeprom char data_extension[ ]
+                 ;*				eeprom char komentar[ ]
+                 ;*				eeprom char status[ ]
+                 ;*				eeprom char beacon_stat
+                 ;*				char xcount
+                 ;*				bit nada
+                 ;*				static char bit_stuff
+                 ;*				unsigned short crc;
+                 ;*
+                 ;* Konstanta custom	:	_1200
+                 ;* 				_2200
+                 ;* 				CONST_1200
+                 ;* 				CONST_2200
+                 ;* 				GAP_TIME_
+                 ;*				FLAG_
+                 ;*				CONTROL_FIELD_
+                 ;*				PROTOCOL_ID_
+                 ;*				TD_POSISI_
+                 ;*				TD_STATUS_
+                 ;*				SYM_TAB_OVL_
+                 ;*				SYM_CODE_
+                 ;*
+                 ;* Chip I/O		:	TX_NOW  PIND.3
+                 ;* 				PTT     PORTB.3
+                 ;* 				DAC_0   PORTB.7
+                 ;* 				DAC_1   PORTB.6
+                 ;* 				DAC_2   PORTB.5
+                 ;* 				DAC_3   PORTB.4
+                 ;* 				L_BUSY	PORTD.5
+                 ;* 				L_STBY  PORTD.4
+                 ;*
+                 ;* Vektor		:	RJMP __RESET
+                 ;*				RJMP _ext_int1_isr
+                 ;*				RJMP _timer1_ovf_isr
+                 ;*
+                 ;* Fuse bit		:	BODLEVEL1 = 0
+                 ;*
+                 ;*
+                 ;***************************************************************************************/
+                 ;
+                 ;// header firmware
+                 ;#include <tiny2313.h>
+                 	#ifndef __SLEEP_DEFINED__
+                 	#define __SLEEP_DEFINED__
+                 	.EQU __se_bit=0x20
+                 	.EQU __sm_mask=0x50
+                 	.EQU __sm_powerdown=0x10
+                 	.EQU __sm_standby=0x40
+                 	.SET power_ctrl_reg=mcucr
+                 	#endif
+                 ;#include <stdio.h>
+                 ;#include <tiny4313_bits.h>
+                 ;
+                 ;
+                 ;
+                 ;/***************************************************************************************
+                 ;*
+                 ;*	DEFINISI KONSTANTA - KONSTANTA CUSTOM
+                 ;*
+                 ;*/
+                 ;// definisi konstanta kondisi tone yang dikirimkan
+                 ;#define _1200		0
+                 ;#define _2200		1
+                 ;
+                 ;// definisi konstanta waktu de-sampling (rekonstruksi) diskrit gelombang sinus untuk tone
+                 ;	// 1200Hz dan 2200Hz dalam microsecond (us). Silahkan fine tune konstanta ini untuk
+                 ;        // adjusting baudrate dan cek hasilnya dengan menginputkan audio dari hardware APRS
+                 ;        // pada PC / Laptop lalu cek hasil tone dan baudrate dengan Cool Edit pro pada
+                 ;        // tampilan waveform atau spektral.
+                 ;
+                 ;
+                 ;        // Konstanta untuk kompilasi dalam mode optimasi ukuran
+                 ;#ifdef	_OPTIMIZE_SIZE_
+                 ;	#define CONST_1200      46
+                 ;	#define CONST_2200      25  // 22-25    22-->2400Hz   25-->2200Hz
+                 ;
+                 ;        // Konstanta untuk kompilasi dalam mode optimasi kecepatan
+                 ;#else
+                 ;	#define CONST_1200      50
+                 ;	#define CONST_2200      25
+                 ;#endif
+                 ;
+                 ;// waktu jeda antara transmisi data dalam detik (s)
+                 ;#define GAP_TIME_	30
+                 ;
+                 ;// konstanta waktu opening flag
+                 ;#define TX_DELAY_	45
+                 ;
+                 ;// definisi konstanta karakter Flag
+                 ;#define FLAG_		0x7E
+                 ;
+                 ;// definisi konstanta karakter Control Field
+                 ;#define	CONTROL_FIELD_	0x03
+                 ;
+                 ;// definisi konstanta karakter PID
+                 ;#define PROTOCOL_ID_	0xF0
+                 ;
+                 ;// definisi konstanta karakter Tipe Data posisi
+                 ;#define TD_POSISI_	'!'
+                 ;
+                 ;// definisi konstanta karakter Tipe Data status
+                 ;#define TD_STATUS_	'>'
+                 ;
+                 ;// definisi konstanta karakter simbol tabel dan overlay (\)
+                 ;#define SYM_TAB_OVL_	'\\'
+                 ;
+                 ;// definisi konstanta karakter simbol station (Area Locns)
+                 ;#define SYM_CODE_	'l'
+                 ;
+                 ;// konstanta waktu closing flag
+                 ;#define TX_TAIL_	15
+                 ;
+                 ;//	AKHIR DARI DEFINISI KONSTANTA - KONSTANTA CUSTOM
+                 ;
+                 ;
+                 ;/**************************************************************************************/
+                 ;
+                 ;// header firmware
+                 ;#include <delay.h>
+                 ;#include <stdarg.h>
+                 ;
+                 ;/***************************************************************************************
+                 ;*
+                 ;*	DEFINISI INPUT - OUTPUT ATTINY2313
+                 ;*
+                 ;*/
+                 ;// definisi input TX manual (request interupsi eksternal) INT1
+                 ;#define TX_NOW  PIND.3
+                 ;
+                 ;// definisi output LED TX dan transistor sebagai switch TX (Hi = TX, Lo = waiting)
+                 ;#define PTT     PORTB.3
+                 ;
+                 ;// definisi output tegangan DAC ladder resistor sebagai generator sinusoid ( DAC_0 = LSB,
+                 ;	// DAC_3 = MSB )
+                 ;#define DAC_0   PORTB.7
+                 ;#define DAC_1   PORTB.6
+                 ;#define DAC_2   PORTB.5
+                 ;#define DAC_3   PORTB.4
+                 ;
+                 ;// definisi output LED saat terima dan ekstrak data GPS (Hi = parsing, Lo = waiting)
+                 ;#define L_BUSY	PORTD.5
+                 ;
+                 ;// definisi output LED saat menunggu interupsi (Hi = waiting, Lo = ada proses)
+                 ;#define L_STBY  PORTD.4
+                 ;
+                 ;//	AKHIR DARI DEFINISI INPUT - OUTPUT ATTINY2313
+                 ;
+                 ;
+                 ;/***************************************************************************************
+                 ;*
+                 ;*	DEKLARASI PROTOTYPE FUNGSI - FUNGSI
+                 ;*
+                 ;*/
+                 ;void set_dac(char value);
+                 ;void set_nada(char i_nada);
+                 ;void kirim_karakter(unsigned char input);
+                 ;void kirim_paket(void);
+                 ;void ubah_nada(void);
+                 ;void hitung_crc(char in_crc);
+                 ;void kirim_crc(void);
+                 ;void ekstrak_gps(void);
+                 ;
+                 ;
+                 ;//	AKHIR DARI DEKLARASI PROTOTYPE FUNGSI - FUNGSI
+                 ;
+                 ;
+                 ;/***************************************************************************************
+                 ;*
+                 ;*	DEKLARASI VARIABEL GLOBAL
+                 ;*
+                 ;*/
+                 ;
+                 ;// variabel penyimpan nilai rekonstruksi diskrit gelombang sinusoid (matrix 16 ele.)
+                 ;flash char matrix[16] = {7,10,13,14,15,14,13,10,7,5,2,1,0,1,2,5};
+                 ;
+                 ;// variabel penyimpan data adresses
+                 ;eeprom unsigned char data_1[21] =
+                 ;{
+                 ;	// destination field, tergeser kiri 1 bit
+                 ;        ('A'<<1),('P'<<1),('R'<<1),('S'<<1),(' '<<1),(' '<<1),('0'<<1),
+                 ;
+                 ;        // source field, tergeser kiri 1 bit
+                 ;	('Y'<<1),('C'<<1),('2'<<1),('W'<<1),('Y'<<1),('A'<<1),('9'<<1),
+                 ;
+                 ;        // path, tergeser kiri 1 bit
+                 ;        ('W'<<1),('I'<<1),('D'<<1),('E'<<1),('2'<<1),(' '<<1),('2'<<1)+1
+                 ;};
+                 ;
+                 ;// variabel penyimpan data awal posisi lintang dan update data gps
+                 ;eeprom char posisi_lat[8] =
+                 ;{
+                 ;	// latitude
+                 ;        '0','0','0','0','.','0','0','S'
+                 ;};
+                 ;
+                 ;// variabel penyimpan data awal posisi bujur dan update data gps
+                 ;eeprom char posisi_long[9] =
+                 ;{
+                 ;	// longitude
+                 ;        '0','0','0','0','0','.','0','0','E'
+                 ;};
+                 ;
+                 ;eeprom char altitude[6];
+                 ;
+                 ;// variabel penyimpan data extensi tipe PHGD
+                 ;eeprom char data_extension[7] =
+                 ;{
+                 ;	// header tipe data ekstensi
+                 ;        'P','H','G',
+                 ;
+                 ;        /************************************************************************************************
+                 ;        |-----------------------------------------------------------------------------------------------|
+                 ;	|	PHGD CODE (Power Height Gain Directivity)						|
+                 ;        |-----------------------------------------------------------------------------------------------|
+                 ;        |	P		|	H		|	G		|	D		|
+                 ;        |-----------------------|-----------------------|-----------------------|-----------------------|
+                 ;        |  0 rep.of  0 watts	|  0 rep.of  10 ft.	|  0 rep.of   0dBi	|  0 rep.of  omni.	|
+                 ;        |  1 rep.of  1 watts	|  1 rep.of  20 ft.	|  1 rep.of   1dBi	|  1 rep.of  NE		|
+                 ;        |  2 rep.of  4 watts	|  2 rep.of  40 ft.	|  2 rep.of   2dBi	|  2 rep.of  E		|
+                 ;        |  3 rep.of  9 watts	|  3 rep.of  80 ft.	|  3 rep.of   3dBi	|  3 rep.of  SE		|
+                 ;        |  4 rep.of  16 watts   |  4 rep.of  160 ft.	|  4 rep.of   4dBi	|  4 rep.of  S		|
+                 ;        |  5 rep.of  25 watts 	|  5 rep.of  320 ft.	|  5 rep.of   5dBi	|  5 rep.of  SW		|
+                 ;        |  6 rep.of  36 watts	|  6 rep.of  640 ft.	|  6 rep.of   6dBi	|  6 rep.of  W		|
+                 ;        |  7 rep.of  49 watts	|  7 rep.of  1280 ft.	|  7 rep.of   7dBi	|  7 rep.of  NW		|
+                 ;        |  8 rep.of  64 watts	|  8 rep.of  2560 ft.	|  8 rep.of   8dBi	|  8 rep.of  N		|
+                 ;        |  9 rep.of  81 watts	|  9 rep.of  5120 ft.	|  9 rep.of   9dBi	|-----------------------|
+                 ;        *************************************************************************************************/
+                 ;
+                 ;
+                 ;        // nilai representasi dari PHGD
+                 ;        // power : 4 watts, P = 2
+                 ;        '2',
+                 ;
+                 ;        // height above average terrain : 10 feet, H = 0
+                 ;        '0',
+                 ;
+                 ;        // antenna gain : 2dBi, G = 2
+                 ;        '2',
+                 ;
+                 ;        // antenna directivity : omnidirectional, D = 0
+                 ;        '0'
+                 ;
+                 ;};
+                 ;
+                 ;// variabel penyimpan konstanta string komentar
+                 ;eeprom char komentar[18] =
+                 ;{
+                 ;	// komentar
+                 ;        //'L','a','b','.','S','S','T','K',' ','T','i','m','-','1'
+                 ;        ':',':',':',' ','1','4','4','.','3','9','0','M','H','z',' ',':',':',':'
+                 ;
+                 ;};
+                 ;
+                 ;// variabel penyimpan konstanta string status
+                 ;eeprom char status[47] =
+                 ;{
+                 ;	// status teks
+                 ;        'A','T','t','i','n','y','2','3','1','3',' ',
+                 ;        'A','P','R','S',' ','t','r','a','c','k','e','r',' ',
+                 ;        'h','a','n','d','i','k','o','g','e','s','a','n','g','@','g','m','a','i','l','.','c','o','m'
+                 ;};
+                 ;
+                 ;// variabel pengingat urutan beacon dan status
+                 ;eeprom char beacon_stat = 0;
+                 ;
+                 ;// variabel penyimpan nilai urutan interupsi, 0 ketika inisialisasi dan reset, 1 ketika TX,
+                 ;	// 2 - GAP_TIME_ ketika parsing data gps
+                 ;char xcount = 0;
+                 ;
+                 ;// variabel penyimpan tone terakhir, _1200 = 0, _2200 = 1, inisialisasi sebagai 1200Hz
+                 ;bit nada = _1200;
+                 ;
+                 ;// variabel penyimpan enablisasi bit stuffing, 0 = disable bit stuffing, 1 = enable bit stuffing
+                 ;static char bit_stuff = 0;
+                 ;
+                 ;// variabel penyimpan nilai sementara dan nilai akhir CRC-16 CCITT
+                 ;unsigned short crc;
+                 ;
+                 ;//	AKHIR DARI DEKLARASI VARIABEL GLOBAL
+                 ;
+                 ;
+                 ;/***************************************************************************************
+                 ;*
+                 ;*	KONSTANTA EVALUATOR
+                 ;*
+                 ;*/
+                 ;// cek define _1200
+                 ;#ifndef	_1200
+                 ;#error	"KONSTANTA _1200 BELUM TERDEFINISI"
+                 ;#endif
+                 ;
+                 ;// cek define _2200
+                 ;#ifndef	_2200
+                 ;#error	"KONSTANTA _2200 BELUM TERDEFINISI"
+                 ;#endif
+                 ;
+                 ;// cek define CONST_1200
+                 ;#ifndef	CONST_1200
+                 ;#error	"KONSTANTA CONST_1200 BELUM TERDEFINISI"
+                 ;#endif
+                 ;
+                 ;// cek define CONST_2200
+                 ;#ifndef	CONST_2200
+                 ;#error	"KONSTANTA CONST_2200 BELUM TERDEFINISI"
+                 ;#endif
+                 ;
+                 ;// cek define GAP_TIME_
+                 ;#ifndef	GAP_TIME_
+                 ;#error	"KONSTANTA GAP_TIME_ BELUM TERDEFINISI"
+                 ;#endif
+                 ;
+                 ;// cek nilai GAP_TIME_ (harus antara 15 - 30)
+                 ;#if	(GAP_TIME_ < 15)
+                 ;//#error	"GAP_TIME_ harus bernilai antara 15 - 60. GAP_TIME_ yang terlalu singkat menyebabkan kepadatan traffic"
+                 ;#endif
+                 ;#if	(GAP_TIME_ > 60)
+                 ;#error	"GAP_TIME_ harus bernilai antara 15 - 60. GAP_TIME_ yang terlalu panjang menyebabkan 'loose of track'  "
+                 ;#endif
+                 ;
+                 ;//	AKHIR DARI KONSTANTA EVALUATOR
+                 ;
+                 ;
+                 ;/***************************************************************************************/
+                 ;	interrupt 		[EXT_INT1] void ext_int1_isr(void)
+                 ; 0000 0173 /***************************************************************************************
+                 ; 0000 0174 *	ABSTRAKSI	:	interupsi eksternal, ketika input TX_NOW bernilai LOW,
+                 ; 0000 0175 *				[EXT_INT1] aktif
+                 ; 0000 0176 *
+                 ; 0000 0177 *      	INPUT		:	input TX_NOW
+                 ; 0000 0178 *	OUTPUT		:       LED standby dan LED busy
+                 ; 0000 0179 *	RETURN		:       tak ada
+                 ; 0000 017A */
+                 ; 0000 017B {
+                 
+                 	.CSEG
+                 _ext_int1_isr:
+000057 d27c      	RCALL SUBOPT_0x0
+                 ; 0000 017C 	// matikan LED standby
+                 ; 0000 017D         L_STBY = 0;
+                 ; 0000 017E 
+                 ; 0000 017F         // tunggu 250ms (bounce switch)
+                 ; 0000 0180         delay_ms(250);
+000058 efea      	LDI  R30,LOW(250)
+000059 e0f0      	LDI  R31,HIGH(250)
+00005a d288      	RCALL SUBOPT_0x1
+                 ; 0000 0181 
+                 ; 0000 0182         // kirim paket data
+                 ; 0000 0183         kirim_paket();
+                 ; 0000 0184 
+                 ; 0000 0185         // nyalakan LED standby
+                 ; 0000 0186         L_STBY = 1;
+                 ; 0000 0187 
+                 ; 0000 0188 } 	// EndOf interrupt [EXT_INT1] void ext_int1_isr(void)
+00005b c009      	RJMP _0x84
+                 ;
+                 ;
+                 ;/***************************************************************************************/
+                 ;	interrupt 		[TIM1_OVF] void timer1_ovf_isr(void)
+                 ; 0000 018D /***************************************************************************************
+                 ; 0000 018E *	ABSTRAKSI  	: 	interupsi overflow TIMER 1 [TIM1_OVF], di-set overflow
+                 ; 0000 018F *				ketika waktu telah mencapai 1 detik. Pengendali urutan
+                 ; 0000 0190 *				waktu (timeline)antara transmisi data APRS dan parsing
+                 ; 0000 0191 *				data gps
+                 ; 0000 0192 *
+                 ; 0000 0193 *      	INPUT		:	tak ada
+                 ; 0000 0194 *	OUTPUT		:       kondisi LED standby dan LED busy
+                 ; 0000 0195 *	RETURN		:       tak ada
+                 ; 0000 0196 */
+                 ; 0000 0197 {
+                 _timer1_ovf_isr:
+00005c d277      	RCALL SUBOPT_0x0
+                 ; 0000 0198 	// matikan LED stanby
+                 ; 0000 0199         L_STBY = 0;
+                 ; 0000 019A 
+                 ; 0000 019B         /*
+                 ; 0000 019C         // tambahkan 1 nilai variabel xcount
+                 ; 0000 019D         xcount++;
+                 ; 0000 019E 
+                 ; 0000 019F         // seleksi nilai variabel xcount
+                 ; 0000 01A0         if((xcount%2) == 0)
+                 ; 0000 01A1         {	// jika ya
+                 ; 0000 01A2         	// nyalakan LED busy
+                 ; 0000 01A3                 L_BUSY = 1;
+                 ; 0000 01A4 
+                 ; 0000 01A5                 // dapatkan data koordinat sekarang
+                 ; 0000 01A6                 ekstrak_gps();
+                 ; 0000 01A7 
+                 ; 0000 01A8                 //matikan LED busy
+                 ; 0000 01A9                 L_BUSY = 0;
+                 ; 0000 01AA         }
+                 ; 0000 01AB         */
+                 ; 0000 01AC         // terima dan ekstrak data gps ketika timer detik bernilai genap saja
+                 ; 0000 01AD         //if((xcount%8) == 0)
+                 ; 0000 01AE         //{	// jika ya
+                 ; 0000 01AF         	// nyalakan LED busy
+                 ; 0000 01B0                 L_BUSY = 1;
+00005d 9a95      	SBI  0x12,5
+                 ; 0000 01B1 
+                 ; 0000 01B2                 // dapatkan data koordinat sekarang
+                 ; 0000 01B3                 ekstrak_gps();
+00005e d11b      	RCALL _ekstrak_gps
+                 ; 0000 01B4 
+                 ; 0000 01B5                 //matikan LED busy
+                 ; 0000 01B6                 L_BUSY = 0;
+00005f 9895      	CBI  0x12,5
+                 ; 0000 01B7 
+                 ; 0000 01B8                 // berikan delay sebentar
+                 ; 0000 01B9                 delay_ms(500);
+000060 d288      	RCALL SUBOPT_0x2
+000061 d281      	RCALL SUBOPT_0x1
+                 ; 0000 01BA 
+                 ; 0000 01BB                 // kirim paket data
+                 ; 0000 01BC                 kirim_paket();
+                 ; 0000 01BD 
+                 ; 0000 01BE                 // reset variable counter
+                 ; 0000 01BF                 //xcount = 0;
+                 ; 0000 01C0         //}
+                 ; 0000 01C1 
+                 ; 0000 01C2         // nyalakan LED standby
+                 ; 0000 01C3         L_STBY = 1;
+                 ; 0000 01C4 
+                 ; 0000 01C5         // reset kembali konstanta waktu timer
+                 ; 0000 01C6         TCNT1H = 0xFF;  // 0xAB
+000062 efef      	LDI  R30,LOW(255)
+000063 bded      	OUT  0x2D,R30
+                 ; 0000 01C7         TCNT1L = 0xFF;  // 0xA0
+000064 bdec      	OUT  0x2C,R30
+                 ; 0000 01C8 
+                 ; 0000 01C9 }       // EndOf interrupt [TIM1_OVF] void timer1_ovf_isr(void)
+                 _0x84:
+000065 91e9      	LD   R30,Y+
+000066 bfef      	OUT  SREG,R30
+000067 91f9      	LD   R31,Y+
+000068 91e9      	LD   R30,Y+
+000069 91b9      	LD   R27,Y+
+00006a 91a9      	LD   R26,Y+
+00006b 9199      	LD   R25,Y+
+00006c 9189      	LD   R24,Y+
+00006d 9179      	LD   R23,Y+
+00006e 9169      	LD   R22,Y+
+00006f 90f9      	LD   R15,Y+
+000070 9019      	LD   R1,Y+
+000071 9009      	LD   R0,Y+
+000072 9518      	RETI
+                 ;
+                 ;
+                 ;/***************************************************************************************/
+                 ;	void 			kirim_paket(void)
+                 ; 0000 01CE /***************************************************************************************
+                 ; 0000 01CF *	ABSTRAKSI  	: 	pengendali urutan pengiriman data APRS
+                 ; 0000 01D0 *				penyusun protokol APRS
+                 ; 0000 01D1 *
+                 ; 0000 01D2 *      	INPUT		:	tak ada
+                 ; 0000 01D3 *	OUTPUT		:       kondisi LED dan output transistor switch TX
+                 ; 0000 01D4 *	RETURN		:       tak ada
+                 ; 0000 01D5 */
+                 ; 0000 01D6 {
+                 _kirim_paket:
+                 ; 0000 01D7 	char i;
+                 ; 0000 01D8 
+                 ; 0000 01D9         // inisialisasi nilai CRC dengan 0xFFFF
+                 ; 0000 01DA 	// crc = 0xFFFF;
+                 ; 0000 01DB 
+                 ; 0000 01DC         // tambahkan 1 nilai counter pancar
+                 ; 0000 01DD         // beacon_stat++;
+                 ; 0000 01DE 
+                 ; 0000 01DF         // nyalakan LED TX dan PTT switch
+                 ; 0000 01E0 	PTT = 1;
+000073 931a      	ST   -Y,R17
+                 ;	i -> R17
+000074 9ac3      	SBI  0x18,3
+                 ; 0000 01E1 
+                 ; 0000 01E2         // tunggu 300ms
+                 ; 0000 01E3         delay_ms(100);
+000075 e6e4      	LDI  R30,LOW(100)
+000076 e0f0      	LDI  R31,HIGH(100)
+000077 d274      	RCALL SUBOPT_0x3
+                 ; 0000 01E4 
+                 ; 0000 01E5         /**********************************************************************************
+                 ; 0000 01E6 
+                 ; 0000 01E7         			APRS AX.25 PROTOCOL
+                 ; 0000 01E8 
+                 ; 0000 01E9         |------------------------------------------------------------------------
+                 ; 0000 01EA         |   opn. FLAG	|	DESTINATION	|	SOURCE	|	DIGI'S	| CONTROL...
+                 ; 0000 01EB         |---------------|-----------------------|---------------|---------------|
+                 ; 0000 01EC         |   0x7E 1Bytes |	7 Bytes		|       7 Bytes |  0 - 56 Bytes	|
+                 ; 0000 01ED         |------------------------------------------------------------------------
+                 ; 0000 01EE 
+                 ; 0000 01EF         	-----------------------------------------------------------------
+                 ; 0000 01F0         DIGI'S..|	CONTROL FIELD	|	PROTOCOL ID	|	INFO	| FCS...
+                 ; 0000 01F1                 |-----------------------|-----------------------|---------------|
+                 ; 0000 01F2                 |    0x03 1 Bytes	|     0xF0 1 Bytes	|  0 - 256 Bytes|
+                 ; 0000 01F3                 -----------------------------------------------------------------
+                 ; 0000 01F4 
+                 ; 0000 01F5         	--------------------------------|
+                 ; 0000 01F6         INFO... |	FCS	|   cls. FLAG	|
+                 ; 0000 01F7                 |---------------|---------------|
+                 ; 0000 01F8                 |	2 Bytes	|   0x7E 1Bytes |
+                 ; 0000 01F9                 --------------------------------|
+                 ; 0000 01FA 
+                 ; 0000 01FB         Sumber : APRS101, Tucson Amateur Packet Radio Club. www.tapr.org
+                 ; 0000 01FC         ************************************************************************************/
+                 ; 0000 01FD 
+                 ; 0000 01FE         // kirim karakter opening flag
+                 ; 0000 01FF         for(i=0;i<TX_DELAY_;i++)
+000078 e010      	LDI  R17,LOW(0)
+                 _0x12:
+000079 321d      	CPI  R17,45
+00007a f424      	BRGE _0x13
+                 ; 0000 0200         	kirim_karakter(0x00);
+00007b e0e0      	LDI  R30,LOW(0)
+00007c d272      	RCALL SUBOPT_0x4
+00007d 5f1f      	SUBI R17,-1
+00007e cffa      	RJMP _0x12
+                 _0x13:
+                 ; 0000 0203 crc = 0xFFFF;
+00007f efef      	LDI  R30,LOW(65535)
+000080 efff      	LDI  R31,HIGH(65535)
+000081 012f      	MOVW R4,R30
+                 ; 0000 0204 
+                 ; 0000 0205         //for(i=0;i<TX_DELAY_;i++)
+                 ; 0000 0206         	kirim_karakter(FLAG_);
+000082 e7ee      	LDI  R30,LOW(126)
+000083 d26b      	RCALL SUBOPT_0x4
+                 ; 0000 0207 
+                 ; 0000 0208         // reset nilai variabel bit stuffing
+                 ; 0000 0209         bit_stuff = 0;
+000084 d26c      	RCALL SUBOPT_0x5
+                 ; 0000 020A 
+                 ; 0000 020B         // kirimkan field : destination, source, PATH 1, PATH 2, control, Protocol ID, dan
+                 ; 0000 020C         	// data type ID
+                 ; 0000 020D         for(i=0;i<21;i++)
+000085 e010      	LDI  R17,LOW(0)
+                 _0x15:
+000086 3115      	CPI  R17,21
+000087 f434      	BRGE _0x16
+                 ; 0000 020E         	kirim_karakter(data_1[i]);
+000088 d26c      	RCALL SUBOPT_0x6
+000089 50a0      	SUBI R26,LOW(-_data_1)
+00008a 40b0      	SBCI R27,HIGH(-_data_1)
+00008b d26c      	RCALL SUBOPT_0x7
+00008c 5f1f      	SUBI R17,-1
+00008d cff8      	RJMP _0x15
+                 _0x16:
+                 ; 0000 0211 kirim_karakter(0x03);
+00008e e0e3      	LDI  R30,LOW(3)
+00008f d25f      	RCALL SUBOPT_0x4
+                 ; 0000 0212 
+                 ; 0000 0213         // krimkan protocol ID
+                 ; 0000 0214         kirim_karakter(PROTOCOL_ID_);
+000090 efe0      	LDI  R30,LOW(240)
+000091 d25d      	RCALL SUBOPT_0x4
+                 ; 0000 0215 
+                 ; 0000 0216         // jika sudah 20 kali memancar,
+                 ; 0000 0217         /*if(beacon_stat == 50)
+                 ; 0000 0218         {
+                 ; 0000 0219         	// jika ya
+                 ; 0000 021A                 // kirim tipe data status
+                 ; 0000 021B                 kirim_karakter(TD_STATUS_);
+                 ; 0000 021C 
+                 ; 0000 021D                 // kirim teks status
+                 ; 0000 021E                 for(i=0;i<47;i++)
+                 ; 0000 021F                 	kirim_karakter(status[i]);
+                 ; 0000 0220 
+                 ; 0000 0221                 // reset nilai beacon_stat
+                 ; 0000 0222                 beacon_stat = 0;
+                 ; 0000 0223 
+                 ; 0000 0224                 // lompat ke kirim crc
+                 ; 0000 0225                 goto lompat;
+                 ; 0000 0226         } */
+                 ; 0000 0227 
+                 ; 0000 0228         // krimkan tipe data posisi
+                 ; 0000 0229         kirim_karakter(TD_POSISI_);
+000092 e2e1      	LDI  R30,LOW(33)
+000093 d25b      	RCALL SUBOPT_0x4
+                 ; 0000 022A 
+                 ; 0000 022B         // kirimkan posisi lintang
+                 ; 0000 022C         for(i=0;i<8;i++)
+000094 e010      	LDI  R17,LOW(0)
+                 _0x18:
+000095 3018      	CPI  R17,8
+000096 f434      	BRGE _0x19
+                 ; 0000 022D         	kirim_karakter(posisi_lat[i]);
+000097 d25d      	RCALL SUBOPT_0x6
+000098 5eab      	SUBI R26,LOW(-_posisi_lat)
+000099 4fbf      	SBCI R27,HIGH(-_posisi_lat)
+00009a d25d      	RCALL SUBOPT_0x7
+00009b 5f1f      	SUBI R17,-1
+00009c cff8      	RJMP _0x18
+                 _0x19:
+                 ; 0000 0230 kirim_karakter('\\');
+00009d e5ec      	LDI  R30,LOW(92)
+00009e d250      	RCALL SUBOPT_0x4
+                 ; 0000 0231 
+                 ; 0000 0232         // kirimkan posisi bujur
+                 ; 0000 0233 	for(i=0;i<9;i++)
+00009f e010      	LDI  R17,LOW(0)
+                 _0x1B:
+0000a0 3019      	CPI  R17,9
+0000a1 f434      	BRGE _0x1C
+                 ; 0000 0234         	kirim_karakter(posisi_long[i]);
+0000a2 d252      	RCALL SUBOPT_0x6
+0000a3 5ea3      	SUBI R26,LOW(-_posisi_long)
+0000a4 4fbf      	SBCI R27,HIGH(-_posisi_long)
+0000a5 d252      	RCALL SUBOPT_0x7
+0000a6 5f1f      	SUBI R17,-1
+0000a7 cff8      	RJMP _0x1B
+                 _0x1C:
+                 ; 0000 0237 kirim_karakter('l');
+0000a8 e6ec      	LDI  R30,LOW(108)
+0000a9 d245      	RCALL SUBOPT_0x4
+                 ; 0000 0238 
+                 ; 0000 0239         kirim_karakter('/');
+0000aa e2ef      	LDI  R30,LOW(47)
+0000ab d243      	RCALL SUBOPT_0x4
+                 ; 0000 023A         kirim_karakter('A');
+0000ac e4e1      	LDI  R30,LOW(65)
+0000ad d241      	RCALL SUBOPT_0x4
+                 ; 0000 023B         kirim_karakter('=');
+0000ae e3ed      	LDI  R30,LOW(61)
+0000af d23f      	RCALL SUBOPT_0x4
+                 ; 0000 023C 
+                 ; 0000 023D         for(i=0;i<6;i++)
+0000b0 e010      	LDI  R17,LOW(0)
+                 _0x1E:
+0000b1 3016      	CPI  R17,6
+0000b2 f434      	BRGE _0x1F
+                 ; 0000 023E                 kirim_karakter(altitude[i]);
+0000b3 d241      	RCALL SUBOPT_0x6
+0000b4 5daa      	SUBI R26,LOW(-_altitude)
+0000b5 4fbf      	SBCI R27,HIGH(-_altitude)
+0000b6 d241      	RCALL SUBOPT_0x7
+0000b7 5f1f      	SUBI R17,-1
+0000b8 cff8      	RJMP _0x1E
+                 _0x1F:
+                 ; 0000 0241 if(beacon_stat == 5)
+0000b9 e3a3      	LDI  R26,LOW(_beacon_stat)
+0000ba e0b0      	LDI  R27,HIGH(_beacon_stat)
+0000bb d2d7      	RCALL __EEPROMRDB
+0000bc 30e5      	CPI  R30,LOW(0x5)
+0000bd f449      	BRNE _0x20
+                 ; 0000 0242         {
+                 ; 0000 0243         	// kirimkan field informasi : data ekstensi tipe PHGD
+                 ; 0000 0244         	for(i=0;i<7;i++)
+0000be e010      	LDI  R17,LOW(0)
+                 _0x22:
+0000bf 3017      	CPI  R17,7
+0000c0 f434      	BRGE _0x23
+                 ; 0000 0245         		kirim_karakter(data_extension[i]);
+0000c1 d233      	RCALL SUBOPT_0x6
+0000c2 5da4      	SUBI R26,LOW(-_data_extension)
+0000c3 4fbf      	SBCI R27,HIGH(-_data_extension)
+0000c4 d233      	RCALL SUBOPT_0x7
+0000c5 5f1f      	SUBI R17,-1
+0000c6 cff8      	RJMP _0x22
+                 _0x23:
+                 ; 0000 024A }
+                 ; 0000 024B 
+                 ; 0000 024C 
+                 ; 0000 024D         // label lompatan
+                 ; 0000 024E         lompat:
+                 _0x20:
+                 ; 0000 024F 
+                 ; 0000 0250         // kirimkan field : FCS (CRC-16 CCITT)
+                 ; 0000 0251         kirim_crc();
+0000c7 d00f      	RCALL _kirim_crc
+                 ; 0000 0252 
+                 ; 0000 0253                 kirim_karakter(FLAG_);
+0000c8 e7ee      	LDI  R30,LOW(126)
+0000c9 d225      	RCALL SUBOPT_0x4
+                 ; 0000 0254 
+                 ; 0000 0255         // kirimkan karakter closing flag
+                 ; 0000 0256         for(i=0;i<TX_TAIL_;i++)
+0000ca e010      	LDI  R17,LOW(0)
+                 _0x26:
+0000cb 301f      	CPI  R17,15
+0000cc f424      	BRGE _0x27
+                 ; 0000 0257         	kirim_karakter(0x00);
+0000cd e0e0      	LDI  R30,LOW(0)
+0000ce d220      	RCALL SUBOPT_0x4
+0000cf 5f1f      	SUBI R17,-1
+0000d0 cffa      	RJMP _0x26
+                 _0x27:
+                 ; 0000 025A delay_ms(50);
+0000d1 e3e2      	LDI  R30,LOW(50)
+0000d2 e0f0      	LDI  R31,HIGH(50)
+0000d3 d218      	RCALL SUBOPT_0x3
+                 ; 0000 025B         PTT = 0;
+0000d4 98c3      	CBI  0x18,3
+                 ; 0000 025C 
+                 ; 0000 025D 
+                 ; 0000 025E }       // EndOf void kirim_paket(void)
+0000d5 9119      	LD   R17,Y+
+0000d6 9508      	RET
+                 ;
+                 ;
+                 ;/***************************************************************************************/
+                 ;	void 			kirim_crc(void)
+                 ; 0000 0263 /***************************************************************************************
+                 ; 0000 0264 *	ABSTRAKSI  	: 	Pengendali urutan pengiriman data CRC-16 CCITT Penyusun
+                 ; 0000 0265 *				nilai 8 MSB dan 8 LSB dari nilai CRC yang telah dihitung.
+                 ; 0000 0266 *				Generator polinomial, G(x) = x^16 + x^12 + x^5 + 1 tanpa
+                 ; 0000 0267 *				leading one.
+                 ; 0000 0268 *
+                 ; 0000 0269 *      	INPUT		:	tak ada
+                 ; 0000 026A *	OUTPUT		:       tak ada
+                 ; 0000 026B *	RETURN		:       tak ada
+                 ; 0000 026C */
+                 ; 0000 026D {
+                 _kirim_crc:
+                 ; 0000 026E 	static unsigned char crc_lo;
+                 ; 0000 026F 	static unsigned char crc_hi;
+                 ; 0000 0270 
+                 ; 0000 0271         // Exor-kan nilai CRC terakhir dengan 0xFF, masukkan ke 8 LSB
+                 ; 0000 0272         crc_lo = crc ^ 0xFF;
+0000d7 efef      	LDI  R30,LOW(255)
+0000d8 25e4      	EOR  R30,R4
+0000d9 93e0 0081 	STS  _crc_lo_S0000003000,R30
+                 ; 0000 0273 
+                 ; 0000 0274         // geser kanan 8 bit dan Exor-kan nilai CRC terakhir dengan 0xFF, masukkan ke 8 MSB
+                 ; 0000 0275         crc_hi = (crc >> 8) ^ 0xFF;
+0000db 2de5      	MOV  R30,R5
+0000dc 70f0      	ANDI R31,HIGH(0x0)
+0000dd efaf      	LDI  R26,LOW(255)
+0000de 27ea      	EOR  R30,R26
+0000df 93e0 0082 	STS  _crc_hi_S0000003000,R30
+                 ; 0000 0276 
+                 ; 0000 0277         // kirim 8 LSB
+                 ; 0000 0278         kirim_karakter(crc_lo);
+0000e1 91e0 0081 	LDS  R30,_crc_lo_S0000003000
+0000e3 d20b      	RCALL SUBOPT_0x4
+                 ; 0000 0279 
+                 ; 0000 027A         // kirim 8 MSB
+                 ; 0000 027B         kirim_karakter(crc_hi);
+0000e4 91e0 0082 	LDS  R30,_crc_hi_S0000003000
+0000e6 d208      	RCALL SUBOPT_0x4
+                 ; 0000 027C 
+                 ; 0000 027D }       // EndOf void kirim_crc(void)
+0000e7 9508      	RET
+                 ;
+                 ;
+                 ;/***************************************************************************************/
+                 ;	void 			kirim_karakter(unsigned char input)
+                 ; 0000 0282 /***************************************************************************************
+                 ; 0000 0283 *	ABSTRAKSI  	: 	mengirim data APRS karakter-demi-karakter, menghitung FCS
+                 ; 0000 0284 *				field dan melakukan bit stuffing. Polarisasi data adalah
+                 ; 0000 0285 *				NRZI (Non Return to Zero, Inverted). Bit dikirimkan sebagai
+                 ; 0000 0286 *				bit terakhir yang ditahan jika bit masukan adalah bit 1.
+                 ; 0000 0287 *				Bit dikirimkan sebagai bit terakhir yang di-invert jika bit
+                 ; 0000 0288 *				masukan adalah bit 0. Tone 1200Hz dan 2200Hz masing - masing
+                 ; 0000 0289 * 				merepresentasikan bit 0 dan 1 atau sebaliknya. Polarisasi
+                 ; 0000 028A *				tone adalah tidak penting dalam polarisasi data NRZI.
+                 ; 0000 028B *
+                 ; 0000 028C *      	INPUT		:	byte data protokol APRS
+                 ; 0000 028D *	OUTPUT		:       tak ada
+                 ; 0000 028E *	RETURN		:       tak ada
+                 ; 0000 028F */
+                 ; 0000 0290 {
+                 _kirim_karakter:
+0000e8 92ff      	PUSH R15
+                 ; 0000 0291 	char i;
+                 ; 0000 0292 	bit in_bit;
+                 ; 0000 0293 
+                 ; 0000 0294         // kirimkan setiap byte data (8 bit)
+                 ; 0000 0295 	for(i=0;i<8;i++)
+0000e9 931a      	ST   -Y,R17
+                 ;	input -> Y+1
+                 ;	i -> R17
+                 ;	in_bit -> R15.0
+0000ea e010      	LDI  R17,LOW(0)
+                 _0x2B:
+0000eb 3018      	CPI  R17,8
+0000ec f514      	BRGE _0x2C
+                 ; 0000 0296         {
+                 ; 0000 0297         	// ambil 1 bit berurutan dari LSB ke MSB setiap perulangan for 0 - 7
+                 ; 0000 0298                 in_bit = (input >> i) & 0x01;
+0000ed 2fe1      	MOV  R30,R17
+0000ee 81a9      	LDD  R26,Y+1
+0000ef d248      	RCALL __LSRB12
+0000f0 fbe0      	BST  R30,0
+0000f1 f8f0      	BLD  R15,0
+                 ; 0000 0299 
+                 ; 0000 029A                 // jika data adalah flag, nol-kan pengingat bit stuffing
+                 ; 0000 029B                 if(input==0x7E)	{bit_stuff = 0;}
+0000f2 37ae      	CPI  R26,LOW(0x7E)
+0000f3 f411      	BRNE _0x2D
+0000f4 d1fc      	RCALL SUBOPT_0x5
+                 ; 0000 029C 
+                 ; 0000 029D                 // jika bukan flag, hitung nilai CRC dari bit data saat ini
+                 ; 0000 029E                 else		{hitung_crc(in_bit);}
+0000f5 c005      	RJMP _0x2E
+                 _0x2D:
+0000f6 e0e0      	LDI  R30,0
+0000f7 fcf0      	SBRC R15,0
+0000f8 e0e1      	LDI  R30,1
+0000f9 93ea      	ST   -Y,R30
+0000fa d018      	RCALL _hitung_crc
+                 _0x2E:
+                 ; 0000 029F 
+                 ; 0000 02A0                 // jika bit data saat ini adalah
+                 ; 0000 02A1                 // nol
+                 ; 0000 02A2                 if(!in_bit)
+0000fb fef0      	SBRS R15,0
+                 ; 0000 02A3                 {	// jika ya
+                 ; 0000 02A4                 	// ubah tone dan bentuk gelombang sinus
+                 ; 0000 02A5                         ubah_nada();
+0000fc c00e      	RJMP _0x82
+                 ; 0000 02A6 
+                 ; 0000 02A7                         // nol-kan pengingat bit stuffing
+                 ; 0000 02A8                         bit_stuff = 0;
+                 ; 0000 02A9                 }
+                 ; 0000 02AA                 // satu
+                 ; 0000 02AB                 else
+                 ; 0000 02AC                 {	// jika ya
+                 ; 0000 02AD                 	// jaga tone dan bentuk gelombang sinus
+                 ; 0000 02AE                         set_nada(nada);
+0000fd e0e0      	LDI  R30,0
+0000fe 9998      	SBIC 0x13,0
+0000ff e0e1      	LDI  R30,1
+000100 93ea      	ST   -Y,R30
+000101 d051      	RCALL _set_nada
+                 ; 0000 02AF 
+                 ; 0000 02B0                         // hitung sebagai bit stuffing (bit satu berurut) tambahkan 1 nilai bit stuffing
+                 ; 0000 02B1                         bit_stuff++;
+000102 91e0 0080 	LDS  R30,_bit_stuff_G000
+000104 5fef      	SUBI R30,-LOW(1)
+000105 93e0 0080 	STS  _bit_stuff_G000,R30
+                 ; 0000 02B2 
+                 ; 0000 02B3                         // jika sudah terjadi bit satu berurut sebanyak 5 kali
+                 ; 0000 02B4                         if(bit_stuff==5)
+000107 91a0 0080 	LDS  R26,_bit_stuff_G000
+000109 30a5      	CPI  R26,LOW(0x5)
+00010a f411      	BRNE _0x31
+                 ; 0000 02B5                         {
+                 ; 0000 02B6                         	// kirim bit nol :
+                 ; 0000 02B7                                 // ubah tone dan bentuk gelombang sinus
+                 ; 0000 02B8                                 ubah_nada();
+                 _0x82:
+00010b d01c      	RCALL _ubah_nada
+                 ; 0000 02B9 
+                 ; 0000 02BA                                 // nol-kan pengingat bit stuffing
+                 ; 0000 02BB                                 bit_stuff = 0;
+00010c d1e4      	RCALL SUBOPT_0x5
+                 ; 0000 02BC 
+                 ; 0000 02BD                         }
+                 ; 0000 02BE                 }
+                 _0x31:
+                 ; 0000 02BF         }
+00010d 5f1f      	SUBI R17,-1
+00010e cfdc      	RJMP _0x2B
+                 _0x2C:
+                 ; 0000 02C0 
+                 ; 0000 02C1 }      // EndOf void kirim_karakter(unsigned char input)
+00010f 8118      	LDD  R17,Y+0
+000110 9622      	ADIW R28,2
+000111 90ff      	POP  R15
+000112 9508      	RET
+                 ;
+                 ;
+                 ;/***************************************************************************************/
+                 ;	void 			hitung_crc(char in_crc)
+                 ; 0000 02C6 /***************************************************************************************
+                 ; 0000 02C7 *	ABSTRAKSI  	: 	menghitung nilai CRC-16 CCITT dari tiap bit data yang terkirim,
+                 ; 0000 02C8 *				generator polinomial, G(x) = x^16 + x^12 + x^5 + 1 tanpa
+                 ; 0000 02C9 *				leading one
+                 ; 0000 02CA *
+                 ; 0000 02CB *      	INPUT		:	bit data yang terkirim
+                 ; 0000 02CC *	OUTPUT		:       tak ada
+                 ; 0000 02CD *	RETURN		:       tak ada
+                 ; 0000 02CE */
+                 ; 0000 02CF {
+                 _hitung_crc:
+                 ; 0000 02D0 	static unsigned short xor_in;
+                 ; 0000 02D1 
+                 ; 0000 02D2         // simpan nilai Exor dari CRC sementara dengan bit data yang baru terkirim
+                 ; 0000 02D3 	xor_in = crc ^ in_crc;
+                 ;	in_crc -> Y+0
+000113 81e8      	LD   R30,Y
+000114 e0f0      	LDI  R31,0
+000115 fde7      	SBRC R30,7
+000116 efff      	SER  R31
+000117 25e4      	EOR  R30,R4
+000118 25f5      	EOR  R31,R5
+000119 93e0 0083 	STS  _xor_in_S0000005000,R30
+00011b 93f0 0084 	STS  _xor_in_S0000005000+1,R31
+                 ; 0000 02D4 
+                 ; 0000 02D5         // geser kanan nilai CRC sebanyak 1 bit
+                 ; 0000 02D6 	crc >>= 1;
+00011d 9456      	LSR  R5
+00011e 9447      	ROR  R4
+                 ; 0000 02D7 
+                 ; 0000 02D8         // jika hasil nilai Exor di-and-kan dengan satu bernilai satu
+                 ; 0000 02D9         if(xor_in & 0x01)
+00011f 91e0 0083 	LDS  R30,_xor_in_S0000005000
+000121 70e1      	ANDI R30,LOW(0x1)
+000122 f021      	BREQ _0x32
+                 ; 0000 02DA         	// maka nilai CRC di-Exor-kan dengan generator polinomial
+                 ; 0000 02DB                 crc ^= 0x8408;
+000123 e0e8      	LDI  R30,LOW(33800)
+000124 e8f4      	LDI  R31,HIGH(33800)
+                +
+000125 264e     +EOR R4 , R30
+000126 265f     +EOR R5 , R31
+                 	__EORWRR 4,5,30,31
+                 ; 0000 02DC 
+                 ; 0000 02DD }      // EndOf void hitung_crc(char in_crc)
+                 _0x32:
+000127 c029      	RJMP _0x2060001
+                 ;
+                 ;
+                 ;/***************************************************************************************/
+                 ;	void 			ubah_nada(void)
+                 ; 0000 02E2 /***************************************************************************************
+                 ; 0000 02E3 *	ABSTRAKSI  	: 	Menukar seting tone terakhir dengan tone yang baru. Tone
+                 ; 0000 02E4 *				1200Hz dan 2200Hz masing - masing merepresentasikan bit
+                 ; 0000 02E5 *				0 dan 1 atau sebaliknya. Polarisasi tone adalah tidak
+                 ; 0000 02E6 *				penting dalam polarisasi data NRZI.
+                 ; 0000 02E7 *
+                 ; 0000 02E8 *      	INPUT		:	tak ada
+                 ; 0000 02E9 *	OUTPUT		:       tak ada
+                 ; 0000 02EA *	RETURN		:       tak ada
+                 ; 0000 02EB */
+                 ; 0000 02EC {
+                 _ubah_nada:
+                 ; 0000 02ED 	// jika tone terakhir adalah :
+                 ; 0000 02EE         // 1200Hz
+                 ; 0000 02EF         if(nada ==_1200)
+000128 9998      	SBIC 0x13,0
+000129 c002      	RJMP _0x33
+                 ; 0000 02F0 	{	// jika ya
+                 ; 0000 02F1         	// ubah tone saat ini menjadi 2200Hz
+                 ; 0000 02F2                 nada = _2200;
+00012a 9a98      	SBI  0x13,0
+                 ; 0000 02F3 
+                 ; 0000 02F4                 // bangkitkan gelombang sinus 2200Hz
+                 ; 0000 02F5         	set_nada(nada);
+00012b c001      	RJMP _0x83
+                 ; 0000 02F6 	}
+                 ; 0000 02F7         // 2200Hz
+                 ; 0000 02F8         else
+                 _0x33:
+                 ; 0000 02F9         {	// jika ya
+                 ; 0000 02FA         	// ubah tone saat ini menjadi 1200Hz
+                 ; 0000 02FB                 nada = _1200;
+00012c 9898      	CBI  0x13,0
+                 ; 0000 02FC 
+                 ; 0000 02FD                 // bangkitkan gelombang sinus 1200Hz
+                 ; 0000 02FE         	set_nada(nada);
+                 _0x83:
+00012d e0e0      	LDI  R30,0
+00012e 9998      	SBIC 0x13,0
+00012f e0e1      	LDI  R30,1
+000130 93ea      	ST   -Y,R30
+000131 d021      	RCALL _set_nada
+                 ; 0000 02FF         }
+                 ; 0000 0300 
+                 ; 0000 0301 }       // EndOf void ubah_nada(void)
+000132 9508      	RET
+                 ;
+                 ;
+                 ;/***************************************************************************************/
+                 ;	void 			set_dac(char value)
+                 ; 0000 0306 /***************************************************************************************
+                 ; 0000 0307 *	ABSTRAKSI  	: 	Men-set dan reset output DAC sebagai bilangan biner yang
+                 ; 0000 0308 *				merepresentasikan nilai diskrit dari gelombang sinus yang
+                 ; 0000 0309 *				sedang dibentuk saat ini sehingga membentuk tegangan sampling
+                 ; 0000 030A *				dari gelombang.
+                 ; 0000 030B *
+                 ; 0000 030C *      	INPUT		:	nilai matrix rekonstruksi diskrit gelombang sinusoid
+                 ; 0000 030D *	OUTPUT		:       DAC 0 - 3, tegangan kontinyu pada output Low Pass Filter
+                 ; 0000 030E *	RETURN		:       tak ada
+                 ; 0000 030F */
+                 ; 0000 0310 {
+                 _set_dac:
+                 ; 0000 0311 	// ambil nilai LSB dari matrix rekonstruksi dan set sebagai DAC-0
+                 ; 0000 0312         DAC_0 = value & 0x01;
+                 ;	value -> Y+0
+000133 81e8      	LD   R30,Y
+000134 70e1      	ANDI R30,LOW(0x1)
+000135 f411      	BRNE _0x39
+000136 98c7      	CBI  0x18,7
+000137 c001      	RJMP _0x3A
+                 _0x39:
+000138 9ac7      	SBI  0x18,7
+                 _0x3A:
+                 ; 0000 0313 
+                 ; 0000 0314         // ambil nilai dari matrix rekonstruksi, geser kanan 1 bit, ambil bit paling kanan
+                 ; 0000 0315         	// dan set sebagai DAC-1
+                 ; 0000 0316         DAC_1 =( value >> 1 ) & 0x01;
+000139 81e8      	LD   R30,Y
+00013a 95e5      	ASR  R30
+00013b 70e1      	ANDI R30,LOW(0x1)
+00013c f411      	BRNE _0x3B
+00013d 98c6      	CBI  0x18,6
+00013e c001      	RJMP _0x3C
+                 _0x3B:
+00013f 9ac6      	SBI  0x18,6
+                 _0x3C:
+                 ; 0000 0317 
+                 ; 0000 0318         // ambil nilai dari matrix rekonstruksi, geser kanan 2 bit, ambil bit paling kanan
+                 ; 0000 0319         	// dan set sebagai DAC-2
+                 ; 0000 031A         DAC_2 =( value >> 2 ) & 0x01;
+000140 81e8      	LD   R30,Y
+000141 95e5      	ASR  R30
+000142 95e5      	ASR  R30
+000143 70e1      	ANDI R30,LOW(0x1)
+000144 f411      	BRNE _0x3D
+000145 98c5      	CBI  0x18,5
+000146 c001      	RJMP _0x3E
+                 _0x3D:
+000147 9ac5      	SBI  0x18,5
+                 _0x3E:
+                 ; 0000 031B 
+                 ; 0000 031C         // ambil nilai dari matrix rekonstruksi, geser kanan 3 bit, ambil bit tersebut dan
+                 ; 0000 031D         	// set sebagai DAC-3 (MSB)
+                 ; 0000 031E         DAC_3 =( value >> 3 ) & 0x01;
+000148 81e8      	LD   R30,Y
+000149 95e5      	ASR  R30
+00014a 95e5      	ASR  R30
+00014b 95e5      	ASR  R30
+00014c 70e1      	ANDI R30,LOW(0x1)
+00014d f411      	BRNE _0x3F
+00014e 98c4      	CBI  0x18,4
+00014f c001      	RJMP _0x40
+                 _0x3F:
+000150 9ac4      	SBI  0x18,4
+                 _0x40:
+                 ; 0000 031F 
+                 ; 0000 0320 }      	// EndOf void set_dac(char value)
+                 _0x2060001:
+000151 9621      	ADIW R28,1
+000152 9508      	RET
+                 ;
+                 ;
+                 ;/***************************************************************************************/
+                 ;	void 			set_nada(char i_nada)
+                 ; 0000 0325 /***************************************************************************************
+                 ; 0000 0326 *	ABSTRAKSI  	: 	Membentuk baudrate serta frekensi tone 1200Hz dan 2200Hz
+                 ; 0000 0327 *				dari konstanta waktu. Men-setting nilai DAC. Lakukan fine
+                 ; 0000 0328 *				tuning pada jumlah masing - masing perulangan for dan
+                 ; 0000 0329 *				konstanta waktu untuk meng-adjust parameter baudrate dan
+                 ; 0000 032A *				frekuensi tone.
+                 ; 0000 032B *
+                 ; 0000 032C *      	INPUT		:	nilai frekuensi tone yang akan ditransmisikan
+                 ; 0000 032D *	OUTPUT		:       nilai DAC
+                 ; 0000 032E *	RETURN		:       tak ada
+                 ; 0000 032F */
+                 ; 0000 0330 {
+                 _set_nada:
+                 ; 0000 0331 	char i;
+                 ; 0000 0332 
+                 ; 0000 0333         // jika frekuensi tone yang akan segera dipancarkan adalah :
+                 ; 0000 0334         // 1200Hz
+                 ; 0000 0335 	if(i_nada == _1200)
+000153 931a      	ST   -Y,R17
+                 ;	i_nada -> Y+1
+                 ;	i -> R17
+000154 81e9      	LDD  R30,Y+1
+000155 30e0      	CPI  R30,0
+000156 f451      	BRNE _0x41
+                 ; 0000 0336     	{
+                 ; 0000 0337         	// jika ya
+                 ; 0000 0338         	for(i=0; i<16; i++)
+000157 e010      	LDI  R17,LOW(0)
+                 _0x43:
+000158 3110      	CPI  R17,16
+000159 f434      	BRGE _0x44
+                 ; 0000 0339         	{
+                 ; 0000 033A                 	// set nilai DAC sesuai urutan matrix rekonstruksi gelombang sinus
+                 ; 0000 033B                 		// dan urutan perulangan for 0 - 15
+                 ; 0000 033C                 	set_dac(matrix[i]);
+00015a d19f      	RCALL SUBOPT_0x8
+                 ; 0000 033D 
+                 ; 0000 033E                         // bangkitkan frekuensi 1200Hz dari konstanta waktu
+                 ; 0000 033F         		delay_us(CONST_1200);
+                +
+00015b ea8a     +LDI R24 , LOW ( 170 )
+                +__DELAY_USB_LOOP :
+00015c 958a     +DEC R24
+00015d f7f1     +BRNE __DELAY_USB_LOOP
+                 	__DELAY_USB 170
+                 ; 0000 0340         	}
+00015e 5f1f      	SUBI R17,-1
+00015f cff8      	RJMP _0x43
+                 _0x44:
+                 ; 0000 0341     	}
+                 ; 0000 0342         // 2200Hz
+                 ; 0000 0343     	else
+000160 c012      	RJMP _0x45
+                 _0x41:
+                 ; 0000 0344     	{
+                 ; 0000 0345         	// jika ya
+                 ; 0000 0346         	for(i=0; i<15; i++)
+000161 e010      	LDI  R17,LOW(0)
+                 _0x47:
+000162 301f      	CPI  R17,15
+000163 f434      	BRGE _0x48
+                 ; 0000 0347         	{
+                 ; 0000 0348                 	// set nilai DAC sesuai urutan matrix rekonstruksi gelombang sinus
+                 ; 0000 0349                 		// dan urutan perulangan for 0 - 15
+                 ; 0000 034A                 	set_dac(matrix[i]);
+000164 d195      	RCALL SUBOPT_0x8
+                 ; 0000 034B 
+                 ; 0000 034C                         // bangkitkan frekuensi 2200Hz dari konstanta waktu
+                 ; 0000 034D                 	delay_us(CONST_2200);
+                +
+000165 e58c     +LDI R24 , LOW ( 92 )
+                +__DELAY_USB_LOOP :
+000166 958a     +DEC R24
+000167 f7f1     +BRNE __DELAY_USB_LOOP
+                 	__DELAY_USB 92
+                 ; 0000 034E                 }
+000168 5f1f      	SUBI R17,-1
+000169 cff8      	RJMP _0x47
+                 _0x48:
+                 ; 0000 034F                 // sekali lagi, untuk mengatur baudrate lakukan fine tune pada jumlah for
+                 ; 0000 0350                 for(i=0; i<12; i++)
+00016a e010      	LDI  R17,LOW(0)
+                 _0x4A:
+00016b 301c      	CPI  R17,12
+00016c f434      	BRGE _0x4B
+                 ; 0000 0351                 {
+                 ; 0000 0352                 	// set nilai DAC sesuai urutan matrix rekonstruksi gelombang sinus
+                 ; 0000 0353                 		// dan urutan perulangan for
+                 ; 0000 0354                 	set_dac(matrix[i]);
+00016d d18c      	RCALL SUBOPT_0x8
+                 ; 0000 0355 
+                 ; 0000 0356                         // bangkitkan frekuensi 2200Hz dari konstanta waktu
+                 ; 0000 0357                 	delay_us(CONST_2200);
+                +
+00016e e58c     +LDI R24 , LOW ( 92 )
+                +__DELAY_USB_LOOP :
+00016f 958a     +DEC R24
+000170 f7f1     +BRNE __DELAY_USB_LOOP
+                 	__DELAY_USB 92
+                 ; 0000 0358                 }
+000171 5f1f      	SUBI R17,-1
+000172 cff8      	RJMP _0x4A
+                 _0x4B:
+                 ; 0000 0359     	}
+                 _0x45:
+                 ; 0000 035A 
+                 ; 0000 035B } 	// EndOf void set_nada(char i_nada)
+000173 8118      	LDD  R17,Y+0
+000174 9622      	ADIW R28,2
+000175 9508      	RET
+                 ;
+                 ;
+                 ;/***************************************************************************************/
+                 ;	void 			getComma(void)
+                 ; 0000 0360 /***************************************************************************************
+                 ; 0000 0361 *	ABSTRAKSI  	: 	Menunggu data RX serial berupa karakter koma dan segera
+                 ; 0000 0362 *				kembali pada fungsi yang memanggilnya.
+                 ; 0000 0363 *
+                 ; 0000 0364 *      	INPUT		:	RX data serial $GPGLL gps
+                 ; 0000 0365 *	OUTPUT		:       tak ada
+                 ; 0000 0366 *	RETURN		:       tak ada
+                 ; 0000 0367 */
+                 ; 0000 0368 {
+                 _getComma:
+                 ; 0000 0369 	// jika data yang diterima bukan karakter koma, terima terus
+                 ; 0000 036A         	// jika data yang diterima adalah koma, keluar
+                 ; 0000 036B         while(getchar() != ',');
+                 _0x4C:
+000176 d159      	RCALL _getchar
+000177 32ec      	CPI  R30,LOW(0x2C)
+000178 f7e9      	BRNE _0x4C
+                 ; 0000 036C 
+                 ; 0000 036D }      	// EndOf void getComma(void)
+000179 9508      	RET
+                 ;
+                 ;
+                 ;/***************************************************************************************/
+                 ;	void 			ekstrak_gps(void)
+                 ; 0000 0372 /***************************************************************************************
+                 ; 0000 0373 *	ABSTRAKSI  	: 	Menunggu interupsi RX data serial dari USART, memparsing
+                 ; 0000 0374 *				data $GPGLL yang diterima menjadi data posisi, dan mengupdate
+                 ; 0000 0375 *				data variabel posisi.
+                 ; 0000 0376 *
+                 ; 0000 0377 *      	INPUT		:	RX data serial $GPGLL gps
+                 ; 0000 0378 *	OUTPUT		:       tak ada
+                 ; 0000 0379 *	RETURN		:       tak ada
+                 ; 0000 037A */
+                 ; 0000 037B {
+                 _ekstrak_gps:
+                 ; 0000 037C 	int i,j;
+                 ; 0000 037D         static char buff_posisi[17], buff_altitude[9];
+                 ; 0000 037E         unsigned int n_altitude[6];
+                 ; 0000 037F 
+                 ; 0000 0380         /************************************************************************************************
+                 ; 0000 0381         	$GPGLL - GLL - Geographic Position Latitude / Longitude
+                 ; 0000 0382 
+                 ; 0000 0383                 Contoh : $GPGLL,3723.2475,N,12158.3416,W,161229.487,A*2C
+                 ; 0000 0384 
+                 ; 0000 0385         |-----------------------------------------------------------------------------------------------|
+                 ; 0000 0386         |	Nama		| 	Contoh		|		Deskripsi			|
+                 ; 0000 0387         |-----------------------|-----------------------|-----------------------------------------------|
+                 ; 0000 0388         |	Message ID	|	$GPGLL		|	header protokol GLL			|
+                 ; 0000 0389         |	Latitude	|	3723.2475	|	ddmm.mmmm 	, d=degree, m=minute	|
+                 ; 0000 038A         |	N/S indicator	|	N		|	N=utara, S=selatan			|
+                 ; 0000 038B         |	Longitude	|	12158.3416	|	dddmm.mmmm	, d=degree, m=minute	|
+                 ; 0000 038C         |	W/E indicator	|	W		|	W=barat, E=timur			|
+                 ; 0000 038D         |	Waktu UTC (GMT)	|	161229.487	|	HHMMSS.SS  ,H=hour, M=minute, S=second	|
+                 ; 0000 038E         |	Status		|	A		|	A=data valid, V=data invalid		|
+                 ; 0000 038F         |	Checksum	|	*2C		|						|
+                 ; 0000 0390         |-----------------------------------------------------------------------------------------------|
+                 ; 0000 0391 
+                 ; 0000 0392         	Sumber : GPS SiRF EM-406A datasheet
+                 ; 0000 0393 
+                 ; 0000 0394         *************************************************************************************************/
+                 ; 0000 0395 
+                 ; 0000 0396         // jika data yang diterima bukan karakter $, terima terus
+                 ; 0000 0397         	// jika data yang diterima adalah $, lanjutkan
+                 ; 0000 0398         while(getchar() != '$');
+00017a 972c      	SBIW R28,12
+00017b d232      	RCALL __SAVELOCR4
+                 ;	i -> R16,R17
+                 ;	j -> R18,R19
+                 ;	n_altitude -> Y+4
+                 _0x4F:
+00017c d153      	RCALL _getchar
+00017d 32e4      	CPI  R30,LOW(0x24)
+00017e f7e9      	BRNE _0x4F
+                 ; 0000 0399 
+                 ; 0000 039A         // tunggu dan terima data tanpa proses lebih lanjut (lewatkan karakter G)
+                 ; 0000 039B 	getchar();
+00017f d150      	RCALL _getchar
+                 ; 0000 039C 
+                 ; 0000 039D         // tunggu dan terima data tanpa proses lebih lanjut (lewatkan karakter P)
+                 ; 0000 039E         getchar();
+000180 d14f      	RCALL _getchar
+                 ; 0000 039F 
+                 ; 0000 03A0         // tunggu data, jika yang diterima adalah karakter G
+                 ; 0000 03A1         if(getchar() == 'G')
+000181 d14e      	RCALL _getchar
+000182 34e7      	CPI  R30,LOW(0x47)
+000183 f009      	BREQ PC+2
+000184 c117      	RJMP _0x52
+                 ; 0000 03A2         {
+                 ; 0000 03A3         	// maka
+                 ; 0000 03A4         	// tunggu data, jika yang diterima adalah karakter G
+                 ; 0000 03A5                 if(getchar() == 'G')
+000185 d14a      	RCALL _getchar
+000186 34e7      	CPI  R30,LOW(0x47)
+000187 f009      	BREQ PC+2
+000188 c113      	RJMP _0x53
+                 ; 0000 03A6         	{
+                 ; 0000 03A7                 	// maka
+                 ; 0000 03A8                         // tunggu data, jika yang diterima adalah karakter A
+                 ; 0000 03A9                         if(getchar() == 'A')
+000189 d146      	RCALL _getchar
+00018a 34e1      	CPI  R30,LOW(0x41)
+00018b f009      	BREQ PC+2
+00018c c10f      	RJMP _0x54
+                 ; 0000 03AA                 	{
+                 ; 0000 03AB                         	// maka
+                 ; 0000 03AC                                 // tunggu koma dan lanjutkan
+                 ; 0000 03AD                                 getComma();
+00018d dfe8      	RCALL _getComma
+                 ; 0000 03AE                                 getComma();
+00018e dfe7      	RCALL _getComma
+                 ; 0000 03AF 
+                 ; 0000 03B0                                 // ambil 7 byte data berurut dan masukkan dalam buffer data
+                 ; 0000 03B1                         	for(i=0; i<7; i++)	buff_posisi[i] = getchar();
+00018f d171      	RCALL SUBOPT_0x9
+                 _0x56:
+                +
+000190 3007     +CPI R16 , LOW ( 7 )
+000191 e0e0     +LDI R30 , HIGH ( 7 )
+000192 071e     +CPC R17 , R30
+                 	__CPWRN 16,17,7
+000193 f444      	BRGE _0x57
+000194 2fe0      	MOV  R30,R16
+000195 57eb      	SUBI R30,-LOW(_buff_posisi_S000000A000)
+000196 93ef      	PUSH R30
+000197 d138      	RCALL _getchar
+000198 91af      	POP  R26
+000199 93ec      	ST   X,R30
+00019a d169      	RCALL SUBOPT_0xA
+00019b cff4      	RJMP _0x56
+                 _0x57:
+                 ; 0000 03B4 getComma();
+00019c dfd9      	RCALL _getComma
+                 ; 0000 03B5 
+                 ; 0000 03B6                                 // ambil 1 byte data dan masukkan dalam buffer data
+                 ; 0000 03B7                                 buff_posisi[7] = getchar();
+00019d d132      	RCALL _getchar
+                +
+00019e 93e0 008c+STS _buff_posisi_S000000A000 + ( 7 ) , R30
+                 	__PUTB1MN _buff_posisi_S000000A000,7
+                 ; 0000 03B8 
+                 ; 0000 03B9                                 // tunggu koma dan lanjutkan
+                 ; 0000 03BA                                 getComma();
+0001a0 dfd5      	RCALL _getComma
+                 ; 0000 03BB 
+                 ; 0000 03BC                                 // ambil 8 byte data berurut dan masukkan dalam buffer data
+                 ; 0000 03BD                                 for(i=0; i<8; i++)	buff_posisi[i+8] = getchar();
+0001a1 d15f      	RCALL SUBOPT_0x9
+                 _0x59:
+0001a2 d164      	RCALL SUBOPT_0xB
+0001a3 f444      	BRGE _0x5A
+0001a4 2fe0      	MOV  R30,R16
+                +
+0001a5 57e3     +SUBI R30 , LOW ( - _buff_posisi_S000000A000 - ( 8 ) )
+                 	__ADDB1MN _buff_posisi_S000000A000,8
+0001a6 93ef      	PUSH R30
+0001a7 d128      	RCALL _getchar
+0001a8 91af      	POP  R26
+0001a9 93ec      	ST   X,R30
+0001aa d159      	RCALL SUBOPT_0xA
+0001ab cff6      	RJMP _0x59
+                 _0x5A:
+                 ; 0000 03C0 getComma();
+0001ac dfc9      	RCALL _getComma
+                 ; 0000 03C1 
+                 ; 0000 03C2                                 // ambil 1 byte data dan masukkan dalam buffer data
+                 ; 0000 03C3                                 buff_posisi[16] = getchar();
+0001ad d122      	RCALL _getchar
+                +
+0001ae 93e0 0095+STS _buff_posisi_S000000A000 + ( 16 ) , R30
+                 	__PUTB1MN _buff_posisi_S000000A000,16
+                 ; 0000 03C4 
+                 ; 0000 03C5                                 // tunggu dan lewatkan 3 koma
+                 ; 0000 03C6                                 getComma();
+0001b0 dfc5      	RCALL _getComma
+                 ; 0000 03C7                                 getComma();
+0001b1 dfc4      	RCALL _getComma
+                 ; 0000 03C8                                 getComma();
+0001b2 dfc3      	RCALL _getComma
+                 ; 0000 03C9                                 getComma();
+0001b3 dfc2      	RCALL _getComma
+                 ; 0000 03CA 
+                 ; 0000 03CB                                 // ambil 8 byte data ketinggian dalam meter
+                 ; 0000 03CC                                 for(i=0;i<8;i++)        buff_altitude[i] = getchar();
+0001b4 d14c      	RCALL SUBOPT_0x9
+                 _0x5C:
+0001b5 d151      	RCALL SUBOPT_0xB
+0001b6 f444      	BRGE _0x5D
+0001b7 2fe0      	MOV  R30,R16
+0001b8 56ea      	SUBI R30,-LOW(_buff_altitude_S000000A000)
+0001b9 93ef      	PUSH R30
+0001ba d115      	RCALL _getchar
+0001bb 91af      	POP  R26
+0001bc 93ec      	ST   X,R30
+0001bd d146      	RCALL SUBOPT_0xA
+0001be cff6      	RJMP _0x5C
+                 _0x5D:
+                 ; 0000 03CF for(i=0;i<8;i++)	{posisi_lat[i]=buff_posisi[i];}
+0001bf d141      	RCALL SUBOPT_0x9
+                 _0x5F:
+0001c0 d146      	RCALL SUBOPT_0xB
+0001c1 f45c      	BRGE _0x60
+0001c2 01f8      	MOVW R30,R16
+0001c3 5eeb      	SUBI R30,LOW(-_posisi_lat)
+0001c4 4fff      	SBCI R31,HIGH(-_posisi_lat)
+0001c5 010f      	MOVW R0,R30
+0001c6 e8a5      	LDI  R26,LOW(_buff_posisi_S000000A000)
+0001c7 0fa0      	ADD  R26,R16
+0001c8 91ec      	LD   R30,X
+0001c9 01d0      	MOVW R26,R0
+0001ca d1d3      	RCALL __EEPROMWRB
+0001cb d138      	RCALL SUBOPT_0xA
+0001cc cff3      	RJMP _0x5F
+                 _0x60:
+                 ; 0000 03D0         			for(i=0;i<9;i++)	{posisi_long[i]=buff_posisi[i+8];}
+0001cd d133      	RCALL SUBOPT_0x9
+                 _0x62:
+                +
+0001ce 3009     +CPI R16 , LOW ( 9 )
+0001cf e0e0     +LDI R30 , HIGH ( 9 )
+0001d0 071e     +CPC R17 , R30
+                 	__CPWRN 16,17,9
+0001d1 f44c      	BRGE _0x63
+0001d2 01d8      	MOVW R26,R16
+0001d3 5ea3      	SUBI R26,LOW(-_posisi_long)
+0001d4 4fbf      	SBCI R27,HIGH(-_posisi_long)
+0001d5 2fe0      	MOV  R30,R16
+                +
+0001d6 57e3     +SUBI R30 , LOW ( - _buff_posisi_S000000A000 - ( 8 ) )
+                 	__ADDB1MN _buff_posisi_S000000A000,8
+0001d7 81e0      	LD   R30,Z
+0001d8 d1c5      	RCALL __EEPROMWRB
+0001d9 d12a      	RCALL SUBOPT_0xA
+0001da cff3      	RJMP _0x62
+                 _0x63:
+                 ; 0000 03D1 
+                 ; 0000 03D2                                 // nol-kan variable ketinggian
+                 ; 0000 03D3                                 for(i=0;i<6;i++)        n_altitude[i] = '0';
+0001db d125      	RCALL SUBOPT_0x9
+                 _0x65:
+0001dc d12e      	RCALL SUBOPT_0xC
+0001dd f43c      	BRGE _0x66
+0001de d130      	RCALL SUBOPT_0xD
+0001df e3e0      	LDI  R30,LOW(48)
+0001e0 e0f0      	LDI  R31,HIGH(48)
+0001e1 93ed      	ST   X+,R30
+0001e2 93fc      	ST   X,R31
+0001e3 d120      	RCALL SUBOPT_0xA
+0001e4 cff7      	RJMP _0x65
+                 _0x66:
+                 ; 0000 03D6 for(i=0;i<8;i++)
+0001e5 d11b      	RCALL SUBOPT_0x9
+                 _0x68:
+0001e6 d120      	RCALL SUBOPT_0xB
+0001e7 f58c      	BRGE _0x69
+                 ; 0000 03D7                                 {
+                 ; 0000 03D8                                         if(buff_altitude[i] == '.')     goto selesai;
+0001e8 d12c      	RCALL SUBOPT_0xE
+0001e9 f179      	BREQ _0x6B
+                 ; 0000 03D9                                         if((buff_altitude[i] != '.')&&(buff_altitude[i] != ',')&&(buff_altitude[i] != 'M'))
+0001ea d12a      	RCALL SUBOPT_0xE
+0001eb f051      	BREQ _0x6D
+0001ec e9a6      	LDI  R26,LOW(_buff_altitude_S000000A000)
+0001ed 0fa0      	ADD  R26,R16
+0001ee 91ac      	LD   R26,X
+0001ef 32ac      	CPI  R26,LOW(0x2C)
+0001f0 f029      	BREQ _0x6D
+0001f1 e9a6      	LDI  R26,LOW(_buff_altitude_S000000A000)
+0001f2 0fa0      	ADD  R26,R16
+0001f3 91ac      	LD   R26,X
+0001f4 34ad      	CPI  R26,LOW(0x4D)
+0001f5 f409      	BRNE _0x6E
+                 _0x6D:
+0001f6 c020      	RJMP _0x6C
+                 _0x6E:
+                 ; 0000 03DA                                         {
+                 ; 0000 03DB                                                 // geser dari satuan ke puluhan dst.
+                 ; 0000 03DC                                                 for(j=0;j<6;j++)        n_altitude[j] = n_altitude[j+1];
+                +
+0001f7 e020     +LDI R18 , LOW ( 0 )
+0001f8 e030     +LDI R19 , HIGH ( 0 )
+                 	__GETWRN 18,19,0
+                 _0x70:
+                +
+0001f9 3026     +CPI R18 , LOW ( 6 )
+0001fa e0e0     +LDI R30 , HIGH ( 6 )
+0001fb 073e     +CPC R19 , R30
+                 	__CPWRN 18,19,6
+0001fc f49c      	BRGE _0x71
+0001fd 2fe2      	MOV  R30,R18
+0001fe 2fac      	MOV  R26,R28
+0001ff 5fac      	SUBI R26,-(4)
+000200 0fee      	LSL  R30
+000201 0fea      	ADD  R30,R26
+000202 2e0e      	MOV  R0,R30
+000203 2fe2      	MOV  R30,R18
+000204 5fef      	SUBI R30,-LOW(1)
+000205 2fac      	MOV  R26,R28
+000206 5fac      	SUBI R26,-(4)
+000207 0fee      	LSL  R30
+000208 0fae      	ADD  R26,R30
+000209 d185      	RCALL __GETW1P
+00020a 2da0      	MOV  R26,R0
+00020b 93ed      	ST   X+,R30
+00020c 93fc      	ST   X,R31
+                +
+00020d 5f2f     +SUBI R18 , LOW ( - 1 )
+00020e 4f3f     +SBCI R19 , HIGH ( - 1 )
+                 	__ADDWRN 18,19,1
+00020f cfe9      	RJMP _0x70
+                 _0x71:
+                 ; 0000 03DF n_altitude[5] = buff_altitude[i];
+000210 e9a6      	LDI  R26,LOW(_buff_altitude_S000000A000)
+000211 0fa0      	ADD  R26,R16
+000212 91ec      	LD   R30,X
+000213 e0f0      	LDI  R31,0
+000214 fde7      	SBRC R30,7
+000215 efff      	SER  R31
+000216 d103      	RCALL SUBOPT_0xF
+                 ; 0000 03E0                                         }
+                 ; 0000 03E1                                 }
+                 _0x6C:
+000217 d0ec      	RCALL SUBOPT_0xA
+000218 cfcd      	RJMP _0x68
+                 _0x69:
+                 ; 0000 03E2 
+                 ; 0000 03E3                                 selesai:
+                 _0x6B:
+                 ; 0000 03E4 
+                 ; 0000 03E5                                 // atoi
+                 ; 0000 03E6                                 for(i=0;i<6;i++)        n_altitude[i] -= '0';
+000219 d0e7      	RCALL SUBOPT_0x9
+                 _0x73:
+00021a d0f0      	RCALL SUBOPT_0xC
+00021b f444      	BRGE _0x74
+00021c d0f2      	RCALL SUBOPT_0xD
+00021d 91ed      	LD   R30,X+
+00021e 91fd      	LD   R31,X+
+00021f 97f0      	SBIW R30,48
+000220 93fe      	ST   -X,R31
+000221 93ee      	ST   -X,R30
+000222 d0e1      	RCALL SUBOPT_0xA
+000223 cff6      	RJMP _0x73
+                 _0x74:
+                 ; 0000 03E9 n_altitude[0] *= 100000;
+000224 81ec      	LDD  R30,Y+4
+000225 81fd      	LDD  R31,Y+4+1
+000226 eaa0      	LDI  R26,LOW(34464)
+000227 e8b6      	LDI  R27,HIGH(34464)
+000228 d117      	RCALL __MULW12U
+000229 83ec      	STD  Y+4,R30
+00022a 83fd      	STD  Y+4+1,R31
+                 ; 0000 03EA                                 n_altitude[1] *=  10000;
+00022b 81ee      	LDD  R30,Y+6
+00022c 81ff      	LDD  R31,Y+6+1
+00022d e1a0      	LDI  R26,LOW(10000)
+00022e e2b7      	LDI  R27,HIGH(10000)
+00022f d110      	RCALL __MULW12U
+000230 83ee      	STD  Y+6,R30
+000231 83ff      	STD  Y+6+1,R31
+                 ; 0000 03EB                                 n_altitude[2] *=   1000;
+000232 85e8      	LDD  R30,Y+8
+000233 85f9      	LDD  R31,Y+8+1
+000234 eea8      	LDI  R26,LOW(1000)
+000235 e0b3      	LDI  R27,HIGH(1000)
+000236 d109      	RCALL __MULW12U
+000237 87e8      	STD  Y+8,R30
+000238 87f9      	STD  Y+8+1,R31
+                 ; 0000 03EC                                 n_altitude[3] *=    100;
+000239 85ea      	LDD  R30,Y+10
+00023a 85fb      	LDD  R31,Y+10+1
+00023b e6a4      	LDI  R26,LOW(100)
+00023c e0b0      	LDI  R27,HIGH(100)
+00023d d102      	RCALL __MULW12U
+00023e 87ea      	STD  Y+10,R30
+00023f 87fb      	STD  Y+10+1,R31
+                 ; 0000 03ED                                 n_altitude[4] *=     10;
+000240 85ec      	LDD  R30,Y+12
+000241 85fd      	LDD  R31,Y+12+1
+000242 e0aa      	LDI  R26,LOW(10)
+000243 e0b0      	LDI  R27,HIGH(10)
+000244 d0fb      	RCALL __MULW12U
+000245 87ec      	STD  Y+12,R30
+000246 87fd      	STD  Y+12+1,R31
+                 ; 0000 03EE 
+                 ; 0000 03EF                                 // jumlahkan satuan + puluhan + ratusan dst.
+                 ; 0000 03F0                                 n_altitude[5] += (n_altitude[0] + n_altitude[1] + n_altitude[2] + n_altitude[3] + n_altitude[4]);
+000247 81ee      	LDD  R30,Y+6
+000248 81ff      	LDD  R31,Y+6+1
+000249 81ac      	LDD  R26,Y+4
+00024a 81bd      	LDD  R27,Y+4+1
+00024b d0d1      	RCALL SUBOPT_0x10
+00024c 85a8      	LDD  R26,Y+8
+00024d 85b9      	LDD  R27,Y+8+1
+00024e d0ce      	RCALL SUBOPT_0x10
+00024f 85aa      	LDD  R26,Y+10
+000250 85bb      	LDD  R27,Y+10+1
+000251 d0cb      	RCALL SUBOPT_0x10
+000252 85ac      	LDD  R26,Y+12
+000253 85bd      	LDD  R27,Y+12+1
+000254 d0c8      	RCALL SUBOPT_0x10
+000255 d0ca      	RCALL SUBOPT_0x11
+000256 d0c6      	RCALL SUBOPT_0x10
+000257 d0c2      	RCALL SUBOPT_0xF
+                 ; 0000 03F1 
+                 ; 0000 03F2                                 // meter to feet
+                 ; 0000 03F3                                 n_altitude[5] *= 3;
+000258 85ee      	LDD  R30,Y+14
+000259 85ff      	LDD  R31,Y+14+1
+00025a e0a3      	LDI  R26,LOW(3)
+00025b e0b0      	LDI  R27,HIGH(3)
+00025c d0e3      	RCALL __MULW12U
+00025d d0c5      	RCALL SUBOPT_0x12
+                 ; 0000 03F4 
+                 ; 0000 03F5                                 // num to 'string'
+                 ; 0000 03F6                                 n_altitude[0] = n_altitude[5] / 100000;
+00025e d0c6      	RCALL SUBOPT_0x13
+00025f d103      	RCALL __DIVD21U
+000260 83ec      	STD  Y+4,R30
+000261 83fd      	STD  Y+4+1,R31
+                 ; 0000 03F7                                 n_altitude[5] %= 100000;
+000262 d0bd      	RCALL SUBOPT_0x11
+000263 d0c1      	RCALL SUBOPT_0x13
+000264 d126      	RCALL __MODD21U
+000265 d0bd      	RCALL SUBOPT_0x12
+                 ; 0000 03F8 
+                 ; 0000 03F9                                 n_altitude[1] = n_altitude[5] / 10000;
+000266 e1e0      	LDI  R30,LOW(10000)
+000267 e2f7      	LDI  R31,HIGH(10000)
+000268 d0e7      	RCALL __DIVW21U
+000269 83ee      	STD  Y+6,R30
+00026a 83ff      	STD  Y+6+1,R31
+                 ; 0000 03FA                                 n_altitude[5] %= 10000;
+00026b d0b4      	RCALL SUBOPT_0x11
+00026c e1e0      	LDI  R30,LOW(10000)
+00026d e2f7      	LDI  R31,HIGH(10000)
+00026e d119      	RCALL __MODW21U
+00026f d0b3      	RCALL SUBOPT_0x12
+                 ; 0000 03FB 
+                 ; 0000 03FC                                 n_altitude[2] = n_altitude[5] / 1000;
+000270 eee8      	LDI  R30,LOW(1000)
+000271 e0f3      	LDI  R31,HIGH(1000)
+000272 d0dd      	RCALL __DIVW21U
+000273 87e8      	STD  Y+8,R30
+000274 87f9      	STD  Y+8+1,R31
+                 ; 0000 03FD                                 n_altitude[5] %= 1000;
+000275 d0aa      	RCALL SUBOPT_0x11
+000276 eee8      	LDI  R30,LOW(1000)
+000277 e0f3      	LDI  R31,HIGH(1000)
+000278 d10f      	RCALL __MODW21U
+000279 d0a9      	RCALL SUBOPT_0x12
+                 ; 0000 03FE 
+                 ; 0000 03FF                                 n_altitude[3] = n_altitude[5] / 100;
+00027a e6e4      	LDI  R30,LOW(100)
+00027b e0f0      	LDI  R31,HIGH(100)
+00027c d0d3      	RCALL __DIVW21U
+00027d 87ea      	STD  Y+10,R30
+00027e 87fb      	STD  Y+10+1,R31
+                 ; 0000 0400                                 n_altitude[5] %= 100;
+00027f d0a0      	RCALL SUBOPT_0x11
+000280 e6e4      	LDI  R30,LOW(100)
+000281 e0f0      	LDI  R31,HIGH(100)
+000282 d105      	RCALL __MODW21U
+000283 d09f      	RCALL SUBOPT_0x12
+                 ; 0000 0401 
+                 ; 0000 0402                                 n_altitude[4] = n_altitude[5] / 10;
+000284 e0ea      	LDI  R30,LOW(10)
+000285 e0f0      	LDI  R31,HIGH(10)
+000286 d0c9      	RCALL __DIVW21U
+000287 87ec      	STD  Y+12,R30
+000288 87fd      	STD  Y+12+1,R31
+                 ; 0000 0403                                 n_altitude[5] %= 10;
+000289 d096      	RCALL SUBOPT_0x11
+00028a e0ea      	LDI  R30,LOW(10)
+00028b e0f0      	LDI  R31,HIGH(10)
+00028c d0fb      	RCALL __MODW21U
+00028d d08c      	RCALL SUBOPT_0xF
+                 ; 0000 0404 
+                 ; 0000 0405                                 // itoa, pindahkan dari variable numerik ke eeprom
+                 ; 0000 0406                                 for(i=0;i<6;i++)        altitude[i] = (char)(n_altitude[i] + '0');
+00028e d072      	RCALL SUBOPT_0x9
+                 _0x76:
+00028f d07b      	RCALL SUBOPT_0xC
+000290 f45c      	BRGE _0x77
+000291 01f8      	MOVW R30,R16
+000292 5dea      	SUBI R30,LOW(-_altitude)
+000293 4fff      	SBCI R31,HIGH(-_altitude)
+000294 010f      	MOVW R0,R30
+000295 d079      	RCALL SUBOPT_0xD
+000296 91ec      	LD   R30,X
+000297 5de0      	SUBI R30,-LOW(48)
+000298 01d0      	MOVW R26,R0
+000299 d104      	RCALL __EEPROMWRB
+00029a d069      	RCALL SUBOPT_0xA
+00029b cff3      	RJMP _0x76
+                 _0x77:
+                 ; 0000 0407 }
+                 ; 0000 0408                 }
+                 _0x54:
+                 ; 0000 0409         }
+                 _0x53:
+                 ; 0000 040A 
+                 ; 0000 040B } 	// EndOf void ekstrak_gps(void)
+                 _0x52:
+00029c d116      	RCALL __LOADLOCR4
+00029d 9660      	ADIW R28,16
+00029e 9508      	RET
+                 ;
+                 ;
+                 ;/***************************************************************************************/
+                 ;	void main(void)
+                 ; 0000 0410 /***************************************************************************************
+                 ; 0000 0411 *
+                 ; 0000 0412 *	MAIN PROGRAM
+                 ; 0000 0413 *
+                 ; 0000 0414 */
+                 ; 0000 0415 {
+                 _main:
+                 ; 0000 0416 	// pengaturan clock CPU dan menjaga agar kompatibel dengan versi code vision terdahulu
+                 ; 0000 0417 #pragma optsize-
+                 ; 0000 0418 	CLKPR=0x80;
+00029f e8e0      	LDI  R30,LOW(128)
+0002a0 bde6      	OUT  0x26,R30
+                 ; 0000 0419 	CLKPR=0x00;
+0002a1 e0e0      	LDI  R30,LOW(0)
+0002a2 bde6      	OUT  0x26,R30
+                 ; 0000 041A 	#ifdef _OPTIMIZE_SIZE_
+                 ; 0000 041B #pragma optsize+
+                 ; 0000 041C 	#endif
+                 ; 0000 041D 
+                 ; 0000 041E         // set bit register PORTB
+                 ; 0000 041F         PORTB=0x00;
+0002a3 bbe8      	OUT  0x18,R30
+                 ; 0000 0420 
+                 ; 0000 0421         // set bit Data Direction Register PORTB
+                 ; 0000 0422 	DDRB=0xF8;
+0002a4 efe8      	LDI  R30,LOW(248)
+0002a5 bbe7      	OUT  0x17,R30
+                 ; 0000 0423 
+                 ; 0000 0424         // set bit register PORTD
+                 ; 0000 0425         PORTD=0x09;
+0002a6 e0e9      	LDI  R30,LOW(9)
+0002a7 bbe2      	OUT  0x12,R30
+                 ; 0000 0426 
+                 ; 0000 0427         // set bit Data Direction Register PORTD
+                 ; 0000 0428 	DDRD=0x30;
+0002a8 e3e0      	LDI  R30,LOW(48)
+0002a9 bbe1      	OUT  0x11,R30
+                 ; 0000 0429 
+                 ; 0000 042A         // set parameter 4800baud, 8, N, 1
+                 ; 0000 042B         UCSRA=0x00;
+0002aa e0e0      	LDI  R30,LOW(0)
+0002ab b9eb      	OUT  0xB,R30
+                 ; 0000 042C 	UCSRB=0x10;
+0002ac e1e0      	LDI  R30,LOW(16)
+0002ad b9ea      	OUT  0xA,R30
+                 ; 0000 042D 	UCSRC=0x06;
+0002ae e0e6      	LDI  R30,LOW(6)
+0002af b9e3      	OUT  0x3,R30
+                 ; 0000 042E 	UBRRH=0x00;
+0002b0 e0e0      	LDI  R30,LOW(0)
+0002b1 b9e2      	OUT  0x2,R30
+                 ; 0000 042F 	UBRRL=0x8F;
+0002b2 e8ef      	LDI  R30,LOW(143)
+0002b3 b9e9      	OUT  0x9,R30
+                 ; 0000 0430 
+                 ; 0000 0431         // set register Analog Comparator
+                 ; 0000 0432         ACSR=0x80;
+0002b4 e8e0      	LDI  R30,LOW(128)
+0002b5 b9e8      	OUT  0x8,R30
+                 ; 0000 0433 
+                 ; 0000 0434         // set register EXT_IRQ_1 (External Interrupt 1 Request), Low Interrupt
+                 ; 0000 0435 	GIMSK=0x80;
+0002b6 bfeb      	OUT  0x3B,R30
+                 ; 0000 0436 	MCUCR=0x08;
+0002b7 e0e8      	LDI  R30,LOW(8)
+0002b8 bfe5      	OUT  0x35,R30
+                 ; 0000 0437 	EIFR=0x80;
+0002b9 e8e0      	LDI  R30,LOW(128)
+0002ba bfea      	OUT  0x3A,R30
+                 ; 0000 0438 
+                 ; 0000 0439         // set register Timer 1, System clock 10.8kHz, Timer 1 overflow
+                 ; 0000 043A 	TCCR1B=0x05;
+0002bb e0e5      	LDI  R30,LOW(5)
+0002bc bdee      	OUT  0x2E,R30
+                 ; 0000 043B 
+                 ; 0000 043C         // set konstanta waktu 5 detik sebagai awalan
+                 ; 0000 043D         //timer_detik(INITIAL_TIME_C);
+                 ; 0000 043E         TCNT1H = 0xAB;
+0002bd eaeb      	LDI  R30,LOW(171)
+0002be bded      	OUT  0x2D,R30
+                 ; 0000 043F         TCNT1L = 0xA0;
+0002bf eae0      	LDI  R30,LOW(160)
+0002c0 bdec      	OUT  0x2C,R30
+                 ; 0000 0440 
+                 ; 0000 0441         // set interupsi timer untuk Timer 1
+                 ; 0000 0442         TIMSK=0x80;
+0002c1 e8e0      	LDI  R30,LOW(128)
+0002c2 bfe9      	OUT  0x39,R30
+                 ; 0000 0443 
+                 ; 0000 0444         xcount = 0;
+0002c3 2433      	CLR  R3
+                 ; 0000 0445 
+                 ; 0000 0446         // indikator awalan hardware aktif :
+                 ; 0000 0447         // nyalakan LED busy
+                 ; 0000 0448         L_BUSY = 1;
+0002c4 9a95      	SBI  0x12,5
+                 ; 0000 0449 
+                 ; 0000 044A         // tunggu 500ms
+                 ; 0000 044B         delay_ms(500);
+0002c5 d023      	RCALL SUBOPT_0x2
+0002c6 d025      	RCALL SUBOPT_0x3
+                 ; 0000 044C 
+                 ; 0000 044D         // nyalakan LED standby
+                 ; 0000 044E         L_STBY = 1;
+0002c7 9a94      	SBI  0x12,4
+                 ; 0000 044F 
+                 ; 0000 0450         // tunggu 500ms
+                 ; 0000 0451         delay_ms(500);
+0002c8 d020      	RCALL SUBOPT_0x2
+0002c9 d022      	RCALL SUBOPT_0x3
+                 ; 0000 0452 
+                 ; 0000 0453         // matikan LED busy
+                 ; 0000 0454         L_BUSY = 0;
+0002ca 9895      	CBI  0x12,5
+                 ; 0000 0455 
+                 ; 0000 0456         // tunggu 500ms
+                 ; 0000 0457         delay_ms(500);
+0002cb d01d      	RCALL SUBOPT_0x2
+0002cc d01f      	RCALL SUBOPT_0x3
+                 ; 0000 0458 
+                 ; 0000 0459         // aktifkan interupsi global (berdasar setting register)
+                 ; 0000 045A         #asm("sei")
+0002cd 9478      	sei
+                 ; 0000 045B 
+                 ; 0000 045C         // tidak lakukan apapun selain menunggu interupsi timer1_ovf_isr
+                 ; 0000 045D         while (1)
+                 _0x7E:
+                 ; 0000 045E         {
+                 ; 0000 045F         	// blok ini kosong
+                 ; 0000 0460         };
+0002ce cfff      	RJMP _0x7E
+                 ; 0000 0461 
+                 ; 0000 0462 }	// END OF MAIN PROGRAM
+                 _0x81:
+0002cf cfff      	RJMP _0x81
+                 ;/*
+                 ;*
+                 ;*	END OF FILE
+                 ;*
+                 ;****************************************************************************************/
+                 	#ifndef __SLEEP_DEFINED__
+                 	#endif
+                 
+                 	.CSEG
+                 _getchar:
+                 getchar0:
+0002d0 9b5f           sbis usr,rxc
+0002d1 cffe           rjmp getchar0
+0002d2 b1ec           in   r30,udr
+0002d3 9508      	RET
+                 
+                 	.CSEG
+                 
+                 	.CSEG
+                 
+                 	.ESEG
+                 _data_1:
+000000 82
+000001 a0
+000002 a4
+000003 a6        	.DB  LOW(0xA6A4A082),HIGH(0xA6A4A082),BYTE3(0xA6A4A082),BYTE4(0xA6A4A082)
+000004 40
+000005 40
+000006 60
+000007 b2        	.DB  LOW(0xB2604040),HIGH(0xB2604040),BYTE3(0xB2604040),BYTE4(0xB2604040)
+000008 86
+000009 64
+00000a ae
+00000b b2        	.DB  LOW(0xB2AE6486),HIGH(0xB2AE6486),BYTE3(0xB2AE6486),BYTE4(0xB2AE6486)
+00000c 82
+00000d 72
+00000e ae
+00000f 92        	.DB  LOW(0x92AE7282),HIGH(0x92AE7282),BYTE3(0x92AE7282),BYTE4(0x92AE7282)
+000010 88
+000011 8a
+000012 64
+000013 40        	.DB  LOW(0x40648A88),HIGH(0x40648A88),BYTE3(0x40648A88),BYTE4(0x40648A88)
+000014 65        	.DB  0x65
+                 _posisi_lat:
+000015 30
+000016 30
+000017 30
+000018 30        	.DB  LOW(0x30303030),HIGH(0x30303030),BYTE3(0x30303030),BYTE4(0x30303030)
+000019 2e
+00001a 30
+00001b 30
+00001c 53        	.DB  LOW(0x5330302E),HIGH(0x5330302E),BYTE3(0x5330302E),BYTE4(0x5330302E)
+                 _posisi_long:
+00001d 30
+00001e 30
+00001f 30
+000020 30        	.DB  LOW(0x30303030),HIGH(0x30303030),BYTE3(0x30303030),BYTE4(0x30303030)
+000021 30
+000022 2e
+000023 30
+000024 30        	.DB  LOW(0x30302E30),HIGH(0x30302E30),BYTE3(0x30302E30),BYTE4(0x30302E30)
+000025 45        	.DB  0x45
+                 _altitude:
+000026           	.BYTE 0x6
+                 _data_extension:
+00002c 50
+00002d 48
+00002e 47
+00002f 32        	.DB  LOW(0x32474850),HIGH(0x32474850),BYTE3(0x32474850),BYTE4(0x32474850)
+000030 30 32     	.DW  0x3230
+000032 30        	.DB  0x30
+                 _beacon_stat:
+000033 00        	.DB  0x0
+                 
+                 	.DSEG
+                 _bit_stuff_G000:
+000080           	.BYTE 0x1
+                 _crc_lo_S0000003000:
+000081           	.BYTE 0x1
+                 _crc_hi_S0000003000:
+000082           	.BYTE 0x1
+                 _xor_in_S0000005000:
+000083           	.BYTE 0x2
+                 _buff_posisi_S000000A000:
+000085           	.BYTE 0x11
+                 _buff_altitude_S000000A000:
+000096           	.BYTE 0x9
+                 
+                 	.CSEG
+                 ;OPTIMIZER ADDED SUBROUTINE, CALLED 2 TIMES, CODE SIZE REDUCTION:11 WORDS
+                 SUBOPT_0x0:
+0002d4 920a      	ST   -Y,R0
+0002d5 921a      	ST   -Y,R1
+0002d6 92fa      	ST   -Y,R15
+0002d7 936a      	ST   -Y,R22
+0002d8 937a      	ST   -Y,R23
+0002d9 938a      	ST   -Y,R24
+0002da 939a      	ST   -Y,R25
+0002db 93aa      	ST   -Y,R26
+0002dc 93ba      	ST   -Y,R27
+0002dd 93ea      	ST   -Y,R30
+0002de 93fa      	ST   -Y,R31
+0002df b7ef      	IN   R30,SREG
+0002e0 93ea      	ST   -Y,R30
+0002e1 9894      	CBI  0x12,4
+0002e2 9508      	RET
+                 
+                 ;OPTIMIZER ADDED SUBROUTINE, CALLED 2 TIMES, CODE SIZE REDUCTION:2 WORDS
+                 SUBOPT_0x1:
+0002e3 93fa      	ST   -Y,R31
+0002e4 93ea      	ST   -Y,R30
+0002e5 d046      	RCALL _delay_ms
+0002e6 dd8c      	RCALL _kirim_paket
+0002e7 9a94      	SBI  0x12,4
+0002e8 9508      	RET
+                 
+                 ;OPTIMIZER ADDED SUBROUTINE, CALLED 4 TIMES, CODE SIZE REDUCTION:1 WORDS
+                 SUBOPT_0x2:
+0002e9 efe4      	LDI  R30,LOW(500)
+0002ea e0f1      	LDI  R31,HIGH(500)
+0002eb 9508      	RET
+                 
+                 ;OPTIMIZER ADDED SUBROUTINE, CALLED 5 TIMES, CODE SIZE REDUCTION:6 WORDS
+                 SUBOPT_0x3:
+0002ec 93fa      	ST   -Y,R31
+0002ed 93ea      	ST   -Y,R30
+0002ee c03d      	RJMP _delay_ms
+                 
+                 ;OPTIMIZER ADDED SUBROUTINE, CALLED 19 TIMES, CODE SIZE REDUCTION:16 WORDS
+                 SUBOPT_0x4:
+0002ef 93ea      	ST   -Y,R30
+0002f0 cdf7      	RJMP _kirim_karakter
+                 
+                 ;OPTIMIZER ADDED SUBROUTINE, CALLED 3 TIMES, CODE SIZE REDUCTION:2 WORDS
+                 SUBOPT_0x5:
+0002f1 e0e0      	LDI  R30,LOW(0)
+0002f2 93e0 0080 	STS  _bit_stuff_G000,R30
+0002f4 9508      	RET
+                 
+                 ;OPTIMIZER ADDED SUBROUTINE, CALLED 5 TIMES, CODE SIZE REDUCTION:10 WORDS
+                 SUBOPT_0x6:
+0002f5 2fa1      	MOV  R26,R17
+0002f6 e0b0      	LDI  R27,0
+0002f7 9508      	RET
+                 
+                 ;OPTIMIZER ADDED SUBROUTINE, CALLED 5 TIMES, CODE SIZE REDUCTION:2 WORDS
+                 SUBOPT_0x7:
+0002f8 d09a      	RCALL __EEPROMRDB
+0002f9 cff5      	RJMP SUBOPT_0x4
+                 
+                 ;OPTIMIZER ADDED SUBROUTINE, CALLED 3 TIMES, CODE SIZE REDUCTION:14 WORDS
+                 SUBOPT_0x8:
+0002fa 2fe1      	MOV  R30,R17
+0002fb e0f0      	LDI  R31,0
+0002fc 5dea      	SUBI R30,LOW(-_matrix*2)
+0002fd 4fff      	SBCI R31,HIGH(-_matrix*2)
+0002fe 91e4      	LPM  R30,Z
+0002ff 93ea      	ST   -Y,R30
+000300 ce32      	RJMP _set_dac
+                 
+                 ;OPTIMIZER ADDED SUBROUTINE, CALLED 9 TIMES, CODE SIZE REDUCTION:6 WORDS
+                 SUBOPT_0x9:
+                +
+000301 e000     +LDI R16 , LOW ( 0 )
+000302 e010     +LDI R17 , HIGH ( 0 )
+                 	__GETWRN 16,17,0
+000303 9508      	RET
+                 
+                 ;OPTIMIZER ADDED SUBROUTINE, CALLED 9 TIMES, CODE SIZE REDUCTION:6 WORDS
+                 SUBOPT_0xA:
+                +
+000304 5f0f     +SUBI R16 , LOW ( - 1 )
+000305 4f1f     +SBCI R17 , HIGH ( - 1 )
+                 	__ADDWRN 16,17,1
+000306 9508      	RET
+                 
+                 ;OPTIMIZER ADDED SUBROUTINE, CALLED 4 TIMES, CODE SIZE REDUCTION:4 WORDS
+                 SUBOPT_0xB:
+                +
+000307 3008     +CPI R16 , LOW ( 8 )
+000308 e0e0     +LDI R30 , HIGH ( 8 )
+000309 071e     +CPC R17 , R30
+                 	__CPWRN 16,17,8
+00030a 9508      	RET
+                 
+                 ;OPTIMIZER ADDED SUBROUTINE, CALLED 3 TIMES, CODE SIZE REDUCTION:2 WORDS
+                 SUBOPT_0xC:
+                +
+00030b 3006     +CPI R16 , LOW ( 6 )
+00030c e0e0     +LDI R30 , HIGH ( 6 )
+00030d 071e     +CPC R17 , R30
+                 	__CPWRN 16,17,6
+00030e 9508      	RET
+                 
+                 ;OPTIMIZER ADDED SUBROUTINE, CALLED 3 TIMES, CODE SIZE REDUCTION:6 WORDS
+                 SUBOPT_0xD:
+00030f 2fe0      	MOV  R30,R16
+000310 2fac      	MOV  R26,R28
+000311 5fac      	SUBI R26,-(4)
+000312 0fee      	LSL  R30
+000313 0fae      	ADD  R26,R30
+000314 9508      	RET
+                 
+                 ;OPTIMIZER ADDED SUBROUTINE, CALLED 2 TIMES, CODE SIZE REDUCTION:1 WORDS
+                 SUBOPT_0xE:
+000315 e9a6      	LDI  R26,LOW(_buff_altitude_S000000A000)
+000316 0fa0      	ADD  R26,R16
+000317 91ac      	LD   R26,X
+000318 32ae      	CPI  R26,LOW(0x2E)
+000319 9508      	RET
+                 
+                 ;OPTIMIZER ADDED SUBROUTINE, CALLED 8 TIMES, CODE SIZE REDUCTION:5 WORDS
+                 SUBOPT_0xF:
+00031a 87ee      	STD  Y+14,R30
+00031b 87ff      	STD  Y+14+1,R31
+00031c 9508      	RET
+                 
+                 ;OPTIMIZER ADDED SUBROUTINE, CALLED 5 TIMES, CODE SIZE REDUCTION:2 WORDS
+                 SUBOPT_0x10:
+00031d 0fea      	ADD  R30,R26
+00031e 1ffb      	ADC  R31,R27
+00031f 9508      	RET
+                 
+                 ;OPTIMIZER ADDED SUBROUTINE, CALLED 11 TIMES, CODE SIZE REDUCTION:8 WORDS
+                 SUBOPT_0x11:
+000320 85ae      	LDD  R26,Y+14
+000321 85bf      	LDD  R27,Y+14+1
+000322 9508      	RET
+                 
+                 ;OPTIMIZER ADDED SUBROUTINE, CALLED 5 TIMES, CODE SIZE REDUCTION:2 WORDS
+                 SUBOPT_0x12:
+000323 dff6      	RCALL SUBOPT_0xF
+000324 cffb      	RJMP SUBOPT_0x11
+                 
+                 ;OPTIMIZER ADDED SUBROUTINE, CALLED 2 TIMES, CODE SIZE REDUCTION:3 WORDS
+                 SUBOPT_0x13:
+000325 2788      	CLR  R24
+000326 2799      	CLR  R25
+                +
+000327 eae0     +LDI R30 , LOW ( 0x186A0 )
+000328 e8f6     +LDI R31 , HIGH ( 0x186A0 )
+000329 e061     +LDI R22 , BYTE3 ( 0x186A0 )
+00032a e070     +LDI R23 , BYTE4 ( 0x186A0 )
+                 	__GETD1N 0x186A0
+00032b 9508      	RET
+                 
+                 
+                 	.CSEG
+                 _delay_ms:
+00032c 91e9      	ld   r30,y+
+00032d 91f9      	ld   r31,y+
+00032e 9630      	adiw r30,0
+00032f f039      	breq __delay_ms1
+                 __delay_ms0:
+                +
+000330 ec8d     +LDI R24 , LOW ( 0xACD )
+000331 e09a     +LDI R25 , HIGH ( 0xACD )
+                +__DELAY_USW_LOOP :
+000332 9701     +SBIW R24 , 1
+000333 f7f1     +BRNE __DELAY_USW_LOOP
+                 	__DELAY_USW 0xACD
+000334 95a8      	wdr
+000335 9731      	sbiw r30,1
+000336 f7c9      	brne __delay_ms0
+                 __delay_ms1:
+000337 9508      	ret
+                 
+                 __LSRB12:
+000338 23ee      	TST  R30
+000339 2e0e      	MOV  R0,R30
+00033a 2fea      	MOV  R30,R26
+00033b f019      	BREQ __LSRB12R
+                 __LSRB12L:
+00033c 95e6      	LSR  R30
+00033d 940a      	DEC  R0
+00033e f7e9      	BRNE __LSRB12L
+                 __LSRB12R:
+00033f 9508      	RET
+                 
+                 __MULW12U:
+000340 2e0a      	MOV  R0,R26
+000341 2e1b      	MOV  R1,R27
+000342 e181      	LDI  R24,17
+000343 27aa      	CLR  R26
+000344 1bbb      	SUB  R27,R27
+000345 c005      	RJMP __MULW12U1
+                 __MULW12U3:
+000346 f410      	BRCC __MULW12U2
+000347 0da0      	ADD  R26,R0
+000348 1db1      	ADC  R27,R1
+                 __MULW12U2:
+000349 95b6      	LSR  R27
+00034a 95a7      	ROR  R26
+                 __MULW12U1:
+00034b 95f7      	ROR  R31
+00034c 95e7      	ROR  R30
+00034d 958a      	DEC  R24
+00034e f7b9      	BRNE __MULW12U3
+00034f 9508      	RET
+                 
+                 __DIVW21U:
+000350 2400      	CLR  R0
+000351 2411      	CLR  R1
+000352 e190      	LDI  R25,16
+                 __DIVW21U1:
+000353 0faa      	LSL  R26
+000354 1fbb      	ROL  R27
+000355 1c00      	ROL  R0
+000356 1c11      	ROL  R1
+000357 1a0e      	SUB  R0,R30
+000358 0a1f      	SBC  R1,R31
+000359 f418      	BRCC __DIVW21U2
+00035a 0e0e      	ADD  R0,R30
+00035b 1e1f      	ADC  R1,R31
+00035c c001      	RJMP __DIVW21U3
+                 __DIVW21U2:
+00035d 60a1      	SBR  R26,1
+                 __DIVW21U3:
+00035e 959a      	DEC  R25
+00035f f799      	BRNE __DIVW21U1
+000360 01fd      	MOVW R30,R26
+000361 01d0      	MOVW R26,R0
+000362 9508      	RET
+                 
+                 __DIVD21U:
+000363 933f      	PUSH R19
+000364 934f      	PUSH R20
+000365 935f      	PUSH R21
+000366 2400      	CLR  R0
+000367 2411      	CLR  R1
+000368 2744      	CLR  R20
+000369 2755      	CLR  R21
+00036a e230      	LDI  R19,32
+                 __DIVD21U1:
+00036b 0faa      	LSL  R26
+00036c 1fbb      	ROL  R27
+00036d 1f88      	ROL  R24
+00036e 1f99      	ROL  R25
+00036f 1c00      	ROL  R0
+000370 1c11      	ROL  R1
+000371 1f44      	ROL  R20
+000372 1f55      	ROL  R21
+000373 1a0e      	SUB  R0,R30
+000374 0a1f      	SBC  R1,R31
+000375 0b46      	SBC  R20,R22
+000376 0b57      	SBC  R21,R23
+000377 f428      	BRCC __DIVD21U2
+000378 0e0e      	ADD  R0,R30
+000379 1e1f      	ADC  R1,R31
+00037a 1f46      	ADC  R20,R22
+00037b 1f57      	ADC  R21,R23
+00037c c001      	RJMP __DIVD21U3
+                 __DIVD21U2:
+00037d 60a1      	SBR  R26,1
+                 __DIVD21U3:
+00037e 953a      	DEC  R19
+00037f f759      	BRNE __DIVD21U1
+000380 01fd      	MOVW R30,R26
+000381 01bc      	MOVW R22,R24
+000382 01d0      	MOVW R26,R0
+000383 01ca      	MOVW R24,R20
+000384 915f      	POP  R21
+000385 914f      	POP  R20
+000386 913f      	POP  R19
+000387 9508      	RET
+                 
+                 __MODW21U:
+000388 dfc7      	RCALL __DIVW21U
+000389 01fd      	MOVW R30,R26
+00038a 9508      	RET
+                 
+                 __MODD21U:
+00038b dfd7      	RCALL __DIVD21U
+00038c 01fd      	MOVW R30,R26
+00038d 01bc      	MOVW R22,R24
+00038e 9508      	RET
+                 
+                 __GETW1P:
+00038f 91ed      	LD   R30,X+
+000390 91fc      	LD   R31,X
+000391 95aa      	DEC  R26
+000392 9508      	RET
+                 
+                 __EEPROMRDB:
+000393 99e1      	SBIC EECR,EEWE
+000394 cffe      	RJMP __EEPROMRDB
+000395 93ff      	PUSH R31
+000396 b7ff      	IN   R31,SREG
+000397 94f8      	CLI
+000398 bbae      	OUT  EEARL,R26
+000399 9ae0      	SBI  EECR,EERE
+00039a b3ed      	IN   R30,EEDR
+00039b bfff      	OUT  SREG,R31
+00039c 91ff      	POP  R31
+00039d 9508      	RET
+                 
+                 __EEPROMWRB:
+00039e 9be1      	SBIS EECR,EEWE
+00039f c002      	RJMP __EEPROMWRB1
+0003a0 95a8      	WDR
+0003a1 cffc      	RJMP __EEPROMWRB
+                 __EEPROMWRB1:
+0003a2 b79f      	IN   R25,SREG
+0003a3 94f8      	CLI
+0003a4 bbae      	OUT  EEARL,R26
+0003a5 9ae0      	SBI  EECR,EERE
+0003a6 b38d      	IN   R24,EEDR
+0003a7 17e8      	CP   R30,R24
+0003a8 f019      	BREQ __EEPROMWRB0
+0003a9 bbed      	OUT  EEDR,R30
+0003aa 9ae2      	SBI  EECR,EEMWE
+0003ab 9ae1      	SBI  EECR,EEWE
+                 __EEPROMWRB0:
+0003ac bf9f      	OUT  SREG,R25
+0003ad 9508      	RET
+                 
+                 __SAVELOCR4:
+0003ae 933a      	ST   -Y,R19
+                 __SAVELOCR3:
+0003af 932a      	ST   -Y,R18
+                 __SAVELOCR2:
+0003b0 931a      	ST   -Y,R17
+0003b1 930a      	ST   -Y,R16
+0003b2 9508      	RET
+                 
+                 __LOADLOCR4:
+0003b3 813b      	LDD  R19,Y+3
+                 __LOADLOCR3:
+0003b4 812a      	LDD  R18,Y+2
+                 __LOADLOCR2:
+0003b5 8119      	LDD  R17,Y+1
+0003b6 8108      	LD   R16,Y
+0003b7 9508      	RET
+                 
+                 ;END OF CODE MARKER
+                 __END_OF_CODE:
+
+
+RESOURCE USE INFORMATION
+------------------------
+
+Notice:
+The register and instruction counts are symbol table hit counts,
+and hence implicitly used resources are not counted, eg, the
+'lpm' instruction without operands implicitly uses r0 and z,
+none of which are counted.
+
+x,y,z are separate entities in the symbol table and are
+counted separately from r26..r31 here.
+
+.dseg memory usage only counts static data declared with .byte
+
+ATtiny2313 register use summary:
+r0 :  26 r1 :  13 r2 :   0 r3 :   1 r4 :   5 r5 :   4 r6 :   0 r7 :   0 
+r8 :   0 r9 :   0 r10:   0 r11:   0 r12:   0 r13:   0 r14:   0 r15:   7 
+r16:  21 r17:  50 r18:   7 r19:   9 r20:   7 r21:   6 r22:   9 r23:   5 
+r24:  26 r25:  10 r26:  84 r27:  30 r28:   9 r29:   0 r30: 244 r31:  69 
+x  :  22 y  : 102 z  :   9 
+Registers used: 24 out of 35 (68.6%)
+
+ATtiny2313 instruction use summary:
+.lds  :   0 .lds.l:   0 .sts  :   0 .sts.l:   0 adc   :   6 add   :  12 
+adiw  :   5 and   :   0 andi  :   6 asr   :   6 bclr  :   0 bld   :   1 
+brbc  :   0 brbs  :   0 brcc  :   3 brcs  :   0 break :   0 breq  :  11 
+brge  :  21 brhc  :   0 brhs  :   0 brid  :   0 brie  :   0 brlo  :   0 
+brlt  :   0 brmi  :   0 brne  :  23 brpl  :   0 brsh  :   0 brtc  :   0 
+brts  :   0 brvc  :   0 brvs  :   0 bset  :   0 bst   :   1 cbi   :   9 
+cbr   :   1 clc   :   0 clh   :   0 cli   :   3 cln   :   0 clr   :  11 
+cls   :   0 clt   :   0 clv   :   0 clz   :   0 com   :   0 cp    :   1 
+cpc   :   5 cpi   :  28 cpse  :   0 dec   :  10 des   :   0 eor   :   6 
+fmul  :   0 fmuls :   0 fmulsu:   0 icall :   0 ijmp  :   0 in    :   7 
+inc   :   0 ld    :  32 ldd   :  31 ldi   : 134 lds   :   5 lpm   :   9 
+lsl   :   5 lsr   :   3 mov   :  20 movw  :  20 mul   :   0 muls  :   0 
+mulsu :   0 neg   :   0 nop   :   0 or    :   0 ori   :   0 out   :  36 
+pop   :   8 push  :   8 rcall : 151 ret   :  36 reti  :   1 rjmp  :  71 
+rol   :  10 ror   :   4 sbc   :   4 sbci  :  11 sbi   :  14 sbic  :   4 
+sbis  :   2 sbiw  :   6 sbr   :   2 sbrc  :   3 sbrs  :   1 sec   :   0 
+seh   :   0 sei   :   1 sen   :   0 ser   :   2 ses   :   0 set   :   0 
+sev   :   0 sez   :   0 sleep :   0 spm   :   0 st    :  40 std   :  22 
+sts   :   8 sub   :   3 subi  :  32 swap  :   0 tst   :   1 wdr   :   2 
+
+Instructions used: 57 out of 114 (50.0%)
+
+ATtiny2313 memory use summary [bytes]:
+Segment   Begin    End      Code   Data   Used    Size   Use%
+---------------------------------------------------------------
+[.cseg] 0x000000 0x000770   1860     44   1904    2048  93.0%
+[.dseg] 0x000060 0x00009f      0     31     31     223  13.9%
+[.eseg] 0x000000 0x000034      0     52     52     128  40.6%
+
+Assembly complete, 0 errors, 3 warnings

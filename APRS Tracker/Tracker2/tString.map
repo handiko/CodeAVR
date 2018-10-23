@@ -1,0 +1,13 @@
+RAM Allocation
+Variable                                                          Address   Size
+--------------------------------------------------------------------------------
+
+EEPROM Allocation
+Variable                                                          Address   Size
+--------------------------------------------------------------------------------
+string                                                            0x0000      98
+
+Register Allocation
+Variable                                                          Register  Size
+--------------------------------------------------------------------------------
+tone                                                              GPIOR0.0  1bit

@@ -1,0 +1,5 @@
+APZAVR  RELAy  WIDE3-3
+
+DB A4h, 8Ah, 98h, 82h, B2h, 40h, 60h
+DB 82h, A0h, B4h, 82h, ACh, A4h, 60h
+DB AEh, 92h, 88h, 8Ah, 66h, 40h, 67h

@@ -1,0 +1,4 @@
+main DSTACK_USAGE:0 DSTACK_LEVEL:0 FILE:"TNC_string_reader.c" LINE:195
+transmisi_data DSTACK_USAGE:0 DSTACK_LEVEL:0 FILE:"TNC_string_reader.c" LINE:172
+putchar DSTACK_USAGE:1 DSTACK_LEVEL:1 FILE:"TNC_string_reader.c" LINE:144
+usart_rx_isr DSTACK_USAGE:5 DSTACK_LEVEL:6 FILE:"TNC_string_reader.c" LINE:74

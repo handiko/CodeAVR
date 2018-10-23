@@ -1,0 +1,85 @@
+/*******************************************************************************
+File:			StdDefines.h
+
+				Standard definitions file.
+
+Version:		1.00
+
+*******************************************************************************/
+
+// General use definitions
+#define	TRUE			(1)
+#define	FALSE			(0)
+
+#define	ON				(1)
+#define	OFF			(0)
+
+#define	HI				(1)
+#define	LO				(0)
+
+#define	PASS			(1)
+#define	FAIL			(0)
+
+#define	OK				(1)
+#define	ERROR			(0)
+
+#define ShortPos		(1)
+#define LongPos			(0)
+
+#define	VALID_GPS_LED			0x04
+#define TRX_ONOFF				0x02
+
+#define	SW_CAR_MOTORBIKE		0x20	// PD5
+#define	SW_SLOWRATE				0x40	// PD6
+#define	SW_COMMENTTEXT			0x18	// PD4 + PD3
+#define	SW_COMMENTTEXT1			0x18	// Text 1
+#define	SW_COMMENTTEXT2			0x08	// Text 2
+#define	SW_COMMENTTEXT3			0x10	// Text 3
+#define	SW_COMMENTTEXT4			0x00	// Text 4
+
+
+#define	BEGIN_TEXT1				112
+#define BEGIN_TEXT2				212
+#define BEGIN_TEXT3				312
+#define BEGIN_TEXT4				412
+#define BEGIN_STATUSTEXT		 40
+#define BEGIN_CALLSIGN			 31
+
+//#define APRS_SYMBOL_MOTORBIKE 	'<'
+//#define APRS_SSID_MOTORBIKE 	0x74
+//#define APRS_SYMBOL_CAR			'>'
+//#define APRS_SSID_CAR			0x72
+//#define APRS_SSID_DEFAULT		0x60
+//#define APRS_SYMBOL_FIFI		';'
+//#define SYMBOL_TABLE			'/'			// For primary Table
+//#define SYMBOL_TABLE			'\\'		// For alternate Table
+
+
+
+#define APRS_CONFIG_WAIT_GPS	0x01	
+#define APRS_CONFIG_UBAT_TX		0x02	
+#define APRS_CONFIG_TEMP_TX		0x04	
+#define APRS_CONFIG_APO			0x08	
+#define APRS_CONFIG_5			0x10	
+#define APRS_CONFIG_6			0x20	
+#define APRS_CONFIG_MESSAGING	0x40	
+#define APRS_CONFIG_TIMESTAMP	0x80
+
+
+#define APRS_VOLTAGE_ADJUST_ADR	0x68
+#define APRS_CONFIG_ADR_1		0x69
+#define APRS_SSID_ADR_1			0x6A
+#define APRS_SYMBOLTABLE_ADR_1	0x6B
+#define APRS_SYMBOL_ICON_ADR_1	0x6C
+#define APRS_SSID_ADR_2			0x6D
+#define APRS_SYMBOLTABLE_ADR_2	0x6E
+#define APRS_SYMBOL_ICON_ADR_2	0x6F
+
+#define STANDBY_INTERVAL		7
+#define POWEROFF_INTERVAL		90
+#define MINIMUM_SPEED			5
+#define MAX_COUNT_NOSPEED		5
+#define STATUS_INTERVAL			10
+
+//#define DEBUG
+//#define TEMP

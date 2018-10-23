@@ -1,0 +1,9 @@
+VERSION:3 SOURCE_TIMESTAMP:40A2309B
+NODE:I LEVEL:0 LINE:24 "C:\cvavreval\inc\mega32.h"
+NODE:I LEVEL:0 LINE:25 "C:\cvavreval\inc\delay.h"
+NODE:I LEVEL:0 LINE:26 "C:\cvavreval\inc\alcd.h"
+NODE:I LEVEL:0 LINE:27 "C:\cvavreval\inc\stdio.h"
+NODE:V LEVEL:0 LINE:29 "data_rx -> EEPROM:????"
+NODE:F LEVEL:0 LINE:31 "tampil_lcd(void)"
+NODE:F LEVEL:0 LINE:43 "terima_data(void)"
+NODE:F LEVEL:0 LINE:57 "main(void)"

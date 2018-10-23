@@ -1,0 +1,22 @@
+RAM Allocation
+Variable                                                          Address   Size
+--------------------------------------------------------------------------------
+destination                                                       0x0080       7
+source                                                            0x0087       7
+digi                                                              0x008E       7
+fcs_arr                                                           0x0095       4
+
+EEPROM Allocation
+Variable                                                          Address   Size
+--------------------------------------------------------------------------------
+
+Register Allocation
+Variable                                                          Register  Size
+--------------------------------------------------------------------------------
+fcshi                                                             R3           1
+fcslo                                                             R2           1
+count_1                                                           R5           1
+x_counter                                                         R4           1
+flag_state                                                        GPIOR0.0  1bit
+crc_flag                                                          GPIOR0.1  1bit
+tone                                                              R6,R7        2

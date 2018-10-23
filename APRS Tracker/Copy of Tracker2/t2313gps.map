@@ -1,0 +1,17 @@
+RAM Allocation
+Variable                                                          Address   Size
+--------------------------------------------------------------------------------
+rx_buffer                                                         0x0080       8
+
+EEPROM Allocation
+Variable                                                          Address   Size
+--------------------------------------------------------------------------------
+gps_buff                                                          0x0000      80
+
+Register Allocation
+Variable                                                          Register  Size
+--------------------------------------------------------------------------------
+rx_buffer_overflow                                                GPIOR0.0  1bit
+rx_wr_index                                                       R3           1
+rx_rd_index                                                       R2           1
+rx_counter                                                        R5           1

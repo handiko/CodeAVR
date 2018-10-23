@@ -1,0 +1,4 @@
+main DSTACK_USAGE:0 DSTACK_LEVEL:0 FILE:"tnc_tone_encoder.c" LINE:127
+timer_detik DSTACK_USAGE:3 DSTACK_LEVEL:3 FILE:"tnc_tone_encoder.c" LINE:44
+timer0_ovf_isr DSTACK_USAGE:12 DSTACK_LEVEL:15 FILE:"tnc_tone_encoder.c" LINE:73
+set_timer_0 DSTACK_USAGE:1 DSTACK_LEVEL:16 FILE:"tnc_tone_encoder.c" LINE:38

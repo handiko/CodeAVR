@@ -1,0 +1,2041 @@
+;/***************************************************************************************
+;*
+;*				HANYA UNTUK TUJUAN EDUKASIONAL
+;*				FOR EDUCATION PURPOSE ONLY
+;*
+;*				COPYRIGHT (c)2012, HANDIKO GESANG ANUGRAH SEJATI
+;*				(handikogesang@gmail.com)
+;*
+;*				2 FEBRUARY 2012
+;*
+;*				BASIC APRS BEACON, GPS PARSER, & APRS ENCODER ONLY
+;*				TANPA FITUR SMART BEACONING(TM), TELEMETRY, DAN PC CONFIG
+;*
+;*				LAST REVISION 30 SEPTEMBER 2012
+;*
+;*				DOKUMEN INI BEBAS UNTUK DISEBARLUASKAN.
+;*				HARAP TIDAK MELAKUKAN PERUBAHAN APAPUN ATAS ISI DOKUMEN INI
+;*				DAN MENCANTUMKAN NAMA DAN EMAIL PENULIS JIKA INGIN MENYEBAR-
+;*				LUASKAN DOKUMEN INI.
+;*
+;* Project 		: 	APRS BEACON
+;* Version 		: 	GPS SUPPORTED, EEPROM DATA PROTECTOR SUPPORTED
+;* Date    		: 	02/02/2012
+;* Author  		: 	HANDIKO GESANG ANUGRAH S.
+;* Company 		: 	TIM INSTRUMENTASI TELEMETRI DAN TELEKONTROL
+;* 	  			LABORATORIUM SENSOR DAN SISTEM TELEKONTROL
+;* 	  			JURUSAN TEKNIK FISIKA
+;*           			FAKULTAS TEKNIK
+;*           			UNIVERSITAS GADJAH MADA
+;*
+;* Chip type           	: 	ATtiny2313
+;* Program type        	: 	Application
+;* Clock frequency     	: 	11.059200 MHz
+;* Memory model        	: 	Tiny
+;* External SRAM size  	: 	0
+;* Data Stack size     	: 	32
+;*
+;* File			:	final.c
+;*
+;* Fungsi - fungsi	: 	void set_dac(char value)
+;* 				void set_nada(char i_nada)
+;* 				void kirim_karakter(unsigned char input)
+;* 				void kirim_paket(void)
+;* 				void ubah_nada(void)
+;* 				void hitung_crc(char in_crc)
+;* 				void kirim_crc(void)
+;* 				void ekstrak_gps(void)
+;*
+;* Variabel global	:	char rx_buffer[RX_BUFFER_SIZE]
+;* 				bit rx_buffer_overflow
+;*                               flash char matrix[ ]
+;*				eeprom char data_1[ ]
+;*				eeprom char posisi_lat[ ]
+;*				eeprom char posisi_long[ ]
+;*				eeprom char data_extension[ ]
+;*				eeprom char komentar[ ]
+;*				eeprom char status[ ]
+;*				eeprom char beacon_stat
+;*				char xcount
+;*				bit nada
+;*				static char bit_stuff
+;*				unsigned short crc;
+;*
+;* Konstanta custom	:	_1200
+;* 				_2200
+;* 				CONST_1200
+;* 				CONST_2200
+;* 				GAP_TIME_
+;*				FLAG_
+;*				CONTROL_FIELD_
+;*				PROTOCOL_ID_
+;*				TD_POSISI_
+;*				TD_STATUS_
+;*				SYM_TAB_OVL_
+;*				SYM_CODE_
+;*
+;* Chip I/O		:	TX_NOW  PIND.3
+;* 				PTT     PORTB.3
+;* 				DAC_0   PORTB.7
+;* 				DAC_1   PORTB.6
+;* 				DAC_2   PORTB.5
+;* 				DAC_3   PORTB.4
+;* 				L_BUSY	PORTD.5
+;* 				L_STBY  PORTD.4
+;*
+;* Vektor		:	RJMP __RESET
+;*				RJMP _ext_int1_isr
+;*				RJMP _timer1_ovf_isr
+;*
+;* Fuse bit		:	BODLEVEL1 = 0
+;*
+;*
+;***************************************************************************************/
+;
+;// header firmware
+;#include <tiny2313.h>
+;PCODE: $00000000 VOL: 0
+	#ifndef __SLEEP_DEFINED__
+;PCODE: $00000001 VOL: 0
+	#define __SLEEP_DEFINED__
+;PCODE: $00000002 VOL: 0
+	.EQU __se_bit=0x20
+;PCODE: $00000003 VOL: 0
+	.EQU __sm_mask=0x50
+;PCODE: $00000004 VOL: 0
+	.EQU __sm_powerdown=0x10
+;PCODE: $00000005 VOL: 0
+	.EQU __sm_standby=0x40
+;PCODE: $00000006 VOL: 0
+	.SET power_ctrl_reg=mcucr
+;PCODE: $00000007 VOL: 0
+	#endif
+;PCODE: $00000008 VOL: 0
+;PCODE: $00000009 VOL: 0
+;#include <stdio.h>
+;#include <tiny4313_bits.h>
+;
+;
+;
+;/***************************************************************************************
+;*
+;*	DEFINISI KONSTANTA - KONSTANTA CUSTOM
+;*
+;*/
+;// definisi konstanta kondisi tone yang dikirimkan
+;#define _1200		0
+;#define _2200		1
+;
+;// definisi konstanta waktu de-sampling (rekonstruksi) diskrit gelombang sinus untuk tone
+;	// 1200Hz dan 2200Hz dalam microsecond (us). Silahkan fine tune konstanta ini untuk
+;        // adjusting baudrate dan cek hasilnya dengan menginputkan audio dari hardware APRS
+;        // pada PC / Laptop lalu cek hasil tone dan baudrate dengan Cool Edit pro pada
+;        // tampilan waveform atau spektral.
+;
+;
+;        // Konstanta untuk kompilasi dalam mode optimasi ukuran
+;#ifdef	_OPTIMIZE_SIZE_
+;	#define CONST_1200      46
+;	#define CONST_2200      25  // 22-25    22-->2400Hz   25-->2200Hz
+;
+;        // Konstanta untuk kompilasi dalam mode optimasi kecepatan
+;#else
+;	#define CONST_1200      50
+;	#define CONST_2200      25
+;#endif
+;
+;// waktu jeda antara transmisi data dalam detik (s)
+;#define GAP_TIME_	30
+;
+;// konstanta waktu opening flag
+;#define TX_DELAY_	45
+;
+;// definisi konstanta karakter Flag
+;#define FLAG_		0x7E
+;
+;// definisi konstanta karakter Control Field
+;#define	CONTROL_FIELD_	0x03
+;
+;// definisi konstanta karakter PID
+;#define PROTOCOL_ID_	0xF0
+;
+;// definisi konstanta karakter Tipe Data posisi
+;#define TD_POSISI_	'!'
+;
+;// definisi konstanta karakter Tipe Data status
+;#define TD_STATUS_	'>'
+;
+;// definisi konstanta karakter simbol tabel dan overlay (\)
+;#define SYM_TAB_OVL_	'\\'
+;
+;// definisi konstanta karakter simbol station (Area Locns)
+;#define SYM_CODE_	'l'
+;
+;// konstanta waktu closing flag
+;#define TX_TAIL_	15
+;
+;//	AKHIR DARI DEFINISI KONSTANTA - KONSTANTA CUSTOM
+;
+;
+;/**************************************************************************************/
+;
+;// header firmware
+;#include <delay.h>
+;#include <stdarg.h>
+;
+;/***************************************************************************************
+;*
+;*	DEFINISI INPUT - OUTPUT ATTINY2313
+;*
+;*/
+;// definisi input TX manual (request interupsi eksternal) INT1
+;#define TX_NOW  PIND.3
+;
+;// definisi output LED TX dan transistor sebagai switch TX (Hi = TX, Lo = waiting)
+;#define PTT     PORTB.3
+;
+;// definisi output tegangan DAC ladder resistor sebagai generator sinusoid ( DAC_0 = LSB,
+;	// DAC_3 = MSB )
+;#define DAC_0   PORTB.7
+;#define DAC_1   PORTB.6
+;#define DAC_2   PORTB.5
+;#define DAC_3   PORTB.4
+;
+;// definisi output LED saat terima dan ekstrak data GPS (Hi = parsing, Lo = waiting)
+;#define L_BUSY	PORTD.5
+;
+;// definisi output LED saat menunggu interupsi (Hi = waiting, Lo = ada proses)
+;#define L_STBY  PORTD.4
+;
+;//	AKHIR DARI DEFINISI INPUT - OUTPUT ATTINY2313
+;
+;
+;/***************************************************************************************
+;*
+;*	DEKLARASI PROTOTYPE FUNGSI - FUNGSI
+;*
+;*/
+;void set_dac(char value);
+;void set_nada(char i_nada);
+;void kirim_karakter(unsigned char input);
+;void kirim_paket(void);
+;void ubah_nada(void);
+;void hitung_crc(char in_crc);
+;void kirim_crc(void);
+;void ekstrak_gps(void);
+;
+;
+;//	AKHIR DARI DEKLARASI PROTOTYPE FUNGSI - FUNGSI
+;
+;
+;/***************************************************************************************
+;*
+;*	DEKLARASI VARIABEL GLOBAL
+;*
+;*/
+;
+;// variabel penyimpan nilai rekonstruksi diskrit gelombang sinusoid (matrix 16 ele.)
+;flash char matrix[16] = {7,10,13,14,15,14,13,10,7,5,2,1,0,1,2,5};
+;
+;// variabel penyimpan data adresses
+;eeprom unsigned char data_1[21] =
+;{
+;	// destination field, tergeser kiri 1 bit
+;        ('A'<<1),('P'<<1),('R'<<1),('S'<<1),(' '<<1),(' '<<1),('0'<<1),
+;
+;        // source field, tergeser kiri 1 bit
+;	('Y'<<1),('C'<<1),('2'<<1),('W'<<1),('Y'<<1),('A'<<1),('9'<<1),
+;
+;        // path, tergeser kiri 1 bit
+;        ('W'<<1),('I'<<1),('D'<<1),('E'<<1),('2'<<1),(' '<<1),('2'<<1)+1
+;};
+;
+;// variabel penyimpan data awal posisi lintang dan update data gps
+;eeprom char posisi_lat[8] =
+;{
+;	// latitude
+;        '0','0','0','0','.','0','0','S'
+;};
+;
+;// variabel penyimpan data awal posisi bujur dan update data gps
+;eeprom char posisi_long[9] =
+;{
+;	// longitude
+;        '0','0','0','0','0','.','0','0','E'
+;};
+;
+;eeprom char altitude[6];
+;
+;// variabel penyimpan data extensi tipe PHGD
+;eeprom char data_extension[7] =
+;{
+;	// header tipe data ekstensi
+;        'P','H','G',
+;
+;        /************************************************************************************************
+;        |-----------------------------------------------------------------------------------------------|
+;	|	PHGD CODE (Power Height Gain Directivity)						|
+;        |-----------------------------------------------------------------------------------------------|
+;        |	P		|	H		|	G		|	D		|
+;        |-----------------------|-----------------------|-----------------------|-----------------------|
+;        |  0 rep.of  0 watts	|  0 rep.of  10 ft.	|  0 rep.of   0dBi	|  0 rep.of  omni.	|
+;        |  1 rep.of  1 watts	|  1 rep.of  20 ft.	|  1 rep.of   1dBi	|  1 rep.of  NE		|
+;        |  2 rep.of  4 watts	|  2 rep.of  40 ft.	|  2 rep.of   2dBi	|  2 rep.of  E		|
+;        |  3 rep.of  9 watts	|  3 rep.of  80 ft.	|  3 rep.of   3dBi	|  3 rep.of  SE		|
+;        |  4 rep.of  16 watts   |  4 rep.of  160 ft.	|  4 rep.of   4dBi	|  4 rep.of  S		|
+;        |  5 rep.of  25 watts 	|  5 rep.of  320 ft.	|  5 rep.of   5dBi	|  5 rep.of  SW		|
+;        |  6 rep.of  36 watts	|  6 rep.of  640 ft.	|  6 rep.of   6dBi	|  6 rep.of  W		|
+;        |  7 rep.of  49 watts	|  7 rep.of  1280 ft.	|  7 rep.of   7dBi	|  7 rep.of  NW		|
+;        |  8 rep.of  64 watts	|  8 rep.of  2560 ft.	|  8 rep.of   8dBi	|  8 rep.of  N		|
+;        |  9 rep.of  81 watts	|  9 rep.of  5120 ft.	|  9 rep.of   9dBi	|-----------------------|
+;        *************************************************************************************************/
+;
+;
+;        // nilai representasi dari PHGD
+;        // power : 4 watts, P = 2
+;        '2',
+;
+;        // height above average terrain : 10 feet, H = 0
+;        '0',
+;
+;        // antenna gain : 2dBi, G = 2
+;        '2',
+;
+;        // antenna directivity : omnidirectional, D = 0
+;        '0'
+;
+;};
+;
+;// variabel penyimpan konstanta string komentar
+;eeprom char komentar[18] =
+;{
+;	// komentar
+;        //'L','a','b','.','S','S','T','K',' ','T','i','m','-','1'
+;        ':',':',':',' ','1','4','4','.','3','9','0','M','H','z',' ',':',':',':'
+;
+;};
+;
+;// variabel penyimpan konstanta string status
+;eeprom char status[47] =
+;{
+;	// status teks
+;        'A','T','t','i','n','y','2','3','1','3',' ',
+;        'A','P','R','S',' ','t','r','a','c','k','e','r',' ',
+;        'h','a','n','d','i','k','o','g','e','s','a','n','g','@','g','m','a','i','l','.','c','o','m'
+;};
+;
+;// variabel pengingat urutan beacon dan status
+;eeprom char beacon_stat = 0;
+;
+;// variabel penyimpan nilai urutan interupsi, 0 ketika inisialisasi dan reset, 1 ketika TX,
+;	// 2 - GAP_TIME_ ketika parsing data gps
+;char xcount = 0;
+;
+;// variabel penyimpan tone terakhir, _1200 = 0, _2200 = 1, inisialisasi sebagai 1200Hz
+;bit nada = _1200;
+;
+;// variabel penyimpan enablisasi bit stuffing, 0 = disable bit stuffing, 1 = enable bit stuffing
+;static char bit_stuff = 0;
+;
+;// variabel penyimpan nilai sementara dan nilai akhir CRC-16 CCITT
+;unsigned short crc;
+;
+;//	AKHIR DARI DEKLARASI VARIABEL GLOBAL
+;
+;
+;/***************************************************************************************
+;*
+;*	KONSTANTA EVALUATOR
+;*
+;*/
+;// cek define _1200
+;#ifndef	_1200
+;#error	"KONSTANTA _1200 BELUM TERDEFINISI"
+;#endif
+;
+;// cek define _2200
+;#ifndef	_2200
+;#error	"KONSTANTA _2200 BELUM TERDEFINISI"
+;#endif
+;
+;// cek define CONST_1200
+;#ifndef	CONST_1200
+;#error	"KONSTANTA CONST_1200 BELUM TERDEFINISI"
+;#endif
+;
+;// cek define CONST_2200
+;#ifndef	CONST_2200
+;#error	"KONSTANTA CONST_2200 BELUM TERDEFINISI"
+;#endif
+;
+;// cek define GAP_TIME_
+;#ifndef	GAP_TIME_
+;#error	"KONSTANTA GAP_TIME_ BELUM TERDEFINISI"
+;#endif
+;
+;// cek nilai GAP_TIME_ (harus antara 15 - 30)
+;#if	(GAP_TIME_ < 15)
+;//#error	"GAP_TIME_ harus bernilai antara 15 - 60. GAP_TIME_ yang terlalu singkat menyebabkan kepadatan traffic"
+;#endif
+;#if	(GAP_TIME_ > 60)
+;#error	"GAP_TIME_ harus bernilai antara 15 - 60. GAP_TIME_ yang terlalu panjang menyebabkan 'loose of track'  "
+;#endif
+;
+;//	AKHIR DARI KONSTANTA EVALUATOR
+;
+;
+;/***************************************************************************************/
+;	interrupt 		[EXT_INT1] void ext_int1_isr(void)
+; 0000 0173 /***************************************************************************************
+; 0000 0174 *	ABSTRAKSI	:	interupsi eksternal, ketika input TX_NOW bernilai LOW,
+; 0000 0175 *				[EXT_INT1] aktif
+; 0000 0176 *
+; 0000 0177 *      	INPUT		:	input TX_NOW
+; 0000 0178 *	OUTPUT		:       LED standby dan LED busy
+; 0000 0179 *	RETURN		:       tak ada
+; 0000 017A */
+; 0000 017B {
+
+	.CSEG
+;PCODE: $0000000A VOL: 0
+;PCODE: $0000000B VOL: 0
+; 0000 017C 	// matikan LED standby
+; 0000 017D         L_STBY = 0;
+;PCODE: $0000000C VOL: 0
+;PCODE: $0000000D VOL: 0
+; 0000 017E 
+; 0000 017F         // tunggu 250ms (bounce switch)
+; 0000 0180         delay_ms(250);
+;PCODE: $0000000E VOL: 0
+;PCODE: $0000000F VOL: 0
+;PCODE: $00000010 VOL: 0
+; 0000 0181 
+; 0000 0182         // kirim paket data
+; 0000 0183         kirim_paket();
+;PCODE: $00000011 VOL: 0
+; 0000 0184 
+; 0000 0185         // nyalakan LED standby
+; 0000 0186         L_STBY = 1;
+;PCODE: $00000012 VOL: 0
+;PCODE: $00000013 VOL: 0
+; 0000 0187 
+; 0000 0188 } 	// EndOf interrupt [EXT_INT1] void ext_int1_isr(void)
+;PCODE: $00000014 VOL: 0
+;PCODE: $00000015 VOL: 0
+;PCODE: $00000016 VOL: 0
+;
+;
+;/***************************************************************************************/
+;	interrupt 		[TIM1_OVF] void timer1_ovf_isr(void)
+; 0000 018D /***************************************************************************************
+; 0000 018E *	ABSTRAKSI  	: 	interupsi overflow TIMER 1 [TIM1_OVF], di-set overflow
+; 0000 018F *				ketika waktu telah mencapai 1 detik. Pengendali urutan
+; 0000 0190 *				waktu (timeline)antara transmisi data APRS dan parsing
+; 0000 0191 *				data gps
+; 0000 0192 *
+; 0000 0193 *      	INPUT		:	tak ada
+; 0000 0194 *	OUTPUT		:       kondisi LED standby dan LED busy
+; 0000 0195 *	RETURN		:       tak ada
+; 0000 0196 */
+; 0000 0197 {
+;PCODE: $00000017 VOL: 0
+;PCODE: $00000018 VOL: 0
+; 0000 0198 	// matikan LED stanby
+; 0000 0199         L_STBY = 0;
+;PCODE: $00000019 VOL: 0
+;PCODE: $0000001A VOL: 0
+; 0000 019A 
+; 0000 019B         /*
+; 0000 019C         // tambahkan 1 nilai variabel xcount
+; 0000 019D         xcount++;
+; 0000 019E 
+; 0000 019F         // seleksi nilai variabel xcount
+; 0000 01A0         if((xcount%2) == 0)
+; 0000 01A1         {	// jika ya
+; 0000 01A2         	// nyalakan LED busy
+; 0000 01A3                 L_BUSY = 1;
+; 0000 01A4 
+; 0000 01A5                 // dapatkan data koordinat sekarang
+; 0000 01A6                 ekstrak_gps();
+; 0000 01A7 
+; 0000 01A8                 //matikan LED busy
+; 0000 01A9                 L_BUSY = 0;
+; 0000 01AA         }
+; 0000 01AB         */
+; 0000 01AC         // terima dan ekstrak data gps ketika timer detik bernilai genap saja
+; 0000 01AD         //if((xcount%8) == 0)
+; 0000 01AE         //{	// jika ya
+; 0000 01AF         	// nyalakan LED busy
+; 0000 01B0                 L_BUSY = 1;
+;PCODE: $0000001B VOL: 0
+;PCODE: $0000001C VOL: 0
+; 0000 01B1 
+; 0000 01B2                 // dapatkan data koordinat sekarang
+; 0000 01B3                 ekstrak_gps();
+;PCODE: $0000001D VOL: 0
+; 0000 01B4 
+; 0000 01B5                 //matikan LED busy
+; 0000 01B6                 L_BUSY = 0;
+;PCODE: $0000001E VOL: 0
+;PCODE: $0000001F VOL: 0
+; 0000 01B7 
+; 0000 01B8                 // berikan delay sebentar
+; 0000 01B9                 delay_ms(500);
+;PCODE: $00000020 VOL: 0
+;PCODE: $00000021 VOL: 0
+;PCODE: $00000022 VOL: 0
+; 0000 01BA 
+; 0000 01BB                 // kirim paket data
+; 0000 01BC                 kirim_paket();
+;PCODE: $00000023 VOL: 0
+; 0000 01BD 
+; 0000 01BE                 // reset variable counter
+; 0000 01BF                 //xcount = 0;
+; 0000 01C0         //}
+; 0000 01C1 
+; 0000 01C2         // nyalakan LED standby
+; 0000 01C3         L_STBY = 1;
+;PCODE: $00000024 VOL: 0
+;PCODE: $00000025 VOL: 0
+; 0000 01C4 
+; 0000 01C5         // reset kembali konstanta waktu timer
+; 0000 01C6         TCNT1H = 0xFF;  // 0xAB
+;PCODE: $00000026 VOL: 0
+;PCODE: $00000027 VOL: 0
+; 0000 01C7         TCNT1L = 0xFF;  // 0xA0
+;PCODE: $00000028 VOL: 0
+;PCODE: $00000029 VOL: 0
+; 0000 01C8 
+; 0000 01C9 }       // EndOf interrupt [TIM1_OVF] void timer1_ovf_isr(void)
+;PCODE: $0000002A VOL: 0
+;PCODE: $0000002B VOL: 0
+;PCODE: $0000002C VOL: 0
+;
+;
+;/***************************************************************************************/
+;	void 			kirim_paket(void)
+; 0000 01CE /***************************************************************************************
+; 0000 01CF *	ABSTRAKSI  	: 	pengendali urutan pengiriman data APRS
+; 0000 01D0 *				penyusun protokol APRS
+; 0000 01D1 *
+; 0000 01D2 *      	INPUT		:	tak ada
+; 0000 01D3 *	OUTPUT		:       kondisi LED dan output transistor switch TX
+; 0000 01D4 *	RETURN		:       tak ada
+; 0000 01D5 */
+; 0000 01D6 {
+;PCODE: $0000002D VOL: 0
+;PCODE: $0000002E VOL: 0
+; 0000 01D7 	char i;
+; 0000 01D8 
+; 0000 01D9         // inisialisasi nilai CRC dengan 0xFFFF
+; 0000 01DA 	// crc = 0xFFFF;
+; 0000 01DB 
+; 0000 01DC         // tambahkan 1 nilai counter pancar
+; 0000 01DD         // beacon_stat++;
+; 0000 01DE 
+; 0000 01DF         // nyalakan LED TX dan PTT switch
+; 0000 01E0 	PTT = 1;
+;PCODE: $0000002F VOL: 0
+;	i -> R17
+;PCODE: $00000030 VOL: 0
+;PCODE: $00000031 VOL: 0
+; 0000 01E1 
+; 0000 01E2         // tunggu 300ms
+; 0000 01E3         delay_ms(100);
+;PCODE: $00000032 VOL: 0
+;PCODE: $00000033 VOL: 0
+;PCODE: $00000034 VOL: 0
+; 0000 01E4 
+; 0000 01E5         /**********************************************************************************
+; 0000 01E6 
+; 0000 01E7         			APRS AX.25 PROTOCOL
+; 0000 01E8 
+; 0000 01E9         |------------------------------------------------------------------------
+; 0000 01EA         |   opn. FLAG	|	DESTINATION	|	SOURCE	|	DIGI'S	| CONTROL...
+; 0000 01EB         |---------------|-----------------------|---------------|---------------|
+; 0000 01EC         |   0x7E 1Bytes |	7 Bytes		|       7 Bytes |  0 - 56 Bytes	|
+; 0000 01ED         |------------------------------------------------------------------------
+; 0000 01EE 
+; 0000 01EF         	-----------------------------------------------------------------
+; 0000 01F0         DIGI'S..|	CONTROL FIELD	|	PROTOCOL ID	|	INFO	| FCS...
+; 0000 01F1                 |-----------------------|-----------------------|---------------|
+; 0000 01F2                 |    0x03 1 Bytes	|     0xF0 1 Bytes	|  0 - 256 Bytes|
+; 0000 01F3                 -----------------------------------------------------------------
+; 0000 01F4 
+; 0000 01F5         	--------------------------------|
+; 0000 01F6         INFO... |	FCS	|   cls. FLAG	|
+; 0000 01F7                 |---------------|---------------|
+; 0000 01F8                 |	2 Bytes	|   0x7E 1Bytes |
+; 0000 01F9                 --------------------------------|
+; 0000 01FA 
+; 0000 01FB         Sumber : APRS101, Tucson Amateur Packet Radio Club. www.tapr.org
+; 0000 01FC         ************************************************************************************/
+; 0000 01FD 
+; 0000 01FE         // kirim karakter opening flag
+; 0000 01FF         for(i=0;i<TX_DELAY_;i++)
+;PCODE: $00000035 VOL: 0
+;PCODE: $00000036 VOL: 0
+;PCODE: $00000037 VOL: 0
+;PCODE: $00000038 VOL: 0
+;PCODE: $00000039 VOL: 0
+;PCODE: $0000003A VOL: 0
+;PCODE: $0000003B VOL: 0
+;PCODE: $0000003C VOL: 0
+;PCODE: $0000003D VOL: 0
+; 0000 0200         	kirim_karakter(0x00);
+;PCODE: $0000003E VOL: 0
+;PCODE: $0000003F VOL: 0
+;PCODE: $00000040 VOL: 0
+;PCODE: $00000041 VOL: 0
+;PCODE: $00000042 VOL: 0
+;PCODE: $00000043 VOL: 0
+;PCODE: $00000044 VOL: 0
+;PCODE: $00000045 VOL: 0
+; 0000 0203 crc = 0xFFFF;
+;PCODE: $00000046 VOL: 0
+;PCODE: $00000047 VOL: 0
+; 0000 0204 
+; 0000 0205         //for(i=0;i<TX_DELAY_;i++)
+; 0000 0206         	kirim_karakter(FLAG_);
+;PCODE: $00000048 VOL: 0
+;PCODE: $00000049 VOL: 0
+;PCODE: $0000004A VOL: 0
+; 0000 0207 
+; 0000 0208         // reset nilai variabel bit stuffing
+; 0000 0209         bit_stuff = 0;
+;PCODE: $0000004B VOL: 0
+;PCODE: $0000004C VOL: 0
+; 0000 020A 
+; 0000 020B         // kirimkan field : destination, source, PATH 1, PATH 2, control, Protocol ID, dan
+; 0000 020C         	// data type ID
+; 0000 020D         for(i=0;i<21;i++)
+;PCODE: $0000004D VOL: 0
+;PCODE: $0000004E VOL: 0
+;PCODE: $0000004F VOL: 0
+;PCODE: $00000050 VOL: 0
+;PCODE: $00000051 VOL: 0
+;PCODE: $00000052 VOL: 0
+;PCODE: $00000053 VOL: 0
+;PCODE: $00000054 VOL: 0
+;PCODE: $00000055 VOL: 0
+; 0000 020E         	kirim_karakter(data_1[i]);
+;PCODE: $00000056 VOL: 0
+;PCODE: $00000057 VOL: 0
+;PCODE: $00000058 VOL: 0
+;PCODE: $00000059 VOL: 0
+;PCODE: $0000005A VOL: 0
+;PCODE: $0000005B VOL: 0
+;PCODE: $0000005C VOL: 0
+;PCODE: $0000005D VOL: 0
+;PCODE: $0000005E VOL: 0
+;PCODE: $0000005F VOL: 0
+;PCODE: $00000060 VOL: 0
+; 0000 0211 kirim_karakter(0x03);
+;PCODE: $00000061 VOL: 0
+;PCODE: $00000062 VOL: 0
+;PCODE: $00000063 VOL: 0
+; 0000 0212 
+; 0000 0213         // krimkan protocol ID
+; 0000 0214         kirim_karakter(PROTOCOL_ID_);
+;PCODE: $00000064 VOL: 0
+;PCODE: $00000065 VOL: 0
+;PCODE: $00000066 VOL: 0
+; 0000 0215 
+; 0000 0216         // jika sudah 20 kali memancar,
+; 0000 0217         /*if(beacon_stat == 50)
+; 0000 0218         {
+; 0000 0219         	// jika ya
+; 0000 021A                 // kirim tipe data status
+; 0000 021B                 kirim_karakter(TD_STATUS_);
+; 0000 021C 
+; 0000 021D                 // kirim teks status
+; 0000 021E                 for(i=0;i<47;i++)
+; 0000 021F                 	kirim_karakter(status[i]);
+; 0000 0220 
+; 0000 0221                 // reset nilai beacon_stat
+; 0000 0222                 beacon_stat = 0;
+; 0000 0223 
+; 0000 0224                 // lompat ke kirim crc
+; 0000 0225                 goto lompat;
+; 0000 0226         } */
+; 0000 0227 
+; 0000 0228         // krimkan tipe data posisi
+; 0000 0229         kirim_karakter(TD_POSISI_);
+;PCODE: $00000067 VOL: 0
+;PCODE: $00000068 VOL: 0
+;PCODE: $00000069 VOL: 0
+; 0000 022A 
+; 0000 022B         // kirimkan posisi lintang
+; 0000 022C         for(i=0;i<8;i++)
+;PCODE: $0000006A VOL: 0
+;PCODE: $0000006B VOL: 0
+;PCODE: $0000006C VOL: 0
+;PCODE: $0000006D VOL: 0
+;PCODE: $0000006E VOL: 0
+;PCODE: $0000006F VOL: 0
+;PCODE: $00000070 VOL: 0
+;PCODE: $00000071 VOL: 0
+;PCODE: $00000072 VOL: 0
+; 0000 022D         	kirim_karakter(posisi_lat[i]);
+;PCODE: $00000073 VOL: 0
+;PCODE: $00000074 VOL: 0
+;PCODE: $00000075 VOL: 0
+;PCODE: $00000076 VOL: 0
+;PCODE: $00000077 VOL: 0
+;PCODE: $00000078 VOL: 0
+;PCODE: $00000079 VOL: 0
+;PCODE: $0000007A VOL: 0
+;PCODE: $0000007B VOL: 0
+;PCODE: $0000007C VOL: 0
+;PCODE: $0000007D VOL: 0
+; 0000 0230 kirim_karakter('\\');
+;PCODE: $0000007E VOL: 0
+;PCODE: $0000007F VOL: 0
+;PCODE: $00000080 VOL: 0
+; 0000 0231 
+; 0000 0232         // kirimkan posisi bujur
+; 0000 0233 	for(i=0;i<9;i++)
+;PCODE: $00000081 VOL: 0
+;PCODE: $00000082 VOL: 0
+;PCODE: $00000083 VOL: 0
+;PCODE: $00000084 VOL: 0
+;PCODE: $00000085 VOL: 0
+;PCODE: $00000086 VOL: 0
+;PCODE: $00000087 VOL: 0
+;PCODE: $00000088 VOL: 0
+;PCODE: $00000089 VOL: 0
+; 0000 0234         	kirim_karakter(posisi_long[i]);
+;PCODE: $0000008A VOL: 0
+;PCODE: $0000008B VOL: 0
+;PCODE: $0000008C VOL: 0
+;PCODE: $0000008D VOL: 0
+;PCODE: $0000008E VOL: 0
+;PCODE: $0000008F VOL: 0
+;PCODE: $00000090 VOL: 0
+;PCODE: $00000091 VOL: 0
+;PCODE: $00000092 VOL: 0
+;PCODE: $00000093 VOL: 0
+;PCODE: $00000094 VOL: 0
+; 0000 0237 kirim_karakter('l');
+;PCODE: $00000095 VOL: 0
+;PCODE: $00000096 VOL: 0
+;PCODE: $00000097 VOL: 0
+; 0000 0238 
+; 0000 0239         kirim_karakter('/');
+;PCODE: $00000098 VOL: 0
+;PCODE: $00000099 VOL: 0
+;PCODE: $0000009A VOL: 0
+; 0000 023A         kirim_karakter('A');
+;PCODE: $0000009B VOL: 0
+;PCODE: $0000009C VOL: 0
+;PCODE: $0000009D VOL: 0
+; 0000 023B         kirim_karakter('=');
+;PCODE: $0000009E VOL: 0
+;PCODE: $0000009F VOL: 0
+;PCODE: $000000A0 VOL: 0
+; 0000 023C 
+; 0000 023D         for(i=0;i<6;i++)
+;PCODE: $000000A1 VOL: 0
+;PCODE: $000000A2 VOL: 0
+;PCODE: $000000A3 VOL: 0
+;PCODE: $000000A4 VOL: 0
+;PCODE: $000000A5 VOL: 0
+;PCODE: $000000A6 VOL: 0
+;PCODE: $000000A7 VOL: 0
+;PCODE: $000000A8 VOL: 0
+;PCODE: $000000A9 VOL: 0
+; 0000 023E                 kirim_karakter(altitude[i]);
+;PCODE: $000000AA VOL: 0
+;PCODE: $000000AB VOL: 0
+;PCODE: $000000AC VOL: 0
+;PCODE: $000000AD VOL: 0
+;PCODE: $000000AE VOL: 0
+;PCODE: $000000AF VOL: 0
+;PCODE: $000000B0 VOL: 0
+;PCODE: $000000B1 VOL: 0
+;PCODE: $000000B2 VOL: 0
+;PCODE: $000000B3 VOL: 0
+;PCODE: $000000B4 VOL: 0
+; 0000 0241 if(beacon_stat == 5)
+;PCODE: $000000B5 VOL: 0
+;PCODE: $000000B6 VOL: 0
+;PCODE: $000000B7 VOL: 0
+;PCODE: $000000B8 VOL: 0
+; 0000 0242         {
+; 0000 0243         	// kirimkan field informasi : data ekstensi tipe PHGD
+; 0000 0244         	for(i=0;i<7;i++)
+;PCODE: $000000B9 VOL: 0
+;PCODE: $000000BA VOL: 0
+;PCODE: $000000BB VOL: 0
+;PCODE: $000000BC VOL: 0
+;PCODE: $000000BD VOL: 0
+;PCODE: $000000BE VOL: 0
+;PCODE: $000000BF VOL: 0
+;PCODE: $000000C0 VOL: 0
+;PCODE: $000000C1 VOL: 0
+; 0000 0245         		kirim_karakter(data_extension[i]);
+;PCODE: $000000C2 VOL: 0
+;PCODE: $000000C3 VOL: 0
+;PCODE: $000000C4 VOL: 0
+;PCODE: $000000C5 VOL: 0
+;PCODE: $000000C6 VOL: 0
+;PCODE: $000000C7 VOL: 0
+;PCODE: $000000C8 VOL: 0
+;PCODE: $000000C9 VOL: 0
+;PCODE: $000000CA VOL: 0
+;PCODE: $000000CB VOL: 0
+;PCODE: $000000CC VOL: 0
+; 0000 024A }
+; 0000 024B 
+; 0000 024C 
+; 0000 024D         // label lompatan
+; 0000 024E         lompat:
+;PCODE: $000000CD VOL: 0
+;PCODE: $000000CE VOL: 0
+; 0000 024F 
+; 0000 0250         // kirimkan field : FCS (CRC-16 CCITT)
+; 0000 0251         kirim_crc();
+;PCODE: $000000CF VOL: 0
+; 0000 0252 
+; 0000 0253                 kirim_karakter(FLAG_);
+;PCODE: $000000D0 VOL: 0
+;PCODE: $000000D1 VOL: 0
+;PCODE: $000000D2 VOL: 0
+; 0000 0254 
+; 0000 0255         // kirimkan karakter closing flag
+; 0000 0256         for(i=0;i<TX_TAIL_;i++)
+;PCODE: $000000D3 VOL: 0
+;PCODE: $000000D4 VOL: 0
+;PCODE: $000000D5 VOL: 0
+;PCODE: $000000D6 VOL: 0
+;PCODE: $000000D7 VOL: 0
+;PCODE: $000000D8 VOL: 0
+;PCODE: $000000D9 VOL: 0
+;PCODE: $000000DA VOL: 0
+;PCODE: $000000DB VOL: 0
+; 0000 0257         	kirim_karakter(0x00);
+;PCODE: $000000DC VOL: 0
+;PCODE: $000000DD VOL: 0
+;PCODE: $000000DE VOL: 0
+;PCODE: $000000DF VOL: 0
+;PCODE: $000000E0 VOL: 0
+;PCODE: $000000E1 VOL: 0
+;PCODE: $000000E2 VOL: 0
+;PCODE: $000000E3 VOL: 0
+; 0000 025A delay_ms(50);
+;PCODE: $000000E4 VOL: 0
+;PCODE: $000000E5 VOL: 0
+;PCODE: $000000E6 VOL: 0
+; 0000 025B         PTT = 0;
+;PCODE: $000000E7 VOL: 0
+;PCODE: $000000E8 VOL: 0
+; 0000 025C 
+; 0000 025D 
+; 0000 025E }       // EndOf void kirim_paket(void)
+;PCODE: $000000E9 VOL: 0
+;PCODE: $000000EA VOL: 0
+;PCODE: $000000EB VOL: 0
+;
+;
+;/***************************************************************************************/
+;	void 			kirim_crc(void)
+; 0000 0263 /***************************************************************************************
+; 0000 0264 *	ABSTRAKSI  	: 	Pengendali urutan pengiriman data CRC-16 CCITT Penyusun
+; 0000 0265 *				nilai 8 MSB dan 8 LSB dari nilai CRC yang telah dihitung.
+; 0000 0266 *				Generator polinomial, G(x) = x^16 + x^12 + x^5 + 1 tanpa
+; 0000 0267 *				leading one.
+; 0000 0268 *
+; 0000 0269 *      	INPUT		:	tak ada
+; 0000 026A *	OUTPUT		:       tak ada
+; 0000 026B *	RETURN		:       tak ada
+; 0000 026C */
+; 0000 026D {
+;PCODE: $000000EC VOL: 0
+;PCODE: $000000ED VOL: 0
+; 0000 026E 	static unsigned char crc_lo;
+; 0000 026F 	static unsigned char crc_hi;
+; 0000 0270 
+; 0000 0271         // Exor-kan nilai CRC terakhir dengan 0xFF, masukkan ke 8 LSB
+; 0000 0272         crc_lo = crc ^ 0xFF;
+;PCODE: $000000EE VOL: 0
+;PCODE: $000000EF VOL: 0
+;PCODE: $000000F0 VOL: 0
+; 0000 0273 
+; 0000 0274         // geser kanan 8 bit dan Exor-kan nilai CRC terakhir dengan 0xFF, masukkan ke 8 MSB
+; 0000 0275         crc_hi = (crc >> 8) ^ 0xFF;
+;PCODE: $000000F1 VOL: 0
+;PCODE: $000000F2 VOL: 0
+;PCODE: $000000F3 VOL: 0
+;PCODE: $000000F4 VOL: 0
+;PCODE: $000000F5 VOL: 0
+; 0000 0276 
+; 0000 0277         // kirim 8 LSB
+; 0000 0278         kirim_karakter(crc_lo);
+;PCODE: $000000F6 VOL: 0
+;PCODE: $000000F7 VOL: 0
+;PCODE: $000000F8 VOL: 0
+; 0000 0279 
+; 0000 027A         // kirim 8 MSB
+; 0000 027B         kirim_karakter(crc_hi);
+;PCODE: $000000F9 VOL: 0
+;PCODE: $000000FA VOL: 0
+;PCODE: $000000FB VOL: 0
+; 0000 027C 
+; 0000 027D }       // EndOf void kirim_crc(void)
+;PCODE: $000000FC VOL: 0
+;PCODE: $000000FD VOL: 0
+;
+;
+;/***************************************************************************************/
+;	void 			kirim_karakter(unsigned char input)
+; 0000 0282 /***************************************************************************************
+; 0000 0283 *	ABSTRAKSI  	: 	mengirim data APRS karakter-demi-karakter, menghitung FCS
+; 0000 0284 *				field dan melakukan bit stuffing. Polarisasi data adalah
+; 0000 0285 *				NRZI (Non Return to Zero, Inverted). Bit dikirimkan sebagai
+; 0000 0286 *				bit terakhir yang ditahan jika bit masukan adalah bit 1.
+; 0000 0287 *				Bit dikirimkan sebagai bit terakhir yang di-invert jika bit
+; 0000 0288 *				masukan adalah bit 0. Tone 1200Hz dan 2200Hz masing - masing
+; 0000 0289 * 				merepresentasikan bit 0 dan 1 atau sebaliknya. Polarisasi
+; 0000 028A *				tone adalah tidak penting dalam polarisasi data NRZI.
+; 0000 028B *
+; 0000 028C *      	INPUT		:	byte data protokol APRS
+; 0000 028D *	OUTPUT		:       tak ada
+; 0000 028E *	RETURN		:       tak ada
+; 0000 028F */
+; 0000 0290 {
+;PCODE: $000000FE VOL: 0
+;PCODE: $000000FF VOL: 0
+; 0000 0291 	char i;
+; 0000 0292 	bit in_bit;
+; 0000 0293 
+; 0000 0294         // kirimkan setiap byte data (8 bit)
+; 0000 0295 	for(i=0;i<8;i++)
+;PCODE: $00000100 VOL: 0
+;	input -> Y+1
+;	i -> R17
+;	in_bit -> R15.0
+;PCODE: $00000101 VOL: 0
+;PCODE: $00000102 VOL: 0
+;PCODE: $00000103 VOL: 0
+;PCODE: $00000104 VOL: 0
+;PCODE: $00000105 VOL: 0
+;PCODE: $00000106 VOL: 0
+;PCODE: $00000107 VOL: 0
+;PCODE: $00000108 VOL: 0
+;PCODE: $00000109 VOL: 0
+; 0000 0296         {
+; 0000 0297         	// ambil 1 bit berurutan dari LSB ke MSB setiap perulangan for 0 - 7
+; 0000 0298                 in_bit = (input >> i) & 0x01;
+;PCODE: $0000010A VOL: 0
+;PCODE: $0000010B VOL: 0
+;PCODE: $0000010C VOL: 0
+;PCODE: $0000010D VOL: 0
+;PCODE: $0000010E VOL: 0
+;PCODE: $0000010F VOL: 0
+;PCODE: $00000110 VOL: 0
+; 0000 0299 
+; 0000 029A                 // jika data adalah flag, nol-kan pengingat bit stuffing
+; 0000 029B                 if(input==0x7E)	{bit_stuff = 0;}
+;PCODE: $00000111 VOL: 0
+;PCODE: $00000112 VOL: 0
+;PCODE: $00000113 VOL: 0
+;PCODE: $00000114 VOL: 0
+;PCODE: $00000115 VOL: 0
+; 0000 029C 
+; 0000 029D                 // jika bukan flag, hitung nilai CRC dari bit data saat ini
+; 0000 029E                 else		{hitung_crc(in_bit);}
+;PCODE: $00000116 VOL: 0
+;PCODE: $00000117 VOL: 0
+;PCODE: $00000118 VOL: 0
+;PCODE: $00000119 VOL: 0
+;PCODE: $0000011A VOL: 0
+;PCODE: $0000011B VOL: 0
+;PCODE: $0000011C VOL: 0
+; 0000 029F 
+; 0000 02A0                 // jika bit data saat ini adalah
+; 0000 02A1                 // nol
+; 0000 02A2                 if(!in_bit)
+;PCODE: $0000011D VOL: 0
+;PCODE: $0000011E VOL: 0
+;PCODE: $0000011F VOL: 0
+; 0000 02A3                 {	// jika ya
+; 0000 02A4                 	// ubah tone dan bentuk gelombang sinus
+; 0000 02A5                         ubah_nada();
+;PCODE: $00000120 VOL: 0
+; 0000 02A6 
+; 0000 02A7                         // nol-kan pengingat bit stuffing
+; 0000 02A8                         bit_stuff = 0;
+;PCODE: $00000121 VOL: 0
+;PCODE: $00000122 VOL: 0
+; 0000 02A9                 }
+; 0000 02AA                 // satu
+; 0000 02AB                 else
+;PCODE: $00000123 VOL: 0
+;PCODE: $00000124 VOL: 0
+; 0000 02AC                 {	// jika ya
+; 0000 02AD                 	// jaga tone dan bentuk gelombang sinus
+; 0000 02AE                         set_nada(nada);
+;PCODE: $00000125 VOL: 0
+;PCODE: $00000126 VOL: 0
+;PCODE: $00000127 VOL: 0
+;PCODE: $00000128 VOL: 0
+; 0000 02AF 
+; 0000 02B0                         // hitung sebagai bit stuffing (bit satu berurut) tambahkan 1 nilai bit stuffing
+; 0000 02B1                         bit_stuff++;
+;PCODE: $00000129 VOL: 0
+;PCODE: $0000012A VOL: 0
+;PCODE: $0000012B VOL: 0
+; 0000 02B2 
+; 0000 02B3                         // jika sudah terjadi bit satu berurut sebanyak 5 kali
+; 0000 02B4                         if(bit_stuff==5)
+;PCODE: $0000012C VOL: 0
+;PCODE: $0000012D VOL: 0
+;PCODE: $0000012E VOL: 0
+; 0000 02B5                         {
+; 0000 02B6                         	// kirim bit nol :
+; 0000 02B7                                 // ubah tone dan bentuk gelombang sinus
+; 0000 02B8                                 ubah_nada();
+;PCODE: $0000012F VOL: 0
+; 0000 02B9 
+; 0000 02BA                                 // nol-kan pengingat bit stuffing
+; 0000 02BB                                 bit_stuff = 0;
+;PCODE: $00000130 VOL: 0
+;PCODE: $00000131 VOL: 0
+; 0000 02BC 
+; 0000 02BD                         }
+; 0000 02BE                 }
+;PCODE: $00000132 VOL: 0
+;PCODE: $00000133 VOL: 0
+; 0000 02BF         }
+;PCODE: $00000134 VOL: 0
+;PCODE: $00000135 VOL: 0
+;PCODE: $00000136 VOL: 0
+;PCODE: $00000137 VOL: 0
+;PCODE: $00000138 VOL: 0
+; 0000 02C0 
+; 0000 02C1 }      // EndOf void kirim_karakter(unsigned char input)
+;PCODE: $00000139 VOL: 0
+;PCODE: $0000013A VOL: 0
+;PCODE: $0000013B VOL: 0
+;PCODE: $0000013C VOL: 0
+;PCODE: $0000013D VOL: 0
+;
+;
+;/***************************************************************************************/
+;	void 			hitung_crc(char in_crc)
+; 0000 02C6 /***************************************************************************************
+; 0000 02C7 *	ABSTRAKSI  	: 	menghitung nilai CRC-16 CCITT dari tiap bit data yang terkirim,
+; 0000 02C8 *				generator polinomial, G(x) = x^16 + x^12 + x^5 + 1 tanpa
+; 0000 02C9 *				leading one
+; 0000 02CA *
+; 0000 02CB *      	INPUT		:	bit data yang terkirim
+; 0000 02CC *	OUTPUT		:       tak ada
+; 0000 02CD *	RETURN		:       tak ada
+; 0000 02CE */
+; 0000 02CF {
+;PCODE: $0000013E VOL: 0
+;PCODE: $0000013F VOL: 0
+; 0000 02D0 	static unsigned short xor_in;
+; 0000 02D1 
+; 0000 02D2         // simpan nilai Exor dari CRC sementara dengan bit data yang baru terkirim
+; 0000 02D3 	xor_in = crc ^ in_crc;
+;	in_crc -> Y+0
+;PCODE: $00000140 VOL: 0
+;PCODE: $00000141 VOL: 0
+;PCODE: $00000142 VOL: 0
+;PCODE: $00000143 VOL: 0
+; 0000 02D4 
+; 0000 02D5         // geser kanan nilai CRC sebanyak 1 bit
+; 0000 02D6 	crc >>= 1;
+;PCODE: $00000144 VOL: 0
+; 0000 02D7 
+; 0000 02D8         // jika hasil nilai Exor di-and-kan dengan satu bernilai satu
+; 0000 02D9         if(xor_in & 0x01)
+;PCODE: $00000145 VOL: 0
+;PCODE: $00000146 VOL: 0
+;PCODE: $00000147 VOL: 0
+; 0000 02DA         	// maka nilai CRC di-Exor-kan dengan generator polinomial
+; 0000 02DB                 crc ^= 0x8408;
+;PCODE: $00000148 VOL: 0
+;PCODE: $00000149 VOL: 0
+;PCODE: $0000014A VOL: 0
+; 0000 02DC 
+; 0000 02DD }      // EndOf void hitung_crc(char in_crc)
+;PCODE: $0000014B VOL: 0
+;PCODE: $0000014C VOL: 0
+;PCODE: $0000014D VOL: 0
+;PCODE: $0000014E VOL: 0
+;
+;
+;/***************************************************************************************/
+;	void 			ubah_nada(void)
+; 0000 02E2 /***************************************************************************************
+; 0000 02E3 *	ABSTRAKSI  	: 	Menukar seting tone terakhir dengan tone yang baru. Tone
+; 0000 02E4 *				1200Hz dan 2200Hz masing - masing merepresentasikan bit
+; 0000 02E5 *				0 dan 1 atau sebaliknya. Polarisasi tone adalah tidak
+; 0000 02E6 *				penting dalam polarisasi data NRZI.
+; 0000 02E7 *
+; 0000 02E8 *      	INPUT		:	tak ada
+; 0000 02E9 *	OUTPUT		:       tak ada
+; 0000 02EA *	RETURN		:       tak ada
+; 0000 02EB */
+; 0000 02EC {
+;PCODE: $0000014F VOL: 0
+;PCODE: $00000150 VOL: 0
+; 0000 02ED 	// jika tone terakhir adalah :
+; 0000 02EE         // 1200Hz
+; 0000 02EF         if(nada ==_1200)
+;PCODE: $00000151 VOL: 0
+;PCODE: $00000152 VOL: 0
+;PCODE: $00000153 VOL: 0
+; 0000 02F0 	{	// jika ya
+; 0000 02F1         	// ubah tone saat ini menjadi 2200Hz
+; 0000 02F2                 nada = _2200;
+;PCODE: $00000154 VOL: 0
+;PCODE: $00000155 VOL: 0
+; 0000 02F3 
+; 0000 02F4                 // bangkitkan gelombang sinus 2200Hz
+; 0000 02F5         	set_nada(nada);
+;PCODE: $00000156 VOL: 0
+;PCODE: $00000157 VOL: 0
+;PCODE: $00000158 VOL: 0
+;PCODE: $00000159 VOL: 0
+; 0000 02F6 	}
+; 0000 02F7         // 2200Hz
+; 0000 02F8         else
+;PCODE: $0000015A VOL: 0
+;PCODE: $0000015B VOL: 0
+; 0000 02F9         {	// jika ya
+; 0000 02FA         	// ubah tone saat ini menjadi 1200Hz
+; 0000 02FB                 nada = _1200;
+;PCODE: $0000015C VOL: 0
+;PCODE: $0000015D VOL: 0
+; 0000 02FC 
+; 0000 02FD                 // bangkitkan gelombang sinus 1200Hz
+; 0000 02FE         	set_nada(nada);
+;PCODE: $0000015E VOL: 0
+;PCODE: $0000015F VOL: 0
+;PCODE: $00000160 VOL: 0
+;PCODE: $00000161 VOL: 0
+; 0000 02FF         }
+;PCODE: $00000162 VOL: 0
+; 0000 0300 
+; 0000 0301 }       // EndOf void ubah_nada(void)
+;PCODE: $00000163 VOL: 0
+;PCODE: $00000164 VOL: 0
+;
+;
+;/***************************************************************************************/
+;	void 			set_dac(char value)
+; 0000 0306 /***************************************************************************************
+; 0000 0307 *	ABSTRAKSI  	: 	Men-set dan reset output DAC sebagai bilangan biner yang
+; 0000 0308 *				merepresentasikan nilai diskrit dari gelombang sinus yang
+; 0000 0309 *				sedang dibentuk saat ini sehingga membentuk tegangan sampling
+; 0000 030A *				dari gelombang.
+; 0000 030B *
+; 0000 030C *      	INPUT		:	nilai matrix rekonstruksi diskrit gelombang sinusoid
+; 0000 030D *	OUTPUT		:       DAC 0 - 3, tegangan kontinyu pada output Low Pass Filter
+; 0000 030E *	RETURN		:       tak ada
+; 0000 030F */
+; 0000 0310 {
+;PCODE: $00000165 VOL: 0
+;PCODE: $00000166 VOL: 0
+; 0000 0311 	// ambil nilai LSB dari matrix rekonstruksi dan set sebagai DAC-0
+; 0000 0312         DAC_0 = value & 0x01;
+;	value -> Y+0
+;PCODE: $00000167 VOL: 0
+;PCODE: $00000168 VOL: 0
+;PCODE: $00000169 VOL: 0
+;PCODE: $0000016A VOL: 0
+;PCODE: $0000016B VOL: 0
+;PCODE: $0000016C VOL: 0
+;PCODE: $0000016D VOL: 0
+;PCODE: $0000016E VOL: 0
+;PCODE: $0000016F VOL: 0
+;PCODE: $00000170 VOL: 0
+; 0000 0313 
+; 0000 0314         // ambil nilai dari matrix rekonstruksi, geser kanan 1 bit, ambil bit paling kanan
+; 0000 0315         	// dan set sebagai DAC-1
+; 0000 0316         DAC_1 =( value >> 1 ) & 0x01;
+;PCODE: $00000171 VOL: 0
+;PCODE: $00000172 VOL: 0
+;PCODE: $00000173 VOL: 0
+;PCODE: $00000174 VOL: 0
+;PCODE: $00000175 VOL: 0
+;PCODE: $00000176 VOL: 0
+;PCODE: $00000177 VOL: 0
+;PCODE: $00000178 VOL: 0
+;PCODE: $00000179 VOL: 0
+;PCODE: $0000017A VOL: 0
+;PCODE: $0000017B VOL: 0
+; 0000 0317 
+; 0000 0318         // ambil nilai dari matrix rekonstruksi, geser kanan 2 bit, ambil bit paling kanan
+; 0000 0319         	// dan set sebagai DAC-2
+; 0000 031A         DAC_2 =( value >> 2 ) & 0x01;
+;PCODE: $0000017C VOL: 0
+;PCODE: $0000017D VOL: 0
+;PCODE: $0000017E VOL: 0
+;PCODE: $0000017F VOL: 0
+;PCODE: $00000180 VOL: 0
+;PCODE: $00000181 VOL: 0
+;PCODE: $00000182 VOL: 0
+;PCODE: $00000183 VOL: 0
+;PCODE: $00000184 VOL: 0
+;PCODE: $00000185 VOL: 0
+;PCODE: $00000186 VOL: 0
+; 0000 031B 
+; 0000 031C         // ambil nilai dari matrix rekonstruksi, geser kanan 3 bit, ambil bit tersebut dan
+; 0000 031D         	// set sebagai DAC-3 (MSB)
+; 0000 031E         DAC_3 =( value >> 3 ) & 0x01;
+;PCODE: $00000187 VOL: 0
+;PCODE: $00000188 VOL: 0
+;PCODE: $00000189 VOL: 0
+;PCODE: $0000018A VOL: 0
+;PCODE: $0000018B VOL: 0
+;PCODE: $0000018C VOL: 0
+;PCODE: $0000018D VOL: 0
+;PCODE: $0000018E VOL: 0
+;PCODE: $0000018F VOL: 0
+;PCODE: $00000190 VOL: 0
+;PCODE: $00000191 VOL: 0
+; 0000 031F 
+; 0000 0320 }      	// EndOf void set_dac(char value)
+;PCODE: $00000192 VOL: 0
+;PCODE: $00000193 VOL: 0
+;PCODE: $00000194 VOL: 0
+;
+;
+;/***************************************************************************************/
+;	void 			set_nada(char i_nada)
+; 0000 0325 /***************************************************************************************
+; 0000 0326 *	ABSTRAKSI  	: 	Membentuk baudrate serta frekensi tone 1200Hz dan 2200Hz
+; 0000 0327 *				dari konstanta waktu. Men-setting nilai DAC. Lakukan fine
+; 0000 0328 *				tuning pada jumlah masing - masing perulangan for dan
+; 0000 0329 *				konstanta waktu untuk meng-adjust parameter baudrate dan
+; 0000 032A *				frekuensi tone.
+; 0000 032B *
+; 0000 032C *      	INPUT		:	nilai frekuensi tone yang akan ditransmisikan
+; 0000 032D *	OUTPUT		:       nilai DAC
+; 0000 032E *	RETURN		:       tak ada
+; 0000 032F */
+; 0000 0330 {
+;PCODE: $00000195 VOL: 0
+;PCODE: $00000196 VOL: 0
+; 0000 0331 	char i;
+; 0000 0332 
+; 0000 0333         // jika frekuensi tone yang akan segera dipancarkan adalah :
+; 0000 0334         // 1200Hz
+; 0000 0335 	if(i_nada == _1200)
+;PCODE: $00000197 VOL: 0
+;	i_nada -> Y+1
+;	i -> R17
+;PCODE: $00000198 VOL: 0
+;PCODE: $00000199 VOL: 0
+;PCODE: $0000019A VOL: 0
+; 0000 0336     	{
+; 0000 0337         	// jika ya
+; 0000 0338         	for(i=0; i<16; i++)
+;PCODE: $0000019B VOL: 0
+;PCODE: $0000019C VOL: 0
+;PCODE: $0000019D VOL: 0
+;PCODE: $0000019E VOL: 0
+;PCODE: $0000019F VOL: 0
+;PCODE: $000001A0 VOL: 0
+;PCODE: $000001A1 VOL: 0
+;PCODE: $000001A2 VOL: 0
+;PCODE: $000001A3 VOL: 0
+; 0000 0339         	{
+; 0000 033A                 	// set nilai DAC sesuai urutan matrix rekonstruksi gelombang sinus
+; 0000 033B                 		// dan urutan perulangan for 0 - 15
+; 0000 033C                 	set_dac(matrix[i]);
+;PCODE: $000001A4 VOL: 0
+;PCODE: $000001A5 VOL: 0
+;PCODE: $000001A6 VOL: 0
+;PCODE: $000001A7 VOL: 0
+;PCODE: $000001A8 VOL: 0
+;PCODE: $000001A9 VOL: 0
+; 0000 033D 
+; 0000 033E                         // bangkitkan frekuensi 1200Hz dari konstanta waktu
+; 0000 033F         		delay_us(CONST_1200);
+;PCODE: $000001AA VOL: 0
+; 0000 0340         	}
+;PCODE: $000001AB VOL: 0
+;PCODE: $000001AC VOL: 0
+;PCODE: $000001AD VOL: 0
+;PCODE: $000001AE VOL: 0
+;PCODE: $000001AF VOL: 0
+; 0000 0341     	}
+; 0000 0342         // 2200Hz
+; 0000 0343     	else
+;PCODE: $000001B0 VOL: 0
+;PCODE: $000001B1 VOL: 0
+; 0000 0344     	{
+; 0000 0345         	// jika ya
+; 0000 0346         	for(i=0; i<15; i++)
+;PCODE: $000001B2 VOL: 0
+;PCODE: $000001B3 VOL: 0
+;PCODE: $000001B4 VOL: 0
+;PCODE: $000001B5 VOL: 0
+;PCODE: $000001B6 VOL: 0
+;PCODE: $000001B7 VOL: 0
+;PCODE: $000001B8 VOL: 0
+;PCODE: $000001B9 VOL: 0
+;PCODE: $000001BA VOL: 0
+; 0000 0347         	{
+; 0000 0348                 	// set nilai DAC sesuai urutan matrix rekonstruksi gelombang sinus
+; 0000 0349                 		// dan urutan perulangan for 0 - 15
+; 0000 034A                 	set_dac(matrix[i]);
+;PCODE: $000001BB VOL: 0
+;PCODE: $000001BC VOL: 0
+;PCODE: $000001BD VOL: 0
+;PCODE: $000001BE VOL: 0
+;PCODE: $000001BF VOL: 0
+;PCODE: $000001C0 VOL: 0
+; 0000 034B 
+; 0000 034C                         // bangkitkan frekuensi 2200Hz dari konstanta waktu
+; 0000 034D                 	delay_us(CONST_2200);
+;PCODE: $000001C1 VOL: 0
+; 0000 034E                 }
+;PCODE: $000001C2 VOL: 0
+;PCODE: $000001C3 VOL: 0
+;PCODE: $000001C4 VOL: 0
+;PCODE: $000001C5 VOL: 0
+;PCODE: $000001C6 VOL: 0
+; 0000 034F                 // sekali lagi, untuk mengatur baudrate lakukan fine tune pada jumlah for
+; 0000 0350                 for(i=0; i<12; i++)
+;PCODE: $000001C7 VOL: 0
+;PCODE: $000001C8 VOL: 0
+;PCODE: $000001C9 VOL: 0
+;PCODE: $000001CA VOL: 0
+;PCODE: $000001CB VOL: 0
+;PCODE: $000001CC VOL: 0
+;PCODE: $000001CD VOL: 0
+;PCODE: $000001CE VOL: 0
+;PCODE: $000001CF VOL: 0
+; 0000 0351                 {
+; 0000 0352                 	// set nilai DAC sesuai urutan matrix rekonstruksi gelombang sinus
+; 0000 0353                 		// dan urutan perulangan for
+; 0000 0354                 	set_dac(matrix[i]);
+;PCODE: $000001D0 VOL: 0
+;PCODE: $000001D1 VOL: 0
+;PCODE: $000001D2 VOL: 0
+;PCODE: $000001D3 VOL: 0
+;PCODE: $000001D4 VOL: 0
+;PCODE: $000001D5 VOL: 0
+; 0000 0355 
+; 0000 0356                         // bangkitkan frekuensi 2200Hz dari konstanta waktu
+; 0000 0357                 	delay_us(CONST_2200);
+;PCODE: $000001D6 VOL: 0
+; 0000 0358                 }
+;PCODE: $000001D7 VOL: 0
+;PCODE: $000001D8 VOL: 0
+;PCODE: $000001D9 VOL: 0
+;PCODE: $000001DA VOL: 0
+;PCODE: $000001DB VOL: 0
+; 0000 0359     	}
+;PCODE: $000001DC VOL: 0
+; 0000 035A 
+; 0000 035B } 	// EndOf void set_nada(char i_nada)
+;PCODE: $000001DD VOL: 0
+;PCODE: $000001DE VOL: 0
+;PCODE: $000001DF VOL: 0
+;PCODE: $000001E0 VOL: 0
+;PCODE: $000001E1 VOL: 0
+;
+;
+;/***************************************************************************************/
+;	void 			getComma(void)
+; 0000 0360 /***************************************************************************************
+; 0000 0361 *	ABSTRAKSI  	: 	Menunggu data RX serial berupa karakter koma dan segera
+; 0000 0362 *				kembali pada fungsi yang memanggilnya.
+; 0000 0363 *
+; 0000 0364 *      	INPUT		:	RX data serial $GPGLL gps
+; 0000 0365 *	OUTPUT		:       tak ada
+; 0000 0366 *	RETURN		:       tak ada
+; 0000 0367 */
+; 0000 0368 {
+;PCODE: $000001E2 VOL: 0
+;PCODE: $000001E3 VOL: 0
+; 0000 0369 	// jika data yang diterima bukan karakter koma, terima terus
+; 0000 036A         	// jika data yang diterima adalah koma, keluar
+; 0000 036B         while(getchar() != ',');
+;PCODE: $000001E4 VOL: 0
+;PCODE: $000001E5 VOL: 0
+;PCODE: $000001E6 VOL: 0
+;PCODE: $000001E7 VOL: 0
+;PCODE: $000001E8 VOL: 0
+;PCODE: $000001E9 VOL: 0
+; 0000 036C 
+; 0000 036D }      	// EndOf void getComma(void)
+;PCODE: $000001EA VOL: 0
+;PCODE: $000001EB VOL: 0
+;
+;
+;/***************************************************************************************/
+;	void 			ekstrak_gps(void)
+; 0000 0372 /***************************************************************************************
+; 0000 0373 *	ABSTRAKSI  	: 	Menunggu interupsi RX data serial dari USART, memparsing
+; 0000 0374 *				data $GPGLL yang diterima menjadi data posisi, dan mengupdate
+; 0000 0375 *				data variabel posisi.
+; 0000 0376 *
+; 0000 0377 *      	INPUT		:	RX data serial $GPGLL gps
+; 0000 0378 *	OUTPUT		:       tak ada
+; 0000 0379 *	RETURN		:       tak ada
+; 0000 037A */
+; 0000 037B {
+;PCODE: $000001EC VOL: 0
+;PCODE: $000001ED VOL: 0
+; 0000 037C 	int i,j;
+; 0000 037D         static char buff_posisi[17], buff_altitude[9];
+; 0000 037E         unsigned int n_altitude[6];
+; 0000 037F 
+; 0000 0380         /************************************************************************************************
+; 0000 0381         	$GPGLL - GLL - Geographic Position Latitude / Longitude
+; 0000 0382 
+; 0000 0383                 Contoh : $GPGLL,3723.2475,N,12158.3416,W,161229.487,A*2C
+; 0000 0384 
+; 0000 0385         |-----------------------------------------------------------------------------------------------|
+; 0000 0386         |	Nama		| 	Contoh		|		Deskripsi			|
+; 0000 0387         |-----------------------|-----------------------|-----------------------------------------------|
+; 0000 0388         |	Message ID	|	$GPGLL		|	header protokol GLL			|
+; 0000 0389         |	Latitude	|	3723.2475	|	ddmm.mmmm 	, d=degree, m=minute	|
+; 0000 038A         |	N/S indicator	|	N		|	N=utara, S=selatan			|
+; 0000 038B         |	Longitude	|	12158.3416	|	dddmm.mmmm	, d=degree, m=minute	|
+; 0000 038C         |	W/E indicator	|	W		|	W=barat, E=timur			|
+; 0000 038D         |	Waktu UTC (GMT)	|	161229.487	|	HHMMSS.SS  ,H=hour, M=minute, S=second	|
+; 0000 038E         |	Status		|	A		|	A=data valid, V=data invalid		|
+; 0000 038F         |	Checksum	|	*2C		|						|
+; 0000 0390         |-----------------------------------------------------------------------------------------------|
+; 0000 0391 
+; 0000 0392         	Sumber : GPS SiRF EM-406A datasheet
+; 0000 0393 
+; 0000 0394         *************************************************************************************************/
+; 0000 0395 
+; 0000 0396         // jika data yang diterima bukan karakter $, terima terus
+; 0000 0397         	// jika data yang diterima adalah $, lanjutkan
+; 0000 0398         while(getchar() != '$');
+;PCODE: $000001EE VOL: 0
+;PCODE: $000001EF VOL: 0
+;	i -> R16,R17
+;	j -> R18,R19
+;	n_altitude -> Y+4
+;PCODE: $000001F0 VOL: 0
+;PCODE: $000001F1 VOL: 0
+;PCODE: $000001F2 VOL: 0
+;PCODE: $000001F3 VOL: 0
+;PCODE: $000001F4 VOL: 0
+;PCODE: $000001F5 VOL: 0
+; 0000 0399 
+; 0000 039A         // tunggu dan terima data tanpa proses lebih lanjut (lewatkan karakter G)
+; 0000 039B 	getchar();
+;PCODE: $000001F6 VOL: 0
+; 0000 039C 
+; 0000 039D         // tunggu dan terima data tanpa proses lebih lanjut (lewatkan karakter P)
+; 0000 039E         getchar();
+;PCODE: $000001F7 VOL: 0
+; 0000 039F 
+; 0000 03A0         // tunggu data, jika yang diterima adalah karakter G
+; 0000 03A1         if(getchar() == 'G')
+;PCODE: $000001F8 VOL: 0
+;PCODE: $000001F9 VOL: 0
+;PCODE: $000001FA VOL: 0
+; 0000 03A2         {
+; 0000 03A3         	// maka
+; 0000 03A4         	// tunggu data, jika yang diterima adalah karakter G
+; 0000 03A5                 if(getchar() == 'G')
+;PCODE: $000001FB VOL: 0
+;PCODE: $000001FC VOL: 0
+;PCODE: $000001FD VOL: 0
+; 0000 03A6         	{
+; 0000 03A7                 	// maka
+; 0000 03A8                         // tunggu data, jika yang diterima adalah karakter A
+; 0000 03A9                         if(getchar() == 'A')
+;PCODE: $000001FE VOL: 0
+;PCODE: $000001FF VOL: 0
+;PCODE: $00000200 VOL: 0
+; 0000 03AA                 	{
+; 0000 03AB                         	// maka
+; 0000 03AC                                 // tunggu koma dan lanjutkan
+; 0000 03AD                                 getComma();
+;PCODE: $00000201 VOL: 0
+; 0000 03AE                                 getComma();
+;PCODE: $00000202 VOL: 0
+; 0000 03AF 
+; 0000 03B0                                 // ambil 7 byte data berurut dan masukkan dalam buffer data
+; 0000 03B1                         	for(i=0; i<7; i++)	buff_posisi[i] = getchar();
+;PCODE: $00000203 VOL: 0
+;PCODE: $00000204 VOL: 0
+;PCODE: $00000205 VOL: 0
+;PCODE: $00000206 VOL: 0
+;PCODE: $00000207 VOL: 0
+;PCODE: $00000208 VOL: 0
+;PCODE: $00000209 VOL: 0
+;PCODE: $0000020A VOL: 0
+;PCODE: $0000020B VOL: 0
+;PCODE: $0000020C VOL: 0
+;PCODE: $0000020D VOL: 0
+;PCODE: $0000020E VOL: 0
+;PCODE: $0000020F VOL: 0
+;PCODE: $00000210 VOL: 0
+;PCODE: $00000211 VOL: 0
+;PCODE: $00000212 VOL: 0
+;PCODE: $00000213 VOL: 0
+;PCODE: $00000214 VOL: 0
+;PCODE: $00000215 VOL: 0
+;PCODE: $00000216 VOL: 0
+; 0000 03B4 getComma();
+;PCODE: $00000217 VOL: 0
+; 0000 03B5 
+; 0000 03B6                                 // ambil 1 byte data dan masukkan dalam buffer data
+; 0000 03B7                                 buff_posisi[7] = getchar();
+;PCODE: $00000218 VOL: 0
+;PCODE: $00000219 VOL: 0
+;PCODE: $0000021A VOL: 0
+; 0000 03B8 
+; 0000 03B9                                 // tunggu koma dan lanjutkan
+; 0000 03BA                                 getComma();
+;PCODE: $0000021B VOL: 0
+; 0000 03BB 
+; 0000 03BC                                 // ambil 8 byte data berurut dan masukkan dalam buffer data
+; 0000 03BD                                 for(i=0; i<8; i++)	buff_posisi[i+8] = getchar();
+;PCODE: $0000021C VOL: 0
+;PCODE: $0000021D VOL: 0
+;PCODE: $0000021E VOL: 0
+;PCODE: $0000021F VOL: 0
+;PCODE: $00000220 VOL: 0
+;PCODE: $00000221 VOL: 0
+;PCODE: $00000222 VOL: 0
+;PCODE: $00000223 VOL: 0
+;PCODE: $00000224 VOL: 0
+;PCODE: $00000225 VOL: 0
+;PCODE: $00000226 VOL: 0
+;PCODE: $00000227 VOL: 0
+;PCODE: $00000228 VOL: 0
+;PCODE: $00000229 VOL: 0
+;PCODE: $0000022A VOL: 0
+;PCODE: $0000022B VOL: 0
+;PCODE: $0000022C VOL: 0
+;PCODE: $0000022D VOL: 0
+;PCODE: $0000022E VOL: 0
+;PCODE: $0000022F VOL: 0
+;PCODE: $00000230 VOL: 0
+; 0000 03C0 getComma();
+;PCODE: $00000231 VOL: 0
+; 0000 03C1 
+; 0000 03C2                                 // ambil 1 byte data dan masukkan dalam buffer data
+; 0000 03C3                                 buff_posisi[16] = getchar();
+;PCODE: $00000232 VOL: 0
+;PCODE: $00000233 VOL: 0
+;PCODE: $00000234 VOL: 0
+; 0000 03C4 
+; 0000 03C5                                 // tunggu dan lewatkan 3 koma
+; 0000 03C6                                 getComma();
+;PCODE: $00000235 VOL: 0
+; 0000 03C7                                 getComma();
+;PCODE: $00000236 VOL: 0
+; 0000 03C8                                 getComma();
+;PCODE: $00000237 VOL: 0
+; 0000 03C9                                 getComma();
+;PCODE: $00000238 VOL: 0
+; 0000 03CA 
+; 0000 03CB                                 // ambil 8 byte data ketinggian dalam meter
+; 0000 03CC                                 for(i=0;i<8;i++)        buff_altitude[i] = getchar();
+;PCODE: $00000239 VOL: 0
+;PCODE: $0000023A VOL: 0
+;PCODE: $0000023B VOL: 0
+;PCODE: $0000023C VOL: 0
+;PCODE: $0000023D VOL: 0
+;PCODE: $0000023E VOL: 0
+;PCODE: $0000023F VOL: 0
+;PCODE: $00000240 VOL: 0
+;PCODE: $00000241 VOL: 0
+;PCODE: $00000242 VOL: 0
+;PCODE: $00000243 VOL: 0
+;PCODE: $00000244 VOL: 0
+;PCODE: $00000245 VOL: 0
+;PCODE: $00000246 VOL: 0
+;PCODE: $00000247 VOL: 0
+;PCODE: $00000248 VOL: 0
+;PCODE: $00000249 VOL: 0
+;PCODE: $0000024A VOL: 0
+;PCODE: $0000024B VOL: 0
+;PCODE: $0000024C VOL: 0
+; 0000 03CF for(i=0;i<8;i++)	{posisi_lat[i]=buff_posisi[i];}
+;PCODE: $0000024D VOL: 0
+;PCODE: $0000024E VOL: 0
+;PCODE: $0000024F VOL: 0
+;PCODE: $00000250 VOL: 0
+;PCODE: $00000251 VOL: 0
+;PCODE: $00000252 VOL: 0
+;PCODE: $00000253 VOL: 0
+;PCODE: $00000254 VOL: 0
+;PCODE: $00000255 VOL: 0
+;PCODE: $00000256 VOL: 0
+;PCODE: $00000257 VOL: 0
+;PCODE: $00000258 VOL: 0
+;PCODE: $00000259 VOL: 0
+;PCODE: $0000025A VOL: 0
+;PCODE: $0000025B VOL: 0
+;PCODE: $0000025C VOL: 0
+;PCODE: $0000025D VOL: 0
+;PCODE: $0000025E VOL: 0
+;PCODE: $0000025F VOL: 0
+;PCODE: $00000260 VOL: 0
+;PCODE: $00000261 VOL: 0
+;PCODE: $00000262 VOL: 0
+; 0000 03D0         			for(i=0;i<9;i++)	{posisi_long[i]=buff_posisi[i+8];}
+;PCODE: $00000263 VOL: 0
+;PCODE: $00000264 VOL: 0
+;PCODE: $00000265 VOL: 0
+;PCODE: $00000266 VOL: 0
+;PCODE: $00000267 VOL: 0
+;PCODE: $00000268 VOL: 0
+;PCODE: $00000269 VOL: 0
+;PCODE: $0000026A VOL: 0
+;PCODE: $0000026B VOL: 0
+;PCODE: $0000026C VOL: 0
+;PCODE: $0000026D VOL: 0
+;PCODE: $0000026E VOL: 0
+;PCODE: $0000026F VOL: 0
+;PCODE: $00000270 VOL: 0
+;PCODE: $00000271 VOL: 0
+;PCODE: $00000272 VOL: 0
+;PCODE: $00000273 VOL: 0
+;PCODE: $00000274 VOL: 0
+;PCODE: $00000275 VOL: 0
+;PCODE: $00000276 VOL: 0
+;PCODE: $00000277 VOL: 0
+; 0000 03D1 
+; 0000 03D2                                 // nol-kan variable ketinggian
+; 0000 03D3                                 for(i=0;i<6;i++)        n_altitude[i] = '0';
+;PCODE: $00000278 VOL: 0
+;PCODE: $00000279 VOL: 0
+;PCODE: $0000027A VOL: 0
+;PCODE: $0000027B VOL: 0
+;PCODE: $0000027C VOL: 0
+;PCODE: $0000027D VOL: 0
+;PCODE: $0000027E VOL: 0
+;PCODE: $0000027F VOL: 0
+;PCODE: $00000280 VOL: 0
+;PCODE: $00000281 VOL: 0
+;PCODE: $00000282 VOL: 0
+;PCODE: $00000283 VOL: 0
+;PCODE: $00000284 VOL: 0
+;PCODE: $00000285 VOL: 0
+;PCODE: $00000286 VOL: 0
+;PCODE: $00000287 VOL: 0
+;PCODE: $00000288 VOL: 0
+;PCODE: $00000289 VOL: 0
+;PCODE: $0000028A VOL: 0
+;PCODE: $0000028B VOL: 0
+; 0000 03D6 for(i=0;i<8;i++)
+;PCODE: $0000028C VOL: 0
+;PCODE: $0000028D VOL: 0
+;PCODE: $0000028E VOL: 0
+;PCODE: $0000028F VOL: 0
+;PCODE: $00000290 VOL: 0
+;PCODE: $00000291 VOL: 0
+;PCODE: $00000292 VOL: 0
+;PCODE: $00000293 VOL: 0
+;PCODE: $00000294 VOL: 0
+; 0000 03D7                                 {
+; 0000 03D8                                         if(buff_altitude[i] == '.')     goto selesai;
+;PCODE: $00000295 VOL: 0
+;PCODE: $00000296 VOL: 0
+;PCODE: $00000297 VOL: 0
+;PCODE: $00000298 VOL: 0
+;PCODE: $00000299 VOL: 0
+;PCODE: $0000029A VOL: 0
+; 0000 03D9                                         if((buff_altitude[i] != '.')&&(buff_altitude[i] != ',')&&(buff_altitude[i] != 'M'))
+;PCODE: $0000029B VOL: 0
+;PCODE: $0000029C VOL: 0
+;PCODE: $0000029D VOL: 0
+;PCODE: $0000029E VOL: 0
+;PCODE: $0000029F VOL: 0
+;PCODE: $000002A0 VOL: 0
+;PCODE: $000002A1 VOL: 0
+;PCODE: $000002A2 VOL: 0
+;PCODE: $000002A3 VOL: 0
+;PCODE: $000002A4 VOL: 0
+;PCODE: $000002A5 VOL: 0
+;PCODE: $000002A6 VOL: 0
+;PCODE: $000002A7 VOL: 0
+;PCODE: $000002A8 VOL: 0
+;PCODE: $000002A9 VOL: 0
+;PCODE: $000002AA VOL: 0
+;PCODE: $000002AB VOL: 0
+;PCODE: $000002AC VOL: 0
+;PCODE: $000002AD VOL: 0
+;PCODE: $000002AE VOL: 0
+; 0000 03DA                                         {
+; 0000 03DB                                                 // geser dari satuan ke puluhan dst.
+; 0000 03DC                                                 for(j=0;j<6;j++)        n_altitude[j] = n_altitude[j+1];
+;PCODE: $000002AF VOL: 0
+;PCODE: $000002B0 VOL: 0
+;PCODE: $000002B1 VOL: 0
+;PCODE: $000002B2 VOL: 0
+;PCODE: $000002B3 VOL: 0
+;PCODE: $000002B4 VOL: 0
+;PCODE: $000002B5 VOL: 0
+;PCODE: $000002B6 VOL: 0
+;PCODE: $000002B7 VOL: 0
+;PCODE: $000002B8 VOL: 0
+;PCODE: $000002B9 VOL: 0
+;PCODE: $000002BA VOL: 0
+;PCODE: $000002BB VOL: 0
+;PCODE: $000002BC VOL: 0
+;PCODE: $000002BD VOL: 0
+;PCODE: $000002BE VOL: 0
+;PCODE: $000002BF VOL: 0
+;PCODE: $000002C0 VOL: 0
+;PCODE: $000002C1 VOL: 0
+;PCODE: $000002C2 VOL: 0
+;PCODE: $000002C3 VOL: 0
+;PCODE: $000002C4 VOL: 0
+;PCODE: $000002C5 VOL: 0
+;PCODE: $000002C6 VOL: 0
+;PCODE: $000002C7 VOL: 0
+;PCODE: $000002C8 VOL: 0
+;PCODE: $000002C9 VOL: 0
+; 0000 03DF n_altitude[5] = buff_altitude[i];
+;PCODE: $000002CA VOL: 0
+;PCODE: $000002CB VOL: 0
+;PCODE: $000002CC VOL: 0
+;PCODE: $000002CD VOL: 0
+;PCODE: $000002CE VOL: 0
+; 0000 03E0                                         }
+; 0000 03E1                                 }
+;PCODE: $000002CF VOL: 0
+;PCODE: $000002D0 VOL: 0
+;PCODE: $000002D1 VOL: 0
+;PCODE: $000002D2 VOL: 0
+;PCODE: $000002D3 VOL: 0
+;PCODE: $000002D4 VOL: 0
+; 0000 03E2 
+; 0000 03E3                                 selesai:
+;PCODE: $000002D5 VOL: 0
+; 0000 03E4 
+; 0000 03E5                                 // atoi
+; 0000 03E6                                 for(i=0;i<6;i++)        n_altitude[i] -= '0';
+;PCODE: $000002D6 VOL: 0
+;PCODE: $000002D7 VOL: 0
+;PCODE: $000002D8 VOL: 0
+;PCODE: $000002D9 VOL: 0
+;PCODE: $000002DA VOL: 0
+;PCODE: $000002DB VOL: 0
+;PCODE: $000002DC VOL: 0
+;PCODE: $000002DD VOL: 0
+;PCODE: $000002DE VOL: 0
+;PCODE: $000002DF VOL: 0
+;PCODE: $000002E0 VOL: 0
+;PCODE: $000002E1 VOL: 0
+;PCODE: $000002E2 VOL: 0
+;PCODE: $000002E3 VOL: 0
+;PCODE: $000002E4 VOL: 0
+;PCODE: $000002E5 VOL: 0
+;PCODE: $000002E6 VOL: 0
+;PCODE: $000002E7 VOL: 0
+;PCODE: $000002E8 VOL: 0
+;PCODE: $000002E9 VOL: 0
+;PCODE: $000002EA VOL: 0
+; 0000 03E9 n_altitude[0] *= 100000;
+;PCODE: $000002EB VOL: 0
+;PCODE: $000002EC VOL: 0
+;PCODE: $000002ED VOL: 0
+;PCODE: $000002EE VOL: 0
+; 0000 03EA                                 n_altitude[1] *=  10000;
+;PCODE: $000002EF VOL: 0
+;PCODE: $000002F0 VOL: 0
+;PCODE: $000002F1 VOL: 0
+;PCODE: $000002F2 VOL: 0
+; 0000 03EB                                 n_altitude[2] *=   1000;
+;PCODE: $000002F3 VOL: 0
+;PCODE: $000002F4 VOL: 0
+;PCODE: $000002F5 VOL: 0
+;PCODE: $000002F6 VOL: 0
+; 0000 03EC                                 n_altitude[3] *=    100;
+;PCODE: $000002F7 VOL: 0
+;PCODE: $000002F8 VOL: 0
+;PCODE: $000002F9 VOL: 0
+;PCODE: $000002FA VOL: 0
+; 0000 03ED                                 n_altitude[4] *=     10;
+;PCODE: $000002FB VOL: 0
+;PCODE: $000002FC VOL: 0
+;PCODE: $000002FD VOL: 0
+;PCODE: $000002FE VOL: 0
+; 0000 03EE 
+; 0000 03EF                                 // jumlahkan satuan + puluhan + ratusan dst.
+; 0000 03F0                                 n_altitude[5] += (n_altitude[0] + n_altitude[1] + n_altitude[2] + n_altitude[3] + n_altitude[4]);
+;PCODE: $000002FF VOL: 0
+;PCODE: $00000300 VOL: 0
+;PCODE: $00000301 VOL: 0
+;PCODE: $00000302 VOL: 0
+;PCODE: $00000303 VOL: 0
+;PCODE: $00000304 VOL: 0
+;PCODE: $00000305 VOL: 0
+;PCODE: $00000306 VOL: 0
+;PCODE: $00000307 VOL: 0
+;PCODE: $00000308 VOL: 0
+;PCODE: $00000309 VOL: 0
+;PCODE: $0000030A VOL: 0
+; 0000 03F1 
+; 0000 03F2                                 // meter to feet
+; 0000 03F3                                 n_altitude[5] *= 3;
+;PCODE: $0000030B VOL: 0
+;PCODE: $0000030C VOL: 0
+;PCODE: $0000030D VOL: 0
+;PCODE: $0000030E VOL: 0
+; 0000 03F4 
+; 0000 03F5                                 // num to 'string'
+; 0000 03F6                                 n_altitude[0] = n_altitude[5] / 100000;
+;PCODE: $0000030F VOL: 0
+;PCODE: $00000310 VOL: 0
+;PCODE: $00000311 VOL: 0
+;PCODE: $00000312 VOL: 0
+;PCODE: $00000313 VOL: 0
+; 0000 03F7                                 n_altitude[5] %= 100000;
+;PCODE: $00000314 VOL: 0
+;PCODE: $00000315 VOL: 0
+;PCODE: $00000316 VOL: 0
+;PCODE: $00000317 VOL: 0
+;PCODE: $00000318 VOL: 0
+; 0000 03F8 
+; 0000 03F9                                 n_altitude[1] = n_altitude[5] / 10000;
+;PCODE: $00000319 VOL: 0
+;PCODE: $0000031A VOL: 0
+;PCODE: $0000031B VOL: 0
+;PCODE: $0000031C VOL: 0
+; 0000 03FA                                 n_altitude[5] %= 10000;
+;PCODE: $0000031D VOL: 0
+;PCODE: $0000031E VOL: 0
+;PCODE: $0000031F VOL: 0
+;PCODE: $00000320 VOL: 0
+; 0000 03FB 
+; 0000 03FC                                 n_altitude[2] = n_altitude[5] / 1000;
+;PCODE: $00000321 VOL: 0
+;PCODE: $00000322 VOL: 0
+;PCODE: $00000323 VOL: 0
+;PCODE: $00000324 VOL: 0
+; 0000 03FD                                 n_altitude[5] %= 1000;
+;PCODE: $00000325 VOL: 0
+;PCODE: $00000326 VOL: 0
+;PCODE: $00000327 VOL: 0
+;PCODE: $00000328 VOL: 0
+; 0000 03FE 
+; 0000 03FF                                 n_altitude[3] = n_altitude[5] / 100;
+;PCODE: $00000329 VOL: 0
+;PCODE: $0000032A VOL: 0
+;PCODE: $0000032B VOL: 0
+;PCODE: $0000032C VOL: 0
+; 0000 0400                                 n_altitude[5] %= 100;
+;PCODE: $0000032D VOL: 0
+;PCODE: $0000032E VOL: 0
+;PCODE: $0000032F VOL: 0
+;PCODE: $00000330 VOL: 0
+; 0000 0401 
+; 0000 0402                                 n_altitude[4] = n_altitude[5] / 10;
+;PCODE: $00000331 VOL: 0
+;PCODE: $00000332 VOL: 0
+;PCODE: $00000333 VOL: 0
+;PCODE: $00000334 VOL: 0
+; 0000 0403                                 n_altitude[5] %= 10;
+;PCODE: $00000335 VOL: 0
+;PCODE: $00000336 VOL: 0
+;PCODE: $00000337 VOL: 0
+;PCODE: $00000338 VOL: 0
+; 0000 0404 
+; 0000 0405                                 // itoa, pindahkan dari variable numerik ke eeprom
+; 0000 0406                                 for(i=0;i<6;i++)        altitude[i] = (char)(n_altitude[i] + '0');
+;PCODE: $00000339 VOL: 0
+;PCODE: $0000033A VOL: 0
+;PCODE: $0000033B VOL: 0
+;PCODE: $0000033C VOL: 0
+;PCODE: $0000033D VOL: 0
+;PCODE: $0000033E VOL: 0
+;PCODE: $0000033F VOL: 0
+;PCODE: $00000340 VOL: 0
+;PCODE: $00000341 VOL: 0
+;PCODE: $00000342 VOL: 0
+;PCODE: $00000343 VOL: 0
+;PCODE: $00000344 VOL: 0
+;PCODE: $00000345 VOL: 0
+;PCODE: $00000346 VOL: 0
+;PCODE: $00000347 VOL: 0
+;PCODE: $00000348 VOL: 0
+;PCODE: $00000349 VOL: 0
+;PCODE: $0000034A VOL: 0
+;PCODE: $0000034B VOL: 0
+;PCODE: $0000034C VOL: 0
+;PCODE: $0000034D VOL: 0
+;PCODE: $0000034E VOL: 0
+;PCODE: $0000034F VOL: 0
+;PCODE: $00000350 VOL: 0
+;PCODE: $00000351 VOL: 0
+; 0000 0407 }
+; 0000 0408                 }
+;PCODE: $00000352 VOL: 0
+; 0000 0409         }
+;PCODE: $00000353 VOL: 0
+; 0000 040A 
+; 0000 040B } 	// EndOf void ekstrak_gps(void)
+;PCODE: $00000354 VOL: 0
+;PCODE: $00000355 VOL: 0
+;PCODE: $00000356 VOL: 0
+;PCODE: $00000357 VOL: 0
+;PCODE: $00000358 VOL: 0
+;
+;
+;/***************************************************************************************/
+;	void main(void)
+; 0000 0410 /***************************************************************************************
+; 0000 0411 *
+; 0000 0412 *	MAIN PROGRAM
+; 0000 0413 *
+; 0000 0414 */
+; 0000 0415 {
+;PCODE: $00000359 VOL: 0
+; 0000 0416 	// pengaturan clock CPU dan menjaga agar kompatibel dengan versi code vision terdahulu
+; 0000 0417 #pragma optsize-
+; 0000 0418 	CLKPR=0x80;
+;PCODE: $0000035A VOL: 0
+;PCODE: $0000035B VOL: 0
+; 0000 0419 	CLKPR=0x00;
+;PCODE: $0000035C VOL: 0
+;PCODE: $0000035D VOL: 0
+; 0000 041A 	#ifdef _OPTIMIZE_SIZE_
+; 0000 041B #pragma optsize+
+; 0000 041C 	#endif
+; 0000 041D 
+; 0000 041E         // set bit register PORTB
+; 0000 041F         PORTB=0x00;
+;PCODE: $0000035E VOL: 0
+;PCODE: $0000035F VOL: 0
+; 0000 0420 
+; 0000 0421         // set bit Data Direction Register PORTB
+; 0000 0422 	DDRB=0xF8;
+;PCODE: $00000360 VOL: 0
+;PCODE: $00000361 VOL: 0
+; 0000 0423 
+; 0000 0424         // set bit register PORTD
+; 0000 0425         PORTD=0x09;
+;PCODE: $00000362 VOL: 0
+;PCODE: $00000363 VOL: 0
+; 0000 0426 
+; 0000 0427         // set bit Data Direction Register PORTD
+; 0000 0428 	DDRD=0x30;
+;PCODE: $00000364 VOL: 0
+;PCODE: $00000365 VOL: 0
+; 0000 0429 
+; 0000 042A         // set parameter 4800baud, 8, N, 1
+; 0000 042B         UCSRA=0x00;
+;PCODE: $00000366 VOL: 0
+;PCODE: $00000367 VOL: 0
+; 0000 042C 	UCSRB=0x10;
+;PCODE: $00000368 VOL: 0
+;PCODE: $00000369 VOL: 0
+; 0000 042D 	UCSRC=0x06;
+;PCODE: $0000036A VOL: 0
+;PCODE: $0000036B VOL: 0
+; 0000 042E 	UBRRH=0x00;
+;PCODE: $0000036C VOL: 0
+;PCODE: $0000036D VOL: 0
+; 0000 042F 	UBRRL=0x8F;
+;PCODE: $0000036E VOL: 0
+;PCODE: $0000036F VOL: 0
+; 0000 0430 
+; 0000 0431         // set register Analog Comparator
+; 0000 0432         ACSR=0x80;
+;PCODE: $00000370 VOL: 0
+;PCODE: $00000371 VOL: 0
+; 0000 0433 
+; 0000 0434         // set register EXT_IRQ_1 (External Interrupt 1 Request), Low Interrupt
+; 0000 0435 	GIMSK=0x80;
+;PCODE: $00000372 VOL: 0
+;PCODE: $00000373 VOL: 0
+; 0000 0436 	MCUCR=0x08;
+;PCODE: $00000374 VOL: 0
+;PCODE: $00000375 VOL: 0
+; 0000 0437 	EIFR=0x80;
+;PCODE: $00000376 VOL: 0
+;PCODE: $00000377 VOL: 0
+; 0000 0438 
+; 0000 0439         // set register Timer 1, System clock 10.8kHz, Timer 1 overflow
+; 0000 043A 	TCCR1B=0x05;
+;PCODE: $00000378 VOL: 0
+;PCODE: $00000379 VOL: 0
+; 0000 043B 
+; 0000 043C         // set konstanta waktu 5 detik sebagai awalan
+; 0000 043D         //timer_detik(INITIAL_TIME_C);
+; 0000 043E         TCNT1H = 0xAB;
+;PCODE: $0000037A VOL: 0
+;PCODE: $0000037B VOL: 0
+; 0000 043F         TCNT1L = 0xA0;
+;PCODE: $0000037C VOL: 0
+;PCODE: $0000037D VOL: 0
+; 0000 0440 
+; 0000 0441         // set interupsi timer untuk Timer 1
+; 0000 0442         TIMSK=0x80;
+;PCODE: $0000037E VOL: 0
+;PCODE: $0000037F VOL: 0
+; 0000 0443 
+; 0000 0444         xcount = 0;
+;PCODE: $00000380 VOL: 0
+; 0000 0445 
+; 0000 0446         // indikator awalan hardware aktif :
+; 0000 0447         // nyalakan LED busy
+; 0000 0448         L_BUSY = 1;
+;PCODE: $00000381 VOL: 0
+;PCODE: $00000382 VOL: 0
+; 0000 0449 
+; 0000 044A         // tunggu 500ms
+; 0000 044B         delay_ms(500);
+;PCODE: $00000383 VOL: 0
+;PCODE: $00000384 VOL: 0
+;PCODE: $00000385 VOL: 0
+; 0000 044C 
+; 0000 044D         // nyalakan LED standby
+; 0000 044E         L_STBY = 1;
+;PCODE: $00000386 VOL: 0
+;PCODE: $00000387 VOL: 0
+; 0000 044F 
+; 0000 0450         // tunggu 500ms
+; 0000 0451         delay_ms(500);
+;PCODE: $00000388 VOL: 0
+;PCODE: $00000389 VOL: 0
+;PCODE: $0000038A VOL: 0
+; 0000 0452 
+; 0000 0453         // matikan LED busy
+; 0000 0454         L_BUSY = 0;
+;PCODE: $0000038B VOL: 0
+;PCODE: $0000038C VOL: 0
+; 0000 0455 
+; 0000 0456         // tunggu 500ms
+; 0000 0457         delay_ms(500);
+;PCODE: $0000038D VOL: 0
+;PCODE: $0000038E VOL: 0
+;PCODE: $0000038F VOL: 0
+; 0000 0458 
+; 0000 0459         // aktifkan interupsi global (berdasar setting register)
+; 0000 045A         #asm("sei")
+;PCODE: $00000390 VOL: 0
+	sei
+;PCODE: $00000391 VOL: 0
+; 0000 045B 
+; 0000 045C         // tidak lakukan apapun selain menunggu interupsi timer1_ovf_isr
+; 0000 045D         while (1)
+;PCODE: $00000392 VOL: 0
+; 0000 045E         {
+; 0000 045F         	// blok ini kosong
+; 0000 0460         };
+;PCODE: $00000393 VOL: 0
+;PCODE: $00000394 VOL: 0
+; 0000 0461 
+; 0000 0462 }	// END OF MAIN PROGRAM
+;PCODE: $00000395 VOL: 0
+;PCODE: $00000396 VOL: 0
+;PCODE: $00000397 VOL: 0
+;/*
+;*
+;*	END OF FILE
+;*
+;****************************************************************************************/

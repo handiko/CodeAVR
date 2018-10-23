@@ -1,0 +1,9 @@
+main DSTACK_USAGE:0 DSTACK_LEVEL:0 FILE:"main.c" LINE:973
+baca_perintah DSTACK_USAGE:1 DSTACK_LEVEL:1 FILE:"main.c" LINE:728
+kirim_data_sekarang DSTACK_USAGE:4 DSTACK_LEVEL:5 FILE:"main.c" LINE:239
+itostring DSTACK_USAGE:5 DSTACK_LEVEL:10 FILE:"main.c" LINE:144
+putchar DSTACK_USAGE:1 DSTACK_LEVEL:11 FILE:"C:\cvavreval\lib\stdio.lib" LINE:204
+timer1_ovf_isr DSTACK_USAGE:13 DSTACK_LEVEL:24 FILE:"main.c" LINE:161
+kirim_data_komplit DSTACK_USAGE:6 DSTACK_LEVEL:30 FILE:"main.c" LINE:200
+itostring DSTACK_USAGE:5 DSTACK_LEVEL:35 FILE:"main.c" LINE:144
+putchar DSTACK_USAGE:1 DSTACK_LEVEL:36 FILE:"C:\cvavreval\lib\stdio.lib" LINE:204

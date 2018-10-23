@@ -1,0 +1,21 @@
+RAM Allocation
+Variable                                                          Address   Size
+--------------------------------------------------------------------------------
+fcs_arr                                                           0x0080       4
+
+EEPROM Allocation
+Variable                                                          Address   Size
+--------------------------------------------------------------------------------
+
+Register Allocation
+Variable                                                          Register  Size
+--------------------------------------------------------------------------------
+fcshi                                                             R3           1
+fcslo                                                             R2           1
+count_1                                                           R5           1
+x_counter                                                         R4           1
+n                                                                 R7           1
+flag_state                                                        GPIOR0.0  1bit
+crc_flag                                                          GPIOR0.1  1bit
+tone                                                              GPIOR0.2  1bit
+k                                                                 R6           1

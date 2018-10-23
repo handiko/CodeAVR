@@ -1,0 +1,29 @@
+RAM Allocation
+Variable                                                          Address   Size
+--------------------------------------------------------------------------------
+destination                                                       0x0160       7
+source                                                            0x0167       7
+digi                                                              0x016E       7
+latitude                                                          0x0175       8
+longitude                                                         0x017D       9
+rx_buffer                                                         0x0186       8
+tx_buffer                                                         0x018E       8
+tone                                                              0x0196       2
+
+EEPROM Allocation
+Variable                                                          Address   Size
+--------------------------------------------------------------------------------
+
+Register Allocation
+Variable                                                          Register  Size
+--------------------------------------------------------------------------------
+fcshi                                                             R5           1
+fcslo                                                             R4           1
+rx_buffer_overflow                                                R2.0      1bit
+rx_wr_index                                                       R7           1
+rx_rd_index                                                       R6           1
+rx_counter                                                        R9           1
+tx_wr_index                                                       R8           1
+tx_rd_index                                                       R11          1
+tx_counter                                                        R10          1
+count_1                                                           R13          1

@@ -1,0 +1,18 @@
+RAM Allocation
+Variable                                                          Address   Size
+--------------------------------------------------------------------------------
+matrix                                                            0x0080      16
+
+EEPROM Allocation
+Variable                                                          Address   Size
+--------------------------------------------------------------------------------
+
+Register Allocation
+Variable                                                          Register  Size
+--------------------------------------------------------------------------------
+data                                                              GPIOR0.0  1bit
+d_data                                                            GPIOR0.1  1bit
+out_data                                                          GPIOR0.2  1bit
+tone                                                              GPIOR0.3  1bit
+t                                                                 R3           1
+v_2200                                                            R2           1

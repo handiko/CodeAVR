@@ -1,0 +1,26 @@
+RAM Allocation
+Variable                                                          Address   Size
+--------------------------------------------------------------------------------
+bit_stuff                                                         0x0080       1
+crc_lo                                                            0x0081       1
+crc_hi                                                            0x0082       1
+xor_in                                                            0x0083       2
+buff_posisi                                                       0x0085      17
+
+EEPROM Allocation
+Variable                                                          Address   Size
+--------------------------------------------------------------------------------
+data_1                                                            0x0000      28
+posisi_lat                                                        0x001C       8
+posisi_long                                                       0x0024       9
+data_extension                                                    0x002D       7
+komentar                                                          0x0034      14
+status                                                            0x0042      47
+beacon_stat                                                       0x0071       1
+xcount                                                            0x0072       1
+
+Register Allocation
+Variable                                                          Register  Size
+--------------------------------------------------------------------------------
+nada                                                              GPIOR0.0  1bit
+crc                                                               R2,R3        2

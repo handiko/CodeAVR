@@ -1,0 +1,42 @@
+RAM Allocation
+Variable                                                          Address   Size
+--------------------------------------------------------------------------------
+error                                                             0x0160       2
+last_error                                                        0x0162       2
+PV                                                                0x0164       2
+Kp                                                                0x0166       2
+Kd                                                                0x0168       2
+intervalPWM                                                       0x016A       2
+x                                                                 0x016C       2
+
+EEPROM Allocation
+Variable                                                          Address   Size
+--------------------------------------------------------------------------------
+cenlimit                                                          0x0000      16
+lowlimit1                                                         0x0010       2
+lowlimit2                                                         0x0012       2
+lowlimit3                                                         0x0014       2
+lowlimit4                                                         0x0016       2
+lowlimit5                                                         0x0018       2
+lowlimit6                                                         0x001A       2
+lowlimit7                                                         0x001C       2
+lowlimit8                                                         0x001E       2
+uplimit1                                                          0x0020       2
+uplimit2                                                          0x0022       2
+uplimit3                                                          0x0024       2
+uplimit4                                                          0x0026       2
+uplimit5                                                          0x0028       2
+uplimit6                                                          0x002A       2
+uplimit7                                                          0x002C       2
+uplimit8                                                          0x002E       2
+
+Register Allocation
+Variable                                                          Register  Size
+--------------------------------------------------------------------------------
+xcount                                                            R5           1
+lpwm                                                              R4           1
+rpwm                                                              R7           1
+i                                                                 R6           1
+sensor                                                            R9           1
+j                                                                 R10,R11      2
+d_error                                                           R12,R13      2

@@ -1,0 +1,31 @@
+RAM Allocation
+Variable                                                          Address   Size
+--------------------------------------------------------------------------------
+error                                                             0x0160       2
+last_error                                                        0x0162       2
+PV                                                                0x0164       2
+Kp                                                                0x0166       2
+Kd                                                                0x0168       2
+intervalPWM                                                       0x016A       2
+_base_y                                                           0x016C       4
+_lcd_y                                                            0x0170       1
+_lcd_maxx                                                         0x0171       1
+
+EEPROM Allocation
+Variable                                                          Address   Size
+--------------------------------------------------------------------------------
+cenlimit                                                          0x0000      16
+lowlimit                                                          0x0010      16
+uplimit                                                           0x0020      16
+
+Register Allocation
+Variable                                                          Register  Size
+--------------------------------------------------------------------------------
+xcount                                                            R5           1
+lpwm                                                              R4           1
+rpwm                                                              R7           1
+i                                                                 R6           1
+sensor                                                            R9           1
+j                                                                 R10,R11      2
+d_error                                                           R12,R13      2
+_lcd_x                                                            R8           1

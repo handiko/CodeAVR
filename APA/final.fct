@@ -1,0 +1,4 @@
+main DSTACK_USAGE:0 DSTACK_LEVEL:0 FILE:"final.c" LINE:209
+timer0_ovf_isr DSTACK_USAGE:12 DSTACK_LEVEL:12 FILE:"final.c" LINE:75
+puts DSTACK_USAGE:3 DSTACK_LEVEL:15 FILE:"C:\cvavreval\lib\stdio.lib" LINE:218
+putchar DSTACK_USAGE:1 DSTACK_LEVEL:16 FILE:"C:\cvavreval\lib\stdio.lib" LINE:204

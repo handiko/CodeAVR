@@ -1,0 +1,5 @@
+main DSTACK_USAGE:0 DSTACK_LEVEL:0 FILE:"pattern.c" LINE:147
+read_adc DSTACK_USAGE:1 DSTACK_LEVEL:1 FILE:"pattern.c" LINE:112
+timer1_ovf_isr DSTACK_USAGE:12 DSTACK_LEVEL:13 FILE:"pattern.c" LINE:47
+puts DSTACK_USAGE:3 DSTACK_LEVEL:16 FILE:"C:\cvavreval\lib\stdio.lib" LINE:218
+putchar DSTACK_USAGE:1 DSTACK_LEVEL:17 FILE:"C:\cvavreval\lib\stdio.lib" LINE:204

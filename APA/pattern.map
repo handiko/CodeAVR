@@ -1,0 +1,16 @@
+RAM Allocation
+Variable                                                          Address   Size
+--------------------------------------------------------------------------------
+sen_buff                                                          0x026E       4
+sen                                                               0x0272      26
+
+EEPROM Allocation
+Variable                                                          Address   Size
+--------------------------------------------------------------------------------
+
+Register Allocation
+Variable                                                          Register  Size
+--------------------------------------------------------------------------------
+time                                                              R4,R5        2
+i                                                                 R7           1
+en_adc                                                            R2.0      1bit

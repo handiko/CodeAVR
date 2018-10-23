@@ -1,0 +1,33 @@
+RAM Allocation
+Variable                                                          Address   Size
+--------------------------------------------------------------------------------
+rx_buffer                                                         0x026D       8
+tx_buffer                                                         0x0275       8
+lcd                                                               0x027D      32
+no_menu                                                           0x029D       1
+detik                                                             0x029E       1
+adc_menu                                                          0x029F       1
+skor                                                              0x02A0       2
+senbuff                                                           0x02A2      25
+sen                                                               0x02BB      25
+_base_y                                                           0x02D4       4
+_lcd_x                                                            0x02D8       1
+_lcd_y                                                            0x02D9       1
+_lcd_maxx                                                         0x02DA       1
+
+EEPROM Allocation
+Variable                                                          Address   Size
+--------------------------------------------------------------------------------
+
+Register Allocation
+Variable                                                          Register  Size
+--------------------------------------------------------------------------------
+timebase                                                          R4,R5        2
+count                                                             R6,R7        2
+rx_wr_index                                                       R9           1
+rx_rd_index                                                       R8           1
+rx_counter                                                        R11          1
+rx_buffer_overflow                                                R2.0      1bit
+tx_wr_index                                                       R10          1
+tx_rd_index                                                       R13          1
+tx_counter                                                        R12          1

@@ -1,0 +1,554 @@
+;/*****************************************************
+;This program was produced by the
+;CodeWizardAVR V2.05.0 Professional
+;Automatic Program Generator
+;© Copyright 1998-2010 Pavel Haiduc, HP InfoTech s.r.l.
+;http://www.hpinfotech.com
+;
+;Project :
+;Version :
+;Date    : 6/8/2012
+;Author  :
+;Company :
+;Comments:
+;
+;
+;Chip type               : ATmega32
+;Program type            : Application
+;AVR Core Clock frequency: 11.059200 MHz
+;Memory model            : Small
+;External RAM size       : 0
+;Data Stack size         : 512
+;*****************************************************/
+;
+;#include <mega32.h>
+;PCODE: $00000000 VOL: 0
+	#ifndef __SLEEP_DEFINED__
+;PCODE: $00000001 VOL: 0
+	#define __SLEEP_DEFINED__
+;PCODE: $00000002 VOL: 0
+	.EQU __se_bit=0x80
+;PCODE: $00000003 VOL: 0
+	.EQU __sm_mask=0x70
+;PCODE: $00000004 VOL: 0
+	.EQU __sm_powerdown=0x20
+;PCODE: $00000005 VOL: 0
+	.EQU __sm_powersave=0x30
+;PCODE: $00000006 VOL: 0
+	.EQU __sm_standby=0x60
+;PCODE: $00000007 VOL: 0
+	.EQU __sm_ext_standby=0x70
+;PCODE: $00000008 VOL: 0
+	.EQU __sm_adc_noise_red=0x10
+;PCODE: $00000009 VOL: 0
+	.SET power_ctrl_reg=mcucr
+;PCODE: $0000000A VOL: 0
+	#endif
+;PCODE: $0000000B VOL: 0
+;PCODE: $0000000C VOL: 0
+;
+;#include <delay.h>
+;
+;#include <stdio.h>
+;
+;#define MUX_A	PINB.0
+;#define MUX_B	PINB.1
+;#define MUX_C	PINB.2
+;
+;bit en=0;
+;
+;unsigned char sen_buff[5];
+;unsigned char sen[26];
+;
+;char i;
+;
+;char ratusan(unsigned char in)
+; 0000 002A {
+
+	.CSEG
+;PCODE: $0000000D VOL: 0
+;PCODE: $0000000E VOL: 0
+; 0000 002B 	in/=100;
+;	in -> Y+0
+;PCODE: $0000000F VOL: 0
+;PCODE: $00000010 VOL: 0
+;PCODE: $00000011 VOL: 0
+;PCODE: $00000012 VOL: 0
+;PCODE: $00000013 VOL: 0
+; 0000 002C         //in/=10;
+; 0000 002D 
+; 0000 002E         return (in +'0');
+;PCODE: $00000014 VOL: 0
+;PCODE: $00000015 VOL: 0
+;PCODE: $00000016 VOL: 0
+;PCODE: $00000017 VOL: 0
+; 0000 002F }
+;PCODE: $00000018 VOL: 0
+;
+;char puluhan(unsigned char in)
+; 0000 0032 {
+;PCODE: $00000019 VOL: 0
+;PCODE: $0000001A VOL: 0
+; 0000 0033 	in%=100;
+;	in -> Y+0
+;PCODE: $0000001B VOL: 0
+;PCODE: $0000001C VOL: 0
+;PCODE: $0000001D VOL: 0
+;PCODE: $0000001E VOL: 0
+;PCODE: $0000001F VOL: 0
+; 0000 0034 
+; 0000 0035         return ((in / 10)+'0');
+;PCODE: $00000020 VOL: 0
+;PCODE: $00000021 VOL: 0
+;PCODE: $00000022 VOL: 0
+;PCODE: $00000023 VOL: 0
+;PCODE: $00000024 VOL: 0
+;PCODE: $00000025 VOL: 0
+;PCODE: $00000026 VOL: 0
+; 0000 0036 }
+;PCODE: $00000027 VOL: 0
+;
+;char satuan(unsigned char in)
+; 0000 0039 {
+;PCODE: $00000028 VOL: 0
+;PCODE: $00000029 VOL: 0
+; 0000 003A 	return ((in % 10)+'0');
+;	in -> Y+0
+;PCODE: $0000002A VOL: 0
+;PCODE: $0000002B VOL: 0
+;PCODE: $0000002C VOL: 0
+;PCODE: $0000002D VOL: 0
+;PCODE: $0000002E VOL: 0
+;PCODE: $0000002F VOL: 0
+;PCODE: $00000030 VOL: 0
+; 0000 003B }
+;PCODE: $00000031 VOL: 0
+;
+;// External Interrupt 0 service routine
+;interrupt [EXT_INT0] void ext_int0_isr(void)
+; 0000 003F {
+;PCODE: $00000032 VOL: 0
+;PCODE: $00000033 VOL: 0
+; 0000 0040 // Place your code here
+; 0000 0041 	if(en==1)
+;PCODE: $00000034 VOL: 0
+;PCODE: $00000035 VOL: 0
+;PCODE: $00000036 VOL: 0
+; 0000 0042         {
+; 0000 0043         	en=0;
+;PCODE: $00000037 VOL: 0
+;PCODE: $00000038 VOL: 0
+;PCODE: $00000039 VOL: 0
+; 0000 0044                 /*for(i=0;i<25;i++)
+; 0000 0045                 {
+; 0000 0046                         	putchar(13);
+; 0000 0047                                 putchar(ratusan(sen[i+1]));
+; 0000 0048                                 putchar(puluhan(sen[i+1]));
+; 0000 0049                                 putchar(satuan(sen[i+1]));
+; 0000 004A                                 sen[i+1]=0;
+; 0000 004B                 } */
+; 0000 004C 
+; 0000 004D                 putchar('A');
+;PCODE: $0000003A VOL: 0
+;PCODE: $0000003B VOL: 0
+;PCODE: $0000003C VOL: 0
+; 0000 004E         }
+; 0000 004F 
+; 0000 0050         if(en==0)
+;PCODE: $0000003D VOL: 0
+;PCODE: $0000003E VOL: 0
+;PCODE: $0000003F VOL: 0
+;PCODE: $00000040 VOL: 0
+; 0000 0051         {
+; 0000 0052         	en=1;
+;PCODE: $00000041 VOL: 0
+;PCODE: $00000042 VOL: 0
+;PCODE: $00000043 VOL: 0
+; 0000 0053                 putchar('B');
+;PCODE: $00000044 VOL: 0
+;PCODE: $00000045 VOL: 0
+;PCODE: $00000046 VOL: 0
+; 0000 0054         }
+; 0000 0055 
+; 0000 0056 }
+;PCODE: $00000047 VOL: 0
+;PCODE: $00000048 VOL: 0
+;PCODE: $00000049 VOL: 0
+;PCODE: $0000004A VOL: 0
+;
+;
+;
+;// Standard Input/Output functions
+;
+;
+;#define ADC_VREF_TYPE 0x60
+;
+;// Read the 8 most significant bits
+;// of the AD conversion result
+;unsigned char read_adc(unsigned char adc_input)
+; 0000 0062 {
+;PCODE: $0000004B VOL: 0
+;PCODE: $0000004C VOL: 0
+; 0000 0063 ADMUX=adc_input | (ADC_VREF_TYPE & 0xff);
+;	adc_input -> Y+0
+;PCODE: $0000004D VOL: 0
+;PCODE: $0000004E VOL: 0
+;PCODE: $0000004F VOL: 0
+; 0000 0064 // Delay needed for the stabilization of the ADC input voltage
+; 0000 0065 delay_us(10);
+;PCODE: $00000050 VOL: 0
+; 0000 0066 // Start the AD conversion
+; 0000 0067 ADCSRA|=0x40;
+;PCODE: $00000051 VOL: 0
+;PCODE: $00000052 VOL: 0
+; 0000 0068 // Wait for the AD conversion to complete
+; 0000 0069 while ((ADCSRA & 0x10)==0);
+;PCODE: $00000053 VOL: 0
+;PCODE: $00000054 VOL: 0
+;PCODE: $00000055 VOL: 0
+;PCODE: $00000056 VOL: 0
+;PCODE: $00000057 VOL: 0
+;PCODE: $00000058 VOL: 0
+; 0000 006A ADCSRA|=0x10;
+;PCODE: $00000059 VOL: 0
+;PCODE: $0000005A VOL: 0
+; 0000 006B return ADCH;
+;PCODE: $0000005B VOL: 0
+;PCODE: $0000005C VOL: 0
+;PCODE: $0000005D VOL: 0
+; 0000 006C }
+;PCODE: $0000005E VOL: 0
+;
+;// Declare your global variables here
+;
+;void main(void)
+; 0000 0071 {
+;PCODE: $0000005F VOL: 0
+; 0000 0072 // Declare your local variables here
+; 0000 0073 
+; 0000 0074 // Input/Output Ports initialization
+; 0000 0075 // Port A initialization
+; 0000 0076 // Func7=In Func6=In Func5=In Func4=In Func3=In Func2=In Func1=In Func0=In
+; 0000 0077 // State7=T State6=T State5=T State4=T State3=T State2=T State1=T State0=T
+; 0000 0078 PORTA=0x00;
+;PCODE: $00000060 VOL: 0
+;PCODE: $00000061 VOL: 0
+; 0000 0079 DDRA=0x00;
+;PCODE: $00000062 VOL: 0
+;PCODE: $00000063 VOL: 0
+; 0000 007A 
+; 0000 007B // Port B initialization
+; 0000 007C // Func7=In Func6=In Func5=In Func4=In Func3=In Func2=In Func1=In Func0=In
+; 0000 007D // State7=T State6=T State5=T State4=T State3=T State2=T State1=T State0=T
+; 0000 007E PORTB=0x00;
+;PCODE: $00000064 VOL: 0
+;PCODE: $00000065 VOL: 0
+; 0000 007F DDRB=0x00;
+;PCODE: $00000066 VOL: 0
+;PCODE: $00000067 VOL: 0
+; 0000 0080 
+; 0000 0081 // Port C initialization
+; 0000 0082 // Func7=In Func6=In Func5=In Func4=In Func3=In Func2=In Func1=In Func0=In
+; 0000 0083 // State7=T State6=T State5=T State4=T State3=T State2=T State1=T State0=T
+; 0000 0084 PORTC=0x00;
+;PCODE: $00000068 VOL: 0
+;PCODE: $00000069 VOL: 0
+; 0000 0085 DDRC=0x00;
+;PCODE: $0000006A VOL: 0
+;PCODE: $0000006B VOL: 0
+; 0000 0086 
+; 0000 0087 // Port D initialization
+; 0000 0088 // Func7=In Func6=In Func5=In Func4=In Func3=In Func2=In Func1=Out Func0=In
+; 0000 0089 // State7=T State6=T State5=T State4=T State3=T State2=T State1=1 State0=P
+; 0000 008A PORTD=0x03;
+;PCODE: $0000006C VOL: 0
+;PCODE: $0000006D VOL: 0
+; 0000 008B DDRD=0x02;
+;PCODE: $0000006E VOL: 0
+;PCODE: $0000006F VOL: 0
+; 0000 008C 
+; 0000 008D // Timer/Counter 0 initialization
+; 0000 008E // Clock source: System Clock
+; 0000 008F // Clock value: Timer 0 Stopped
+; 0000 0090 // Mode: Normal top=0xFF
+; 0000 0091 // OC0 output: Disconnected
+; 0000 0092 TCCR0=0x00;
+;PCODE: $00000070 VOL: 0
+;PCODE: $00000071 VOL: 0
+; 0000 0093 TCNT0=0x00;
+;PCODE: $00000072 VOL: 0
+;PCODE: $00000073 VOL: 0
+; 0000 0094 OCR0=0x00;
+;PCODE: $00000074 VOL: 0
+;PCODE: $00000075 VOL: 0
+; 0000 0095 
+; 0000 0096 // Timer/Counter 1 initialization
+; 0000 0097 // Clock source: System Clock
+; 0000 0098 // Clock value: Timer1 Stopped
+; 0000 0099 // Mode: Normal top=0xFFFF
+; 0000 009A // OC1A output: Discon.
+; 0000 009B // OC1B output: Discon.
+; 0000 009C // Noise Canceler: Off
+; 0000 009D // Input Capture on Falling Edge
+; 0000 009E // Timer1 Overflow Interrupt: Off
+; 0000 009F // Input Capture Interrupt: Off
+; 0000 00A0 // Compare A Match Interrupt: Off
+; 0000 00A1 // Compare B Match Interrupt: Off
+; 0000 00A2 TCCR1A=0x00;
+;PCODE: $00000076 VOL: 0
+;PCODE: $00000077 VOL: 0
+; 0000 00A3 TCCR1B=0x00;
+;PCODE: $00000078 VOL: 0
+;PCODE: $00000079 VOL: 0
+; 0000 00A4 TCNT1H=0x00;
+;PCODE: $0000007A VOL: 0
+;PCODE: $0000007B VOL: 0
+; 0000 00A5 TCNT1L=0x00;
+;PCODE: $0000007C VOL: 0
+;PCODE: $0000007D VOL: 0
+; 0000 00A6 ICR1H=0x00;
+;PCODE: $0000007E VOL: 0
+;PCODE: $0000007F VOL: 0
+; 0000 00A7 ICR1L=0x00;
+;PCODE: $00000080 VOL: 0
+;PCODE: $00000081 VOL: 0
+; 0000 00A8 OCR1AH=0x00;
+;PCODE: $00000082 VOL: 0
+;PCODE: $00000083 VOL: 0
+; 0000 00A9 OCR1AL=0x00;
+;PCODE: $00000084 VOL: 0
+;PCODE: $00000085 VOL: 0
+; 0000 00AA OCR1BH=0x00;
+;PCODE: $00000086 VOL: 0
+;PCODE: $00000087 VOL: 0
+; 0000 00AB OCR1BL=0x00;
+;PCODE: $00000088 VOL: 0
+;PCODE: $00000089 VOL: 0
+; 0000 00AC 
+; 0000 00AD // Timer/Counter 2 initialization
+; 0000 00AE // Clock source: System Clock
+; 0000 00AF // Clock value: Timer2 Stopped
+; 0000 00B0 // Mode: Normal top=0xFF
+; 0000 00B1 // OC2 output: Disconnected
+; 0000 00B2 ASSR=0x00;
+;PCODE: $0000008A VOL: 0
+;PCODE: $0000008B VOL: 0
+; 0000 00B3 TCCR2=0x00;
+;PCODE: $0000008C VOL: 0
+;PCODE: $0000008D VOL: 0
+; 0000 00B4 TCNT2=0x00;
+;PCODE: $0000008E VOL: 0
+;PCODE: $0000008F VOL: 0
+; 0000 00B5 OCR2=0x00;
+;PCODE: $00000090 VOL: 0
+;PCODE: $00000091 VOL: 0
+; 0000 00B6 
+; 0000 00B7 // External Interrupt(s) initialization
+; 0000 00B8 // INT0: On
+; 0000 00B9 // INT0 Mode: Any change
+; 0000 00BA // INT1: Off
+; 0000 00BB // INT2: Off
+; 0000 00BC GICR|=0x40;
+;PCODE: $00000092 VOL: 0
+;PCODE: $00000093 VOL: 0
+;PCODE: $00000094 VOL: 0
+; 0000 00BD MCUCR=0x01;
+;PCODE: $00000095 VOL: 0
+;PCODE: $00000096 VOL: 0
+; 0000 00BE MCUCSR=0x00;
+;PCODE: $00000097 VOL: 0
+;PCODE: $00000098 VOL: 0
+; 0000 00BF GIFR=0x40;
+;PCODE: $00000099 VOL: 0
+;PCODE: $0000009A VOL: 0
+; 0000 00C0 
+; 0000 00C1 // Timer(s)/Counter(s) Interrupt(s) initialization
+; 0000 00C2 TIMSK=0x00;
+;PCODE: $0000009B VOL: 0
+;PCODE: $0000009C VOL: 0
+; 0000 00C3 
+; 0000 00C4 // USART initialization
+; 0000 00C5 // Communication Parameters: 8 Data, 1 Stop, No Parity
+; 0000 00C6 // USART Receiver: Off
+; 0000 00C7 // USART Transmitter: On
+; 0000 00C8 // USART Mode: Asynchronous
+; 0000 00C9 // USART Baud Rate: 1200
+; 0000 00CA UCSRA=0x00;
+;PCODE: $0000009D VOL: 0
+;PCODE: $0000009E VOL: 0
+; 0000 00CB UCSRB=0x08;
+;PCODE: $0000009F VOL: 0
+;PCODE: $000000A0 VOL: 0
+; 0000 00CC UCSRC=0x86;
+;PCODE: $000000A1 VOL: 0
+;PCODE: $000000A2 VOL: 0
+; 0000 00CD UBRRH=0x02;
+;PCODE: $000000A3 VOL: 0
+;PCODE: $000000A4 VOL: 0
+; 0000 00CE UBRRL=0x3F;
+;PCODE: $000000A5 VOL: 0
+;PCODE: $000000A6 VOL: 0
+; 0000 00CF 
+; 0000 00D0 // Analog Comparator initialization
+; 0000 00D1 // Analog Comparator: Off
+; 0000 00D2 // Analog Comparator Input Capture by Timer/Counter 1: Off
+; 0000 00D3 ACSR=0x80;
+;PCODE: $000000A7 VOL: 0
+;PCODE: $000000A8 VOL: 0
+; 0000 00D4 SFIOR=0x00;
+;PCODE: $000000A9 VOL: 0
+;PCODE: $000000AA VOL: 0
+; 0000 00D5 
+; 0000 00D6 // ADC initialization
+; 0000 00D7 // ADC Clock frequency: 691.200 kHz
+; 0000 00D8 // ADC Voltage Reference: AVCC pin
+; 0000 00D9 // Only the 8 most significant bits of
+; 0000 00DA // the AD conversion result are used
+; 0000 00DB ADMUX=ADC_VREF_TYPE & 0xff;
+;PCODE: $000000AB VOL: 0
+;PCODE: $000000AC VOL: 0
+; 0000 00DC ADCSRA=0x84;
+;PCODE: $000000AD VOL: 0
+;PCODE: $000000AE VOL: 0
+; 0000 00DD 
+; 0000 00DE // SPI initialization
+; 0000 00DF // SPI disabled
+; 0000 00E0 SPCR=0x00;
+;PCODE: $000000AF VOL: 0
+;PCODE: $000000B0 VOL: 0
+; 0000 00E1 
+; 0000 00E2 // TWI initialization
+; 0000 00E3 // TWI disabled
+; 0000 00E4 TWCR=0x00;
+;PCODE: $000000B1 VOL: 0
+;PCODE: $000000B2 VOL: 0
+; 0000 00E5 
+; 0000 00E6 en=0;
+;PCODE: $000000B3 VOL: 0
+;PCODE: $000000B4 VOL: 0
+;PCODE: $000000B5 VOL: 0
+; 0000 00E7 
+; 0000 00E8 // Global enable interrupts
+; 0000 00E9 #asm("sei")
+;PCODE: $000000B6 VOL: 0
+	sei
+;PCODE: $000000B7 VOL: 0
+; 0000 00EA 
+; 0000 00EB while (1)
+;PCODE: $000000B8 VOL: 0
+; 0000 00EC       {
+; 0000 00ED       // Place your code here
+; 0000 00EE       	/*while(en==1)
+; 0000 00EF         {
+; 0000 00F0         	if((MUX_A==0)&&(MUX_B==0)&&(MUX_C==0))
+; 0000 00F1                 {
+; 0000 00F2                 	sen_buff[0]=read_adc(0);
+; 0000 00F3                         sen_buff[1]=read_adc(1);
+; 0000 00F4                         sen_buff[2]=read_adc(2);
+; 0000 00F5                         sen_buff[3]=read_adc(3);
+; 0000 00F6 
+; 0000 00F7                         if(sen_buff[0]>sen[17])	sen[17]=sen_buff[0];
+; 0000 00F8                         if(sen_buff[1]>sen[9])	sen[9]=sen_buff[1];
+; 0000 00F9                         if(sen_buff[2]>sen[1])	sen[1]=sen_buff[2];
+; 0000 00FA                         if(sen_buff[3]>sen[25])	sen[25]=sen_buff[3];
+; 0000 00FB                 }
+; 0000 00FC 
+; 0000 00FD                 else if((MUX_A==0)&&(MUX_B==0)&&(MUX_C==1))
+; 0000 00FE                 {
+; 0000 00FF                 	sen_buff[0]=read_adc(0);
+; 0000 0100                         sen_buff[1]=read_adc(1);
+; 0000 0101                         sen_buff[2]=read_adc(2);
+; 0000 0102                         sen_buff[3]=read_adc(3);
+; 0000 0103 
+; 0000 0104                         if(sen_buff[0]>sen[18])	sen[18]=sen_buff[0];
+; 0000 0105                         if(sen_buff[1]>sen[10])	sen[10]=sen_buff[1];
+; 0000 0106                         if(sen_buff[2]>sen[2])	sen[2]=sen_buff[2];
+; 0000 0107                         if(sen_buff[3]>sen[25])	sen[25]=sen_buff[3];
+; 0000 0108                 }
+; 0000 0109 
+; 0000 010A                 else if((MUX_A==0)&&(MUX_B==1)&&(MUX_C==0))
+; 0000 010B                 {
+; 0000 010C                 	sen_buff[0]=read_adc(0);
+; 0000 010D                         sen_buff[1]=read_adc(1);
+; 0000 010E                         sen_buff[2]=read_adc(2);
+; 0000 010F                         sen_buff[3]=read_adc(3);
+; 0000 0110 
+; 0000 0111                         if(sen_buff[0]>sen[19])	sen[18]=sen_buff[0];
+; 0000 0112                         if(sen_buff[1]>sen[11])	sen[11]=sen_buff[1];
+; 0000 0113                         if(sen_buff[2]>sen[3])	sen[3]=sen_buff[2];
+; 0000 0114                         if(sen_buff[3]>sen[25])	sen[25]=sen_buff[3];
+; 0000 0115                 }
+; 0000 0116 
+; 0000 0117                 else if((MUX_A==0)&&(MUX_B==1)&&(MUX_C==1))
+; 0000 0118                 {
+; 0000 0119                 	sen_buff[0]=read_adc(0);
+; 0000 011A                         sen_buff[1]=read_adc(1);
+; 0000 011B                         sen_buff[2]=read_adc(2);
+; 0000 011C                         sen_buff[3]=read_adc(3);
+; 0000 011D 
+; 0000 011E                         if(sen_buff[0]>sen[20])	sen[20]=sen_buff[0];
+; 0000 011F                         if(sen_buff[1]>sen[12])	sen[12]=sen_buff[1];
+; 0000 0120                         if(sen_buff[2]>sen[4])	sen[4]=sen_buff[2];
+; 0000 0121                         if(sen_buff[3]>sen[25])	sen[25]=sen_buff[3];
+; 0000 0122                 }
+; 0000 0123 
+; 0000 0124                 else if((MUX_A==1)&&(MUX_B==0)&&(MUX_C==0))
+; 0000 0125                 {
+; 0000 0126                 	sen_buff[0]=read_adc(0);
+; 0000 0127                         sen_buff[1]=read_adc(1);
+; 0000 0128                         sen_buff[2]=read_adc(2);
+; 0000 0129                         sen_buff[3]=read_adc(3);
+; 0000 012A 
+; 0000 012B                         if(sen_buff[0]>sen[21])	sen[21]=sen_buff[0];
+; 0000 012C                         if(sen_buff[1]>sen[13])	sen[13]=sen_buff[1];
+; 0000 012D                         if(sen_buff[2]>sen[5])	sen[5]=sen_buff[2];
+; 0000 012E                         if(sen_buff[3]>sen[25])	sen[25]=sen_buff[3];
+; 0000 012F                 }
+; 0000 0130 
+; 0000 0131                 else if((MUX_A==1)&&(MUX_B==0)&&(MUX_C==1))
+; 0000 0132                 {
+; 0000 0133                 	sen_buff[0]=read_adc(0);
+; 0000 0134                         sen_buff[1]=read_adc(1);
+; 0000 0135                         sen_buff[2]=read_adc(2);
+; 0000 0136                         sen_buff[3]=read_adc(3);
+; 0000 0137 
+; 0000 0138                         if(sen_buff[0]>sen[22])	sen[22]=sen_buff[0];
+; 0000 0139                         if(sen_buff[1]>sen[14])	sen[14]=sen_buff[1];
+; 0000 013A                         if(sen_buff[2]>sen[6])	sen[6]=sen_buff[2];
+; 0000 013B                         if(sen_buff[3]>sen[25])	sen[25]=sen_buff[3];
+; 0000 013C                 }
+; 0000 013D 
+; 0000 013E                 else if((MUX_A==1)&&(MUX_B==1)&&(MUX_C==0))
+; 0000 013F                 {
+; 0000 0140                 	sen_buff[0]=read_adc(0);
+; 0000 0141                         sen_buff[1]=read_adc(1);
+; 0000 0142                         sen_buff[2]=read_adc(2);
+; 0000 0143                         sen_buff[3]=read_adc(3);
+; 0000 0144 
+; 0000 0145                         if(sen_buff[0]>sen[23])	sen[23]=sen_buff[0];
+; 0000 0146                         if(sen_buff[1]>sen[15])	sen[15]=sen_buff[1];
+; 0000 0147                         if(sen_buff[2]>sen[7])	sen[7]=sen_buff[2];
+; 0000 0148                         if(sen_buff[3]>sen[25])	sen[25]=sen_buff[3];
+; 0000 0149                 }
+; 0000 014A 
+; 0000 014B                 else if((MUX_A==1)&&(MUX_B==1)&&(MUX_C==1))
+; 0000 014C                 {
+; 0000 014D                 	sen_buff[0]=read_adc(0);
+; 0000 014E                         sen_buff[1]=read_adc(1);
+; 0000 014F                         sen_buff[2]=read_adc(2);
+; 0000 0150                         sen_buff[3]=read_adc(3);
+; 0000 0151 
+; 0000 0152                         if(sen_buff[0]>sen[24])	sen[24]=sen_buff[0];
+; 0000 0153                         if(sen_buff[1]>sen[16])	sen[16]=sen_buff[1];
+; 0000 0154                         if(sen_buff[2]>sen[8])	sen[8]=sen_buff[2];
+; 0000 0155                         if(sen_buff[3]>sen[25])	sen[25]=sen_buff[3];
+; 0000 0156                 }
+; 0000 0157         }*/
+; 0000 0158 
+; 0000 0159       }
+;PCODE: $000000B9 VOL: 0
+;PCODE: $000000BA VOL: 0
+; 0000 015A }
+;PCODE: $000000BB VOL: 0
+;PCODE: $000000BC VOL: 0
+;PCODE: $000000BD VOL: 0

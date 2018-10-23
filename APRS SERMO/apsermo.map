@@ -1,0 +1,32 @@
+RAM Allocation
+Variable                                                          Address   Size
+--------------------------------------------------------------------------------
+bit_stuff                                                         0x0260       1
+rat                                                               0x0261       2
+pul                                                               0x0263       2
+sat                                                               0x0265       2
+crc_lo                                                            0x0267       1
+crc_hi                                                            0x0268       1
+xor_in                                                            0x0269       2
+
+EEPROM Allocation
+Variable                                                          Address   Size
+--------------------------------------------------------------------------------
+beacon_stat                                                       0x0000       1
+idx                                                               0x0001       2
+_idx                                                              0x0003       6
+s1                                                                0x0009       1
+s2                                                                0x000A       1
+s3                                                                0x000B       1
+s4                                                                0x000C       1
+_ch1                                                              0x000D       3
+_ch2                                                              0x0010       3
+_ch3                                                              0x0013       3
+_ch4                                                              0x0016       3
+
+Register Allocation
+Variable                                                          Register  Size
+--------------------------------------------------------------------------------
+xcount                                                            R5           1
+nada                                                              R2.0      1bit
+crc                                                               R6,R7        2

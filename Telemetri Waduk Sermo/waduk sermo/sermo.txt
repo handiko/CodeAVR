@@ -1,0 +1,802 @@
+unit Unit1;
+
+interface
+
+uses
+  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
+  ExtCtrls, StdCtrls, Buttons, Gauges, TeEngine, Series, TeeProcs, Chart,
+  DBCtrls, Mask, Grids, DBGrids, Db, ADODB, DBTables, DBChart, ImgList,
+  ToolWin, ComCtrls, Menus,ExtDlgs,teeprevi, CheckLst, SerialNG, Shellapi;
+
+type
+  TForm1 = class(TForm)
+    Timer1: TTimer;
+    Panel2: TPanel;
+    MainMenu1: TMainMenu;
+    File1: TMenuItem;
+    New1: TMenuItem;
+    Save1: TMenuItem;
+    Delete1: TMenuItem;
+    N1: TMenuItem;
+    Exit1: TMenuItem;
+    ToolBar1: TToolBar;
+    ImageList1: TImageList;
+    ToolButton1: TToolButton;
+    ToolButton2: TToolButton;
+    ToolButton3: TToolButton;
+    ToolButton4: TToolButton;
+    tbstart: TToolButton;
+    ToolButton7: TToolButton;
+    ToolButton8: TToolButton;
+    N2: TMenuItem;
+    ToolButton10: TToolButton;
+    Chart1: TChart;
+    ToolButton11: TToolButton;
+    ToolButton12: TToolButton;
+    PrintChart1: TMenuItem;
+    ColorDialog1: TColorDialog;
+    ToolButton13: TToolButton;
+    Help1: TMenuItem;
+    Run1: TMenuItem;
+    ToolButton14: TToolButton;
+    tbconti: TToolButton;
+    Cb3D: TCheckBox;
+    tbview: TToolButton;
+    ToolButton17: TToolButton;
+    CbOrder: TComboBox;
+    clinput: TCheckListBox;
+    Series1: TFastLineSeries;
+    Series2: TFastLineSeries;
+    Series3: TFastLineSeries;
+    Series4: TFastLineSeries;
+    Series5: TFastLineSeries;
+    Series6: TFastLineSeries;
+    Series7: TFastLineSeries;
+    Series8: TFastLineSeries;
+    Series9: TFastLineSeries;
+    Series10: TFastLineSeries;
+    Series11: TFastLineSeries;
+    Series12: TFastLineSeries;
+    OpenPictureDialog1: TOpenPictureDialog;
+    OpenDialog1: TOpenDialog;
+    SaveAs1: TMenuItem;
+    N3: TMenuItem;
+    Load1: TMenuItem;
+    N4: TMenuItem;
+    SaveDialog1: TSaveDialog;
+    Sp: TSerialPortNG;
+    Timer11: TTimer;
+    Timer12: TTimer;
+    CbHasil: TComboBox;
+    tbsend: TToolButton;
+    ToolButton6: TToolButton;
+    sb: TStatusBar;
+    Timer2: TTimer;
+    Setting1: TMenuItem;
+    Viewchart1: TMenuItem;
+    Ptt1: TMenuItem;
+    N5: TMenuItem;
+    Latar1: TMenuItem;
+    N15Detik1: TMenuItem;
+    N30Detik1: TMenuItem;
+    N1Menit1: TMenuItem;
+    N2Menit1: TMenuItem;
+    N5Menit1: TMenuItem;
+    N10Menit1: TMenuItem;
+    N20Menit1: TMenuItem;
+    N30Menit1: TMenuItem;
+    N1Jam1: TMenuItem;
+    N2Jam1: TMenuItem;
+    N5Jam1: TMenuItem;
+    N10Jam1: TMenuItem;
+    N1Hari1: TMenuItem;
+    N05Detik1: TMenuItem;
+    N1Detik1: TMenuItem;
+    Timer3: TTimer;
+    N6: TMenuItem;
+    AutoSave1: TMenuItem;
+    None1: TMenuItem;
+    N10Menit2: TMenuItem;
+    N30Menit2: TMenuItem;
+    N1Jam2: TMenuItem;
+    Timer4: TTimer;
+    procedure SaveChart;
+    procedure OpenChart;
+
+    procedure SaveColor;
+    procedure OpenColor;
+    Procedure ClearSeries;
+    Procedure Sim;
+    Procedure AktifChart;
+    procedure Waitsend;
+    procedure Timer1Timer(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
+    procedure Exit1Click(Sender: TObject);
+    procedure New1Click(Sender: TObject);
+    procedure Delete1Click(Sender: TObject);
+    procedure cb3dClick(Sender: TObject);
+    procedure PrintChart1Click(Sender: TObject);
+    procedure Chart1ClickLegend(Sender: TCustomChart; Button: TMouseButton;
+      Shift: TShiftState; X, Y: Integer);
+    procedure Help1Click(Sender: TObject);
+    procedure Run1Click(Sender: TObject);
+    procedure tbcontiClick(Sender: TObject);
+    procedure tbviewClick(Sender: TObject);
+    procedure Save1Click(Sender: TObject);
+    procedure clinputClickCheck(Sender: TObject);
+    procedure SaveAs1Click(Sender: TObject);
+    procedure Load1Click(Sender: TObject);
+    procedure SpRxClusterEvent(Sender: TObject);
+    procedure tbsendClick(Sender: TObject);
+    procedure Timer11Timer(Sender: TObject);
+    procedure Timer12Timer(Sender: TObject);
+    procedure CbHasilChange(Sender: TObject);
+    procedure sbDrawPanel(StatusBar: TStatusBar; Panel: TStatusPanel;
+      const Rect: TRect);
+    procedure Timer2Timer(Sender: TObject);
+    procedure Latar1Click(Sender: TObject);
+    procedure N15Detik1Click(Sender: TObject);
+    procedure N05Detik1Click(Sender: TObject);
+    procedure Timer3Timer(Sender: TObject);
+    procedure None1Click(Sender: TObject);
+    procedure Timer4Timer(Sender: TObject);
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+    Scolor: Tcolor;
+    Seri : Array [0..3,0..2] of TFastLineSeries;
+    Scala,MaxScala,Timebase,Timeelap : Tdatetime;
+  end;
+
+const
+  st: array [0..4] of string=('Wait','$STAND,','$3SEC,','$OFFPZ,','$ERRORADC,');
+  nb: array [0..4] of string=('WAIT..','STAND BY','AUTO 3SEC','OFF LINE','ADC ERROR');
+
+var
+  Form1: TForm1;
+  Start,tikus,Autonama,waitorder  : boolean;
+  Mytime,timefind : Tdatetime;
+  Nama,Dir,Order : String;
+  sbpan,status: byte;
+implementation
+
+
+{$R *.DFM}
+
+
+{   untuk mengirim cuma aktifkan ini aja;
+    sp.RTSState:=true;      //ptt di aktifkan
+   Timer11.Enabled:=true;
+}
+procedure TForm1.Timer11Timer(Sender: TObject);
+begin
+  Sp.SendString(Order);  //data dikirimkan
+  Timer11.Enabled:=false;
+  Timer12.Enabled:=true;
+end;
+
+procedure TForm1.Timer12Timer(Sender: TObject);
+begin
+   Timer12.Enabled:=false;
+   Sp.RTSState:=false;         //setelah selesai ptt dioffkan
+   sbpan:=0;  sb.Refresh;
+end;
+
+
+procedure Tform1.Waitsend;
+begin
+    waitorder:=false;
+    tbsend.Enabled:=false;        //kasih order 8 detik kemudian baru aktif
+    Timer4.Enabled:=true;
+    case cborder.ItemIndex of
+    0 : Order:='$PSTAT*';
+    1 : Order:='$STAND*';
+    2 : Order:='$3SEC*';
+    3 : Order:='$OFFPZ*';
+    end;
+    sb.Panels[2].Text:='Send : '+Order;
+    Sp.RTSState:=true;        //ptt di aktifkan
+    Timer11.Enabled:=true;
+    sbpan:=1; sb.Refresh;
+end;
+
+
+
+procedure TForm1.tbsendClick(Sender: TObject);
+var beda : TdateTime;
+begin
+    beda:=Now-TimeFind;  //kecuali 3sec dibawah 3 detik, yang lainnya langsung
+    if (status=2) and (beda < encodetime(0,0,3,0)) then waitorder:=true
+    else Waitsend;       //3sec ditunda
+end;
+
+
+procedure TForm1.Timer4Timer(Sender: TObject);
+begin
+    Timer4.Enabled:=false;
+    tbsend.Enabled:=true;
+end;
+
+
+{format datanya    DIMULAI $ DIAKHIRI *
+  ORDER            POSSIBLE MESSAGE SEND BACK
+  $PSTAT*..........$[STAND,3SEC,OFFPZ,ADCERROR]
+           Status      1     2    3      4
+  $STAND*...........$STAND*   di panggil, 3 detik kemudian dibalas
+  $3SEC* ...........$3SEC*	setiap 3 detik mancarin data
+  $OFFPZ*...........$OFFPZ*    system gak mancar2
+
+  SAAT STAND ato 3sec
+  DATA DITERIMA
+
+  $STAND,PZ1-MIN PZ1-AVE PZ1-MAX PZ2-MIN PZ2-AVE PZ2-MAX,
+         PZ3-MIN PZ3-AVE PZ3-MAX PZ4-MIN PZ4-AVE PZ4-MAX,*
+  $3SEC,PZ1-MIN PZ1-AVE PZ1-MAX PZ2-MIN PZ2-AVE PZ2-MAX,
+         PZ3-MIN PZ3-AVE PZ3-MAX PZ4-MIN PZ4-AVE PZ4-MAX,*
+}
+
+procedure TForm1.SpRxClusterEvent(Sender: TObject);
+var head,isi,tail,asl: string;
+    a,b,c,value,pi,sub,temp : integer;
+    valid : boolean;
+begin
+  if Sp.NextClusterSize >= 0 then
+  if Sp.NextClusterCCError = 0 then
+  begin
+     asl:=Sp.ReadNextClusterAsString;
+     head:='';  Isi:='';  Tail:='';
+     Temp:=0;   valid:=false;
+     for a:=1 to 4 do
+     begin
+        if copy(asl,0,length(st[a])) = st[a] then
+        begin
+           head:= st[a];
+           Temp:=a; valid:=true;  b:=length(st[a])+1 ;
+        end;
+     end;
+     if valid then
+     begin
+       valid:=false;
+       if (Temp in [1,2]) and (length(asl) > 23) then
+       begin
+          pi:=0; sub:=0;
+          for c:=b to b+11 do    //12 ini datanya
+          begin
+              Value:=ord(asl[c]);
+              Seri[pi,sub].AddXY(now,Value);
+              Isi:=Isi+inttostr(Value);
+              inc (Sub);
+              if Sub=3 then
+              begin sub:=0; inc (pi);
+                    if c <> b+12 then isi:=isi+' | ';
+              end else Isi:=Isi+',';
+           end;
+           b:=c; valid:=true;
+       end;
+       if ((Temp in [3,4]) and (length(asl) > 9)) or Valid then
+       begin
+           valid:=false;
+           if copy(asl,b,3) = ',**' then
+           begin Tail:=copy(asl,b,3);
+                 valid:=true;
+           end;
+       end;
+     end;
+     if valid then
+     begin Status:=temp;
+           Timefind:=now;
+           sb.Panels[2].Text:= 'Find : ['+Head+']['+Isi+']['+Tail+']'+
+                           FormatDateTime('"  on " d mmm " at " hh:nn:ss ',Now);
+           if Waitorder then Waitsend;
+     end else
+           sb.Panels[2].Text:= 'Error : '+asl+
+                           FormatDateTime('"  on " d mmm " at " hh:nn:ss ',Now);
+
+     sbpan:=2;  sb.Refresh;
+     timer2.Enabled:=true;
+   end;
+end;
+
+
+procedure TForm1.Timer2Timer(Sender: TObject);
+begin
+      Timer2.Enabled:=false;
+      sbpan:=0;  sb.Refresh;
+end;
+
+
+Procedure Tform1.Sim;
+var a,b,c,d : byte ;
+begin
+   for a:=0 to 3 do
+      for b:=0 to 2 do
+      begin
+         c:=random(20);
+         if c=1 then d:=0
+         else d:=random(255);
+         Seri[a,b].AddXY(now,d);
+      end;
+   Timer1.Enabled:=true;
+end;
+
+
+
+Procedure Tform1.ClearSeries;
+var a,b : byte;
+begin
+   for a:=0 to 3 do
+      for b:=0 to 2 do
+        Seri[a,b].Clear;
+end;
+
+procedure TForm1.Run1Click(Sender: TObject);
+begin
+   start:=not Start;
+   if Start then
+   begin
+      ClearSeries;
+      chart1.BottomAxis.Automatic:=false;
+      chart1.BottomAxis.SetMinMax(now,now+Scala);
+      chart1.MaxPointsPerPage:=0;
+      MaxScala:=now+Scala;
+      Timebase:=Now;
+      Run1.Caption:='Stop';
+      Run1.ImageIndex:=34;
+      Tbstart.ImageIndex:=36;
+      tbconti.Enabled:=false;
+      Latar1.Enabled:=false;
+      tbsend.Enabled:=true;
+      Timer1.Enabled:=true;
+      Timer3.Enabled:=true;
+      Sp.Active:=true;
+      cborder.ItemIndex:=0;
+      tbsendClick(Sender);
+   end else
+   begin
+      Sp.Active:=false;
+      Timer1.Enabled:=false;
+      Timer3.Enabled:=false;
+      Run1.Caption:='Run';
+      Run1.ImageIndex:=36;
+      Tbstart.ImageIndex:=34;
+      tbconti.Enabled:=true;
+      Latar1.Enabled:=true;
+      tbsend.Enabled:=false;
+      sb.Panels[2].Text:='Not Connected';
+   end
+end;
+
+procedure TForm1.tbcontiClick(Sender: TObject);
+begin
+      Run1.Caption:='Stop';
+      Run1.ImageIndex:=34;
+      Tbstart.ImageIndex:=36;
+      Latar1.Enabled:=false;
+      Start:=true;
+      sp.Active:=true;
+      Timer1.Enabled:=true;
+      Timer3.Enabled:=true;
+end;
+
+procedure TForm1.tbviewClick(Sender: TObject);
+begin
+  if Series1.count > 1 then
+  begin
+    if Series1.XValues[Series1.count-1]-Series1.XValues[0] > Scala then
+    begin
+       MaxScala:=Series1.XValues[Series1.count-1];
+       Chart1.BottomAxis.SetMinMax(maxScala-Scala,MaxScala);
+    end else
+    begin
+       MaxScala:=Series1.XValues[Series1.count-1];
+       Chart1.BottomAxis.SetMinMax(Series1.XValues[0],Series1.XValues[0]+Scala);
+    end;
+    timeelap:=Series1.XValues[Series1.count-1]-Series1.XValues[0];
+    chart1.BottomAxis.Title.Caption:=formatdatetime('"Waktu ("hh:nn:ss.zzz")"',Timeelap);
+  end;
+end;
+
+
+procedure TForm1.Timer1Timer(Sender: TObject);
+
+begin
+  // Timer1.Enabled:=false;   //simulasi versi
+  // sim;     //simulasi versi
+  sb.Panels[3].Text:=nb[Status];
+  timeelap:=Now-Timebase;
+  chart1.BottomAxis.Title.Caption:=formatdatetime('"Waktu ("hh:nn:ss")"',Timeelap);
+  if Series1.count > 1 then
+  begin
+   if series1.XValues[Series1.count-1] >= MaxScala then
+   begin
+     MaxScala:=now+Scala;
+     chart1.BottomAxis.SetMinMax(now,MaxScala);
+   end;
+  end;
+end;
+
+procedure TForm1.FormCreate(Sender: TObject);
+begin
+  Seri[0,0]:=Series1;  Seri[0,1]:=Series5;  Seri[0,2]:=Series9;
+  Seri[1,0]:=Series2;  Seri[1,1]:=Series6;  Seri[1,2]:=Series10;
+  Seri[2,0]:=Series3;  Seri[2,1]:=Series7;  Seri[2,2]:=Series11;
+  Seri[3,0]:=Series4;  Seri[3,1]:=Series8;  Seri[3,2]:=Series12;
+
+  Dir:=GetCurrentDir;
+  opendialog1.InitialDir:=GetCurrentDir;
+  savedialog1.InitialDir:=GetCurrentDir;
+
+  Status:=0;
+  timefind:=now;
+  Sp.Active := false;   //non aktifkan serial
+  sp.RTSState:=false;
+  sb.Panels[2].Text:='Not Connected';
+
+  Autonama:=false;
+  OpenColor;               //ambil warna dari file Color
+  cbhasil.ItemIndex:=1;
+  AktifChart;
+
+  Scala:=encodetime(0,1,0,0);  //defoult skala 1 menit
+end;
+
+procedure TForm1.Exit1Click(Sender: TObject);
+begin
+     SaveColor;
+     Sp.Active := False;     //matikan serial
+     Application.Terminate;
+end;
+
+
+procedure Tform1.openColor;
+var  a,b : byte;
+     F2: file of Tcolor;
+begin
+  AssignFile(F2,Dir+'\Color');
+  {$I-} Reset(F2);
+  {$I+}
+  if (IOResult = 0) then
+  begin
+    while not Eof(F2) do
+    begin
+       for a:=0 to 3 do
+       for b:=0 to 2 do
+       begin
+          Read(F2,Scolor);
+          Seri[a,b].LinePen.Color:=Scolor;
+       end;
+    end;
+    CloseFile(F2);
+  end;
+end;
+
+procedure Tform1.SaveColor;
+var   a,b : byte;
+      F2: file of Tcolor;
+begin
+   AssignFile(F2,Dir+'\Color');
+   {$I-} Rewrite(F2);
+   {$I+}
+   if (IOResult = 0) then
+   begin
+      for a:=0 to 3 do
+      for b:=0 to 2 do
+      begin
+         Scolor:=Seri[a,b].LinePen.Color;
+         Write(F2,Scolor);
+      end;
+   end;
+   CloseFile(F2);
+end;
+
+
+procedure Tform1.SaveChart;
+var  a,b : byte;
+     c  : integer;
+     Xa,ya : Double;
+     F2: file of Double;
+begin
+   AssignFile(F2,Nama);
+   {$I-} Rewrite(F2);
+   {$I+}
+   if (IOResult = 0) then
+   begin
+     for c:=0 to Series1.Count-1 do
+     begin
+       for a:=0 to 3 do
+       for b:=0 to 2 do
+       begin
+         Xa:=Seri[a,b].Xvalue[c];
+         Ya:=Seri[a,b].yvalue[c];
+         Write(F2,Xa);
+         Write(F2,Ya);
+       end;
+     end;
+     CloseFile(F2);
+   end;
+end;
+
+
+procedure Tform1.openChart;
+var  a,b : byte;
+     xa,ya : double;
+     F2: file of Double;
+begin
+  ClearSeries;
+  AssignFile(F2,Nama);
+  {$I-} Reset(F2);
+  {$I+}
+  if (IOResult = 0) then
+  begin
+    while not Eof(F2) do
+    begin
+      for a:=0 to 3 do
+      for b:=0 to 2 do
+      begin
+         Read(F2,Xa);
+         Read(F2,Ya);
+         Seri[a,b].AddXY(Xa,ya);
+      end;
+    end;
+    CloseFile(F2);
+  end;
+end;
+
+procedure TForm1.New1Click(Sender: TObject);
+begin
+  Autonama:=false;
+  ClearSeries;
+  sb.Panels[0].Text:='New File';
+end;
+
+procedure TForm1.Delete1Click(Sender: TObject);
+begin
+   if FileExists(Nama) then  DeleteFile(Nama);
+   New1Click(Sender);
+end;
+
+
+procedure TForm1.Save1Click(Sender: TObject);
+begin
+ if not Autonama then
+ begin
+   if Savedialog1.Execute then
+   if Savedialog1.FileName <> '' then
+   begin
+       Nama:=Savedialog1.FileName;
+       Autonama:=true;
+   end;
+ end;
+ sb.Panels[0].Text:='Save File : .....';
+ if Autonama then SaveChart;
+ sb.Panels[0].Text:='Save File : '+nama;
+end;
+
+
+procedure TForm1.SaveAs1Click(Sender: TObject);
+begin
+   Autonama:=false;
+   Save1Click(Sender);
+   if not Autonama then Autonama:=true;   //kalo gak jadi tetap seperti tadi
+end;
+
+
+procedure TForm1.Load1Click(Sender: TObject);
+begin
+   if Opendialog1.Execute then
+   if Opendialog1.FileName <> '' then
+   begin
+       sb.Panels[0].Text:='Load File : .....';
+       Nama:=Opendialog1.FileName;
+       Autonama:=true;
+       OpenChart;
+       tbviewClick(Sender);
+   end;
+   sb.Panels[0].Text:='Load File : '+nama;
+end;
+
+
+procedure TForm1.PrintChart1Click(Sender: TObject);
+begin
+     ChartPreview(form1,Chart1);
+end;
+
+
+procedure TForm1.cb3dClick(Sender: TObject);
+begin
+    if cb3d.Checked then chart1.View3D:=true
+    else chart1.View3D:=false;
+end;
+
+procedure TForm1.Chart1ClickLegend(Sender: TCustomChart;
+  Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+var a,b,c : byte;
+    pas : boolean;
+begin
+  if Not Start then
+    if colordialog1.Execute then
+    begin
+      c:=chart1.Legend.Clicked(x,y);  //caption:=' a :'+inttostr(a);
+      a:=0; pas := false;
+      repeat
+        if clinput.checked[a] then
+        begin
+          if cbhasil.ItemIndex = 3 then
+          begin
+             b:=0;
+             repeat
+                if c=0 then
+                begin
+                   Seri[a,b].LinePen.Color:=Colordialog1.Color;
+                   pas:= true;
+                end else dec (c);
+                inc (b)
+             until Pas or (b=3);
+          end else
+          begin
+            if c=0 then
+            begin
+               Seri[a,cbhasil.ItemIndex].LinePen.Color:=Colordialog1.Color;
+               pas:= true;
+            end else dec (c);
+          end;
+        end;
+        inc (a);
+      until pas or (a=4);
+    end;
+end;
+
+procedure TForm1.Help1Click(Sender: TObject);
+begin
+    shellexecute(0,'open',pchar(Dir+'\HELP.chm'),'','',SW_SHOW);
+end;
+
+Procedure Tform1.AktifChart;
+var a,b: byte;
+begin
+    for a:=0 to 3 do
+        for b:=0 to 2 do
+           Seri[a,b].Active:=false;
+    for a:=0 to 3 do
+    begin
+       if clinput.checked[a] then
+       begin
+           if cbhasil.ItemIndex = 3 then
+           begin for b:=0 to 2 do Seri[a,b].Active:=true
+           end else  Seri[a,cbhasil.ItemIndex].Active:=true;
+       end;
+    end;
+end;
+
+
+procedure TForm1.clinputClickCheck(Sender: TObject);
+begin
+   AktifChart;
+end;
+
+procedure TForm1.CbHasilChange(Sender: TObject);
+begin
+   AktifChart;
+end;
+
+
+procedure TForm1.SBDrawPanel(StatusBar: TStatusBar;
+  Panel: TStatusPanel; const Rect: TRect);
+begin
+  with Sb.Canvas do
+  begin
+     case Sbpan of
+     0 : begin    //wait
+           Brush.Color := clbtnface; FillRect(Rect);
+           ImageList1.Draw(SB.Canvas,Rect.Left,Rect.Top,46);
+         end;
+     1 : begin   //send
+           Brush.Color := clRed; FillRect(Rect);
+           ImageList1.Draw(SB.Canvas,Rect.Left,Rect.Top,42);
+         end;
+     2 : begin   //find
+           Brush.Color := cllime; FillRect(Rect);
+           ImageList1.Draw(SB.Canvas,Rect.Left,Rect.Top,48);
+         end;
+    end;
+  end;
+end;
+
+
+procedure TForm1.Latar1Click(Sender: TObject);
+begin
+     if Openpicturedialog1.Execute then
+     if Openpicturedialog1.FileName <> '' then
+     begin
+        chart1.BackImage.LoadFromFile(Openpicturedialog1.FileName);
+        chart1.BackImageInside:=true;
+     end;
+end;
+
+procedure TForm1.N15Detik1Click(Sender: TObject);
+var  I,a: Integer;
+begin
+  for I := 0 to Viewchart1.Count-1 do
+    if sender= Viewchart1.Items[I] then
+    begin Viewchart1.Items[I].Checked:=true;
+          Viewchart1.Items[I].Default:=true;
+          a:=I;
+    end else
+    begin
+        Viewchart1.Items[I].Checked:=false;
+        Viewchart1.Items[I].Default:=false;
+    end;
+
+   case a of
+    0 : Scala:=encodetime(0,0,15,0);   //15 detik
+    1 : Scala:=encodetime(0,0,30,0);
+    2 : Scala:=encodetime(0,1,0,0);    //1 menit
+    3 : Scala:=encodetime(0,2,0,0);
+    4 : Scala:=encodetime(0,5,0,0);
+    5 : Scala:=encodetime(0,10,0,0);
+    6 : Scala:=encodetime(0,20,0,0);
+    7 : Scala:=encodetime(0,30,0,0);
+    8 : Scala:=encodetime(1,0,0,0);     //1 jam
+    9 : Scala:=encodetime(2,0,0,0);
+    10 : Scala:=encodetime(5,0,0,0);
+    11 : Scala:=encodetime(10,0,0,0);
+    12 : Scala:=encodetime(23,59,59,0);  //1hari kurang 1 detik
+    end;
+    tbviewclick(sender);
+end;
+
+procedure TForm1.N05Detik1Click(Sender: TObject);
+var  I,a: Integer;
+begin
+  for I := 0 to Ptt1.Count-1 do
+  begin
+    if sender= Ptt1.Items[I] then
+    begin Ptt1.Items[I].Checked:=true;
+          Ptt1.Items[I].Default:=true;
+          a:=I;
+    end else
+    begin
+        Ptt1.Items[I].Checked:=false;
+        Ptt1.Items[I].Default:=false;
+    end;
+  end;
+   case a of
+    0 : Timer11.Interval:=500;
+    1 : Timer11.Interval:=1000;
+   end;
+end;
+
+procedure TForm1.Timer3Timer(Sender: TObject);
+begin
+ if not Autonama then
+ begin Nama:=Dir+'\Data\'+'SERMO'+formatdatetime('ddmmmhhnn',(now))+'.Gra';
+       Autonama:=true;
+ end;
+ Save1Click(Sender);
+end;
+
+procedure TForm1.None1Click(Sender: TObject);
+var  I,a: Integer;
+begin
+  for I := 0 to Autosave1.Count-1 do
+    if sender= Autosave1.Items[I] then
+    begin Autosave1.Items[I].Checked:=true;
+          Autosave1.Items[I].Default:=true;
+          a:=I;
+    end else
+    begin
+        Autosave1.Items[I].Checked:=false;
+        Autosave1.Items[I].Default:=false;
+    end;
+
+   case a of
+    0 : Timer3.Interval:=0;             //None
+    1 : Timer3.Interval:=1000*60*10;    //10 menit
+    2 : Timer3.Interval:=1000*60*30;    //30 menit
+    3 : Timer3.Interval:=1000*60*60;    //1 jam
+   end;
+
+end;
+
+end.

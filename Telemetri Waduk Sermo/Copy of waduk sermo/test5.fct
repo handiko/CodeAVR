@@ -1,0 +1,2 @@
+main DSTACK_USAGE:0 DSTACK_LEVEL:0 FILE:"test5.c" LINE:90
+putchar DSTACK_USAGE:1 DSTACK_LEVEL:1 FILE:"C:\cvavreval\lib\stdio.lib" LINE:204

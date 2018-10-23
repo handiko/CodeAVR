@@ -1,0 +1,598 @@
+/*****************************************************
+This program was produced by the
+CodeWizardAVR V2.05.0 Professional
+Automatic Program Generator
+© Copyright 1998-2010 Pavel Haiduc, HP InfoTech s.r.l.
+http://www.hpinfotech.com
+
+Project :
+Version :
+Date    : 9/14/2012
+Author  :
+Company :
+Comments:
+
+
+Chip type               : ATmega32
+Program type            : Application
+AVR Core Clock frequency: 11.059200 MHz
+Memory model            : Small
+External RAM size       : 0
+Data Stack size         : 512
+*****************************************************/
+
+#include <mega32.h>
+
+/******************* ADC ***************************/
+
+#include <delay.h>
+
+#define ADC_VREF_TYPE 0x20
+#define ADC_BUSY_LED    PORTC.4
+#define I_ADC_BUSY_LED  PORTC.5
+
+// Read the 8 most significant bits
+// of the AD conversion result
+unsigned char read_adc(unsigned char adc_input)
+{
+    ADC_BUSY_LED = 1;
+    I_ADC_BUSY_LED = 0;
+
+    ADMUX=adc_input | (ADC_VREF_TYPE & 0xff);
+
+    // Delay needed for the stabilization of the ADC input voltage
+    delay_us(10);
+
+    // Start the AD conversion
+    ADCSRA|=0x40;
+
+    // Wait for the AD conversion to complete
+    while ((ADCSRA & 0x10)==0);
+    ADCSRA|=0x10;
+
+    ADC_BUSY_LED = 0;
+
+    return ADCH;
+}
+
+/******************* END OF ADC ********************/
+
+/********************** USART INTERRUPT*************************/
+
+#ifndef RXB8
+#define RXB8 1
+#endif
+
+#ifndef TXB8
+#define TXB8 0
+#endif
+
+#ifndef UPE
+#define UPE 2
+#endif
+
+#ifndef DOR
+#define DOR 3
+#endif
+
+#ifndef FE
+#define FE 4
+#endif
+
+#ifndef UDRE
+#define UDRE 5
+#endif
+
+#ifndef RXC
+#define RXC 7
+#endif
+
+#define FRAMING_ERROR (1<<FE)
+#define PARITY_ERROR (1<<UPE)
+#define DATA_OVERRUN (1<<DOR)
+#define DATA_REGISTER_EMPTY (1<<UDRE)
+#define RX_COMPLETE (1<<RXC)
+
+// USART Receiver buffer
+#define RX_BUFFER_SIZE 8
+unsigned char rx_buffer[RX_BUFFER_SIZE];
+
+#if RX_BUFFER_SIZE <= 256
+    unsigned char rx_wr_index,rx_rd_index,rx_counter;
+#else
+    unsigned int rx_wr_index,rx_rd_index,rx_counter;
+#endif
+
+// This flag is set on USART Receiver buffer overflow
+bit rx_buffer_overflow;
+
+// USART Receiver interrupt service routine
+interrupt [USART_RXC] void usart_rx_isr(void)
+{
+    unsigned char status,data;
+    status=UCSRA;
+    data=UDR;
+    if ((status & (FRAMING_ERROR | PARITY_ERROR | DATA_OVERRUN))==0)
+    {
+        rx_buffer[rx_wr_index++]=data;
+        #if RX_BUFFER_SIZE == 256
+            // special case for receiver buffer size=256
+            if (++rx_counter == 0)
+            {
+        #else
+            if (rx_wr_index == RX_BUFFER_SIZE) rx_wr_index=0;
+            if (++rx_counter == RX_BUFFER_SIZE)
+            {
+                rx_counter=0;
+        #endif
+                rx_buffer_overflow=1;
+            }
+    }
+}
+
+#ifndef _DEBUG_TERMINAL_IO_
+// Get a character from the USART Receiver buffer
+#define _ALTERNATE_GETCHAR_
+#pragma used+
+unsigned char getchar(void)
+{
+    unsigned char data;
+    while (rx_counter==0);
+    data=rx_buffer[rx_rd_index++];
+    #if RX_BUFFER_SIZE != 256
+        if (rx_rd_index == RX_BUFFER_SIZE) rx_rd_index=0;
+    #endif
+    #asm("cli")
+    --rx_counter;
+    #asm("sei")
+    return data;
+}
+#pragma used-
+#endif
+
+// USART Transmitter buffer
+#define TX_BUFFER_SIZE 8
+unsigned char tx_buffer[TX_BUFFER_SIZE];
+
+#if TX_BUFFER_SIZE <= 256
+    unsigned char tx_wr_index,tx_rd_index,tx_counter;
+#else
+    unsigned int tx_wr_index,tx_rd_index,tx_counter;
+#endif
+
+// USART Transmitter interrupt service routine
+interrupt [USART_TXC] void usart_tx_isr(void)
+{
+    if (tx_counter)
+    {
+        --tx_counter;
+        UDR=tx_buffer[tx_rd_index++];
+        #if TX_BUFFER_SIZE != 256
+            if (tx_rd_index == TX_BUFFER_SIZE) tx_rd_index=0;
+        #endif
+    }
+}
+
+#ifndef _DEBUG_TERMINAL_IO_
+// Write a character to the USART Transmitter buffer
+#define _ALTERNATE_PUTCHAR_
+#pragma used+
+void putchar(unsigned char c)
+{
+    while (tx_counter == TX_BUFFER_SIZE);
+    #asm("cli")
+    if (tx_counter || ((UCSRA & DATA_REGISTER_EMPTY)==0))
+    {
+        tx_buffer[tx_wr_index++]=c;
+        #if TX_BUFFER_SIZE != 256
+            if (tx_wr_index == TX_BUFFER_SIZE) tx_wr_index=0;
+        #endif
+        ++tx_counter;
+    }
+    else
+    UDR=c;
+    #asm("sei")
+}
+#pragma used-
+#endif
+
+// Standard Input/Output functions
+#include <stdio.h>
+
+/**************************** END OF USART INTERRUPT*************/
+
+/**************************** MACRO ****************************/
+
+#define TIME_CONST_1  100
+
+#if TIME_CONST_1 > 200
+#error "TIME_CONST_1 harus bernilai dibawah 200"
+#endif
+
+#define PTT_ON  (PORTB = 0xFF)
+#define PTT_OFF (PORTB = 0x00)
+#define DEBUG_PORT  PIND.7
+#define TX_LED  PORTC.0
+#define RX_LED  PORTC.1
+#define _1200_BAUD  PORTC.2
+#define _38400_BAUD PORTC.3
+#define CARRIER_DETECT  PIND.6
+
+/**************************** GLOBAL VARIABLE ******************/
+
+unsigned char   sensor_1[TIME_CONST_1] ,
+                sensor_2[TIME_CONST_1] ,
+                sensor_3[TIME_CONST_1] ,
+                sensor_4[TIME_CONST_1] ;
+
+eeprom unsigned char   sensor_1_min , sensor_2_min , sensor_3_min , sensor_4_min ,
+                    sensor_1_ave , sensor_2_ave , sensor_3_ave , sensor_4_ave ,
+                    sensor_1_max , sensor_2_max , sensor_3_max , sensor_4_max ;
+
+/**************************** FUNCTION DECLARATION *************/
+void set_time_gap(void);
+void init_port_a(void);
+void init_port_b(void);
+void init_port_c(void);
+void init_port_d(void);
+void init_timer(void);
+void init_usart(unsigned int baud);
+void kirim_data(void);
+void init_adc(void);
+void olah_data(void);
+void receive_command(void);
+
+/*
+//-------------------- TIMER 0 sampling adc --------------------
+// Timer 0 overflow interrupt service routine
+interrupt [TIM0_OVF] void timer0_ovf_isr(void)
+{
+    // Place your code here
+    // time gap ???
+    TCNT0=0x01;
+}
+*/
+
+/******************* TIMER 1 transmit data *********************/
+#if TIME_CONST_1 < 128
+    char timer1_count;
+#else
+    unsigned char timer1_count;
+#endif
+void set_time_gap(void)
+{
+    /*
+    // time gap 30ms
+    TCNT1H=0xFE;
+    TCNT1L=0xBC;
+    */
+    
+    // time gap entah berapa??
+    TCNT1H = 0xFF;
+    TCNT1L = 0x10;
+    /*
+    // time gap 20ms
+    TCNT1H=0xFF;
+    TCNT1L=0x28;
+    */ 
+    
+    /*
+    // time gap 80ms
+    TCNT1H=0xFC;
+    TCNT1L=0xA0; 
+    */
+}
+
+// Timer1 overflow interrupt service routine
+interrupt [TIM1_OVF] void timer1_ovf_isr(void)
+{
+    // Place your code here
+    timer1_count++;
+
+    if(timer1_count < TIME_CONST_1)
+    {
+        sensor_1[timer1_count] = (255 - read_adc(0));
+        sensor_2[timer1_count] = (255 - read_adc(1));
+        sensor_3[timer1_count] = read_adc(2);
+        sensor_4[timer1_count] = read_adc(3);
+
+        if(CARRIER_DETECT)
+        {
+            if((timer1_count % 30) == 0)
+            {
+                init_usart(1200);
+                receive_command();
+            }
+        }
+        if(!DEBUG_PORT)
+        {
+            if((timer1_count % 30) == 0)
+            {
+                init_usart(38400);
+                putsf("debug ready ");
+            }
+        }
+    }
+    if(timer1_count == TIME_CONST_1)
+    {
+        timer1_count = 0;
+
+        init_usart(1200);
+
+        olah_data();
+
+        RX_LED = 0;
+        TX_LED = 1;
+        PTT_ON;
+        delay_ms(300);
+
+        kirim_data();
+        kirim_data();
+        kirim_data();
+
+        delay_ms(150);
+        PTT_OFF;
+        TX_LED = 0;
+    }
+
+    set_time_gap();
+}
+
+// Declare your global variables here
+
+void init_port_a(void)
+{
+    // Port A initialization
+    // Func7=In Func6=In Func5=In Func4=In Func3=In Func2=In Func1=In Func0=In
+    // State7=T State6=T State5=T State4=T State3=T State2=T State1=T State0=P
+    PORTA=0x01;
+    DDRA=0x00;
+}
+
+void init_port_b(void)
+{
+    // Port B initialization
+    // Func7=Out Func6=Out Func5=Out Func4=Out Func3=Out Func2=Out Func1=Out Func0=Out
+    // State7=0 State6=0 State5=0 State4=0 State3=0 State2=0 State1=0 State0=0
+    PORTB=0x00;
+    DDRB=0xFF;
+}
+
+void init_port_c(void)
+{
+    // Port C initialization
+    // Func7=Out Func6=Out Func5=Out Func4=Out Func3=Out Func2=Out Func1=Out Func0=Out
+    // State7=0 State6=0 State5=0 State4=0 State3=0 State2=0 State1=0 State0=0
+    PORTC=0x00;
+    DDRC=0xFF;
+}
+
+void init_port_d(void)
+{
+    // Port D initialization
+    // Func7=In Func6=In Func5=In Func4=In Func3=In Func2=In Func1=Out Func0=In
+    // State7=P State6=P State5=P State4=P State3=P State2=P State1=1 State0=P
+    PORTD=0xFF;
+    DDRD=0x02;
+}
+
+void init_timer(void)
+{
+    /*
+    // TIMER 0 sampling ADC
+
+    // Timer/Counter 0 initialization
+    // Clock source: System Clock
+    // Clock value: 10.800 kHz
+    // Mode: Normal top=0xFF
+    // OC0 output: Disconnected
+    TCCR0=0x05;
+    TCNT0=0xCA;
+    OCR0=0x00;
+    */
+
+    // TIMER_1 transmit data
+
+    // Timer/Counter 1 initialization
+    // Clock source: System Clock
+    // Clock value: 10.800 kHz
+    // Mode: Normal top=0xFFFF
+    // OC1A output: Discon.
+    // OC1B output: Discon.
+    // Noise Canceler: Off
+    // Input Capture on Falling Edge
+    // Timer1 Overflow Interrupt: On
+    // Input Capture Interrupt: Off
+    // Compare A Match Interrupt: Off
+    // Compare B Match Interrupt: Off
+    TCCR1A=0x00;
+    TCCR1B=0x05;
+
+    set_time_gap();
+}
+
+void init_usart(unsigned int baud)
+{
+    if(baud==1200)
+    {
+        // USART initialization
+        // Communication Parameters: 8 Data, 1 Stop, No Parity
+        // USART Receiver: On
+        // USART Transmitter: On
+        // USART Mode: Asynchronous
+        // USART Baud Rate: 1200
+        UCSRA=0x00;
+        UCSRB=0xD8;
+        UCSRC=0x86;
+        UBRRH=0x02;
+        UBRRL=0x3F;
+
+        _1200_BAUD = 1;
+        _38400_BAUD = 0;
+    }
+
+    if(baud==38400)
+    {
+        // USART initialization
+        // Communication Parameters: 8 Data, 1 Stop, No Parity
+        // USART Receiver: On
+        // USART Transmitter: On
+        // USART Mode: Asynchronous
+        // USART Baud Rate: 38400
+        UCSRA=0x00;
+        UCSRB=0xD8;
+        UCSRC=0x86;
+        UBRRH=0x00;
+        UBRRL=0x11;
+
+        _1200_BAUD = 0;
+        _38400_BAUD = 1;
+    }
+}
+
+void kirim_data(void)
+{
+    putchar('$');
+
+    putchar('3');
+    putchar('S');
+    putchar('E');
+    putchar('C');
+
+    putchar(',');
+    putchar((unsigned char)(sensor_1_min));
+    putchar((unsigned char)(sensor_1_ave));
+    putchar((unsigned char)(sensor_1_max));
+
+    putchar((unsigned char)(sensor_2_min));
+    putchar((unsigned char)(sensor_2_ave));
+    putchar((unsigned char)(sensor_2_max));
+
+    putchar((unsigned char)(sensor_3_min));
+    putchar((unsigned char)(sensor_3_ave));
+    putchar((unsigned char)(sensor_3_max));
+
+    putchar((unsigned char)(sensor_4_min));
+    putchar((unsigned char)(sensor_4_ave));
+    putchar((unsigned char)(sensor_4_max));
+
+    putchar(',');
+    putchar('*');
+
+    putchar(13);
+}
+
+void init_adc(void)
+{
+    // ADC initialization
+    // ADC Clock frequency: 86.400 kHz
+    // ADC Voltage Reference: AREF pin
+    // Only the 8 most significant bits of
+    // the AD conversion result are used
+    ADMUX=ADC_VREF_TYPE & 0xff;
+    ADCSRA=0x87;
+}
+
+void olah_data(void)
+{
+    #if TIME_CONST_1 < 128
+        char i;
+    #else
+        unsigned char i;
+    #endif
+
+    unsigned int ave_temp_1 = 0 , ave_temp_2 = 0 , ave_temp_3 = 0 , ave_temp_4 = 0;
+
+    sensor_1_min = 255;
+    sensor_1_ave = 0;
+    sensor_1_max = 0;
+
+    sensor_2_min = 255;
+    sensor_2_ave = 0;
+    sensor_2_max = 0;
+
+    sensor_3_min = 255;
+    sensor_3_ave = 0;
+    sensor_3_max = 0;
+
+    sensor_4_min = 255;
+    sensor_4_ave = 0;
+    sensor_4_max = 0;
+
+    for(i=0;i<TIME_CONST_1;i++)
+    {
+        if(sensor_1[i] < sensor_1_min) sensor_1_min = sensor_1[i];
+        if(sensor_1[i] > sensor_1_max) sensor_1_max = sensor_1[i];
+        ave_temp_1 += sensor_1[i];
+
+        if(sensor_2[i] < sensor_2_min) sensor_2_min = sensor_2[i];
+        if(sensor_2[i] > sensor_2_max) sensor_2_max = sensor_2[i];
+        ave_temp_2 += sensor_2[i];
+
+        if(sensor_3[i] < sensor_3_min) sensor_3_min = sensor_3[i];
+        if(sensor_3[i] > sensor_3_max) sensor_3_max = sensor_3[i];
+        ave_temp_3 += sensor_3[i];
+
+        if(sensor_4[i] < sensor_4_min) sensor_4_min = sensor_4[i];
+        if(sensor_4[i] > sensor_4_max) sensor_4_max = sensor_4[i];
+        ave_temp_4 += sensor_4[i];
+    }
+
+    sensor_1_ave = (unsigned char)(ave_temp_1 / TIME_CONST_1);
+    sensor_2_ave = (unsigned char)(ave_temp_2 / TIME_CONST_1);
+    sensor_3_ave = (unsigned char)(ave_temp_3 / TIME_CONST_1);
+    sensor_4_ave = (unsigned char)(ave_temp_4 / TIME_CONST_1);
+}
+
+
+void receive_command(void)
+{
+    RX_LED = 1;
+}
+
+void main(void)
+{
+    init_port_a();
+    init_port_b();
+    init_port_c();
+    init_port_d();
+    init_usart(1200);
+    init_adc();
+    init_timer();
+
+    sensor_1_ave = 0;
+    sensor_1_min = 255;
+    sensor_1_max = 0;
+
+    sensor_2_ave = 0;
+    sensor_2_min = 255;
+    sensor_2_max = 0;
+
+    sensor_3_ave = 0;
+    sensor_3_min = 255;
+    sensor_3_max = 0;
+
+    sensor_4_ave = 0;
+    sensor_4_min = 255;
+    sensor_4_max = 0;
+
+    timer1_count = 0;
+
+    // Timer(s)/Counter(s) Interrupt(s) initialization
+    //TIMSK=0x05;  
+    TIMSK=0x04;
+
+    // Analog Comparator initialization
+    // Analog Comparator: Off
+    // Analog Comparator Input Capture by Timer/Counter 1: Off
+    ACSR=0x80;
+    SFIOR=0x00;
+
+    // Global enable interrupts
+    #asm("sei")
+
+    while (1)
+    {
+        // Place your code here
+    };
+}

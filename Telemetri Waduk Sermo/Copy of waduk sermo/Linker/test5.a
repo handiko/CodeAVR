@@ -1,0 +1,506 @@
+;/*****************************************************
+;This program was produced by the
+;CodeWizardAVR V2.05.0 Professional
+;Automatic Program Generator
+;© Copyright 1998-2010 Pavel Haiduc, HP InfoTech s.r.l.
+;http://www.hpinfotech.com
+;
+;Project :
+;Version :
+;Date    : 9/28/2013
+;Author  :
+;Company :
+;Comments:
+;
+;
+;Chip type               : ATmega128
+;Program type            : Application
+;AVR Core Clock frequency: 11.059200 MHz
+;Memory model            : Small
+;External RAM size       : 0
+;Data Stack size         : 1024
+;*****************************************************/
+;
+;#include <mega128.h>
+;PCODE: $00000000 VOL: 0
+	#ifndef __SLEEP_DEFINED__
+;PCODE: $00000001 VOL: 0
+	#define __SLEEP_DEFINED__
+;PCODE: $00000002 VOL: 0
+	.EQU __se_bit=0x20
+;PCODE: $00000003 VOL: 0
+	.EQU __sm_mask=0x1C
+;PCODE: $00000004 VOL: 0
+	.EQU __sm_powerdown=0x10
+;PCODE: $00000005 VOL: 0
+	.EQU __sm_powersave=0x18
+;PCODE: $00000006 VOL: 0
+	.EQU __sm_standby=0x14
+;PCODE: $00000007 VOL: 0
+	.EQU __sm_ext_standby=0x1C
+;PCODE: $00000008 VOL: 0
+	.EQU __sm_adc_noise_red=0x08
+;PCODE: $00000009 VOL: 0
+	.SET power_ctrl_reg=mcucr
+;PCODE: $0000000A VOL: 0
+	#endif
+;PCODE: $0000000B VOL: 0
+;PCODE: $0000000C VOL: 0
+;
+;#ifndef RXB8
+;#define RXB8 1
+;#endif
+;
+;#ifndef TXB8
+;#define TXB8 0
+;#endif
+;
+;#ifndef UPE
+;#define UPE 2
+;#endif
+;
+;#ifndef DOR
+;#define DOR 3
+;#endif
+;
+;#ifndef FE
+;#define FE 4
+;#endif
+;
+;#ifndef UDRE
+;#define UDRE 5
+;#endif
+;
+;#ifndef RXC
+;#define RXC 7
+;#endif
+;
+;#define FRAMING_ERROR (1<<FE)
+;#define PARITY_ERROR (1<<UPE)
+;#define DATA_OVERRUN (1<<DOR)
+;#define DATA_REGISTER_EMPTY (1<<UDRE)
+;#define RX_COMPLETE (1<<RXC)
+;
+;// Get a character from the USART1 Receiver
+;#pragma used+
+;char getchar1(void)
+; 0000 003F {
+
+	.CSEG
+;PCODE: $0000000D VOL: 0
+;PCODE: $0000000E VOL: 0
+; 0000 0040 char status,data;
+; 0000 0041 while (1)
+;PCODE: $0000000F VOL: 0
+;PCODE: $00000010 VOL: 0
+;	status -> R17
+;	data -> R16
+;PCODE: $00000011 VOL: 0
+; 0000 0042       {
+; 0000 0043       while (((status=UCSR1A) & RX_COMPLETE)==0);
+;PCODE: $00000012 VOL: 0
+;PCODE: $00000013 VOL: 0
+;PCODE: $00000014 VOL: 0
+;PCODE: $00000015 VOL: 0
+;PCODE: $00000016 VOL: 0
+;PCODE: $00000017 VOL: 0
+;PCODE: $00000018 VOL: 0
+; 0000 0044       data=UDR1;
+;PCODE: $00000019 VOL: 0
+;PCODE: $0000001A VOL: 0
+; 0000 0045       if ((status & (FRAMING_ERROR | PARITY_ERROR | DATA_OVERRUN))==0)
+;PCODE: $0000001B VOL: 0
+;PCODE: $0000001C VOL: 0
+;PCODE: $0000001D VOL: 0
+; 0000 0046          return data;
+;PCODE: $0000001E VOL: 0
+;PCODE: $0000001F VOL: 0
+;PCODE: $00000020 VOL: 0
+; 0000 0047       }
+;PCODE: $00000021 VOL: 0
+;PCODE: $00000022 VOL: 0
+;PCODE: $00000023 VOL: 0
+; 0000 0048 }
+;PCODE: $00000024 VOL: 0
+;PCODE: $00000025 VOL: 0
+;PCODE: $00000026 VOL: 0
+;#pragma used-
+;
+;// Write a character to the USART1 Transmitter
+;#pragma used+
+;void putchar1(char c)
+; 0000 004E {
+;PCODE: $00000027 VOL: 0
+;PCODE: $00000028 VOL: 0
+; 0000 004F while ((UCSR1A & DATA_REGISTER_EMPTY)==0);
+;	c -> Y+0
+;PCODE: $00000029 VOL: 0
+;PCODE: $0000002A VOL: 0
+;PCODE: $0000002B VOL: 0
+;PCODE: $0000002C VOL: 0
+;PCODE: $0000002D VOL: 0
+;PCODE: $0000002E VOL: 0
+; 0000 0050 UDR1=c;
+;PCODE: $0000002F VOL: 0
+;PCODE: $00000030 VOL: 0
+; 0000 0051 }
+;PCODE: $00000031 VOL: 0
+;PCODE: $00000032 VOL: 0
+;PCODE: $00000033 VOL: 0
+;#pragma used-
+;
+;// Standard Input/Output functions
+;#include <stdio.h>
+;
+;// Declare your global variables here
+;int i;
+;
+;void main(void)
+; 0000 005B {
+;PCODE: $00000034 VOL: 0
+; 0000 005C // Declare your local variables here
+; 0000 005D 
+; 0000 005E // Input/Output Ports initialization
+; 0000 005F // Port A initialization
+; 0000 0060 // Func7=In Func6=In Func5=In Func4=In Func3=In Func2=In Func1=In Func0=In
+; 0000 0061 // State7=T State6=T State5=T State4=T State3=T State2=T State1=T State0=T
+; 0000 0062 PORTA=0x00;
+;PCODE: $00000035 VOL: 0
+;PCODE: $00000036 VOL: 0
+; 0000 0063 DDRA=0x00;
+;PCODE: $00000037 VOL: 0
+;PCODE: $00000038 VOL: 0
+; 0000 0064 
+; 0000 0065 // Port B initialization
+; 0000 0066 // Func7=In Func6=In Func5=In Func4=In Func3=In Func2=In Func1=In Func0=In
+; 0000 0067 // State7=T State6=T State5=T State4=T State3=T State2=T State1=T State0=T
+; 0000 0068 PORTB=0x00;
+;PCODE: $00000039 VOL: 0
+;PCODE: $0000003A VOL: 0
+; 0000 0069 DDRB=0x00;
+;PCODE: $0000003B VOL: 0
+;PCODE: $0000003C VOL: 0
+; 0000 006A 
+; 0000 006B // Port C initialization
+; 0000 006C // Func7=In Func6=In Func5=In Func4=In Func3=In Func2=In Func1=In Func0=In
+; 0000 006D // State7=T State6=T State5=T State4=T State3=T State2=T State1=T State0=T
+; 0000 006E PORTC=0x00;
+;PCODE: $0000003D VOL: 0
+;PCODE: $0000003E VOL: 0
+; 0000 006F DDRC=0x00;
+;PCODE: $0000003F VOL: 0
+;PCODE: $00000040 VOL: 0
+; 0000 0070 
+; 0000 0071 // Port D initialization
+; 0000 0072 // Func7=Out Func6=In Func5=In Func4=In Func3=Out Func2=In Func1=In Func0=In
+; 0000 0073 // State7=0 State6=T State5=T State4=T State3=1 State2=P State1=P State0=P
+; 0000 0074 PORTD=0x0F;
+;PCODE: $00000041 VOL: 0
+;PCODE: $00000042 VOL: 0
+; 0000 0075 DDRD=0x88;
+;PCODE: $00000043 VOL: 0
+;PCODE: $00000044 VOL: 0
+; 0000 0076 
+; 0000 0077 // Port E initialization
+; 0000 0078 // Func7=In Func6=In Func5=In Func4=In Func3=In Func2=In Func1=Out Func0=In
+; 0000 0079 // State7=T State6=T State5=T State4=T State3=T State2=T State1=1 State0=P
+; 0000 007A PORTE=0x03;
+;PCODE: $00000045 VOL: 0
+;PCODE: $00000046 VOL: 0
+; 0000 007B DDRE=0x02;
+;PCODE: $00000047 VOL: 0
+;PCODE: $00000048 VOL: 0
+; 0000 007C 
+; 0000 007D // Port F initialization
+; 0000 007E // Func7=In Func6=In Func5=In Func4=In Func3=In Func2=In Func1=In Func0=In
+; 0000 007F // State7=T State6=T State5=T State4=T State3=T State2=T State1=T State0=T
+; 0000 0080 PORTF=0x00;
+;PCODE: $00000049 VOL: 0
+;PCODE: $0000004A VOL: 0
+; 0000 0081 DDRF=0x00;
+;PCODE: $0000004B VOL: 0
+;PCODE: $0000004C VOL: 0
+; 0000 0082 
+; 0000 0083 // Port G initialization
+; 0000 0084 // Func4=In Func3=In Func2=In Func1=In Func0=In
+; 0000 0085 // State4=T State3=T State2=T State1=T State0=T
+; 0000 0086 PORTG=0x00;
+;PCODE: $0000004D VOL: 0
+;PCODE: $0000004E VOL: 0
+; 0000 0087 DDRG=0x00;
+;PCODE: $0000004F VOL: 0
+;PCODE: $00000050 VOL: 0
+; 0000 0088 
+; 0000 0089 // Timer/Counter 0 initialization
+; 0000 008A // Clock source: System Clock
+; 0000 008B // Clock value: Timer 0 Stopped
+; 0000 008C // Mode: Normal top=0xFF
+; 0000 008D // OC0 output: Disconnected
+; 0000 008E ASSR=0x00;
+;PCODE: $00000051 VOL: 0
+;PCODE: $00000052 VOL: 0
+; 0000 008F TCCR0=0x00;
+;PCODE: $00000053 VOL: 0
+;PCODE: $00000054 VOL: 0
+; 0000 0090 TCNT0=0x00;
+;PCODE: $00000055 VOL: 0
+;PCODE: $00000056 VOL: 0
+; 0000 0091 OCR0=0x00;
+;PCODE: $00000057 VOL: 0
+;PCODE: $00000058 VOL: 0
+; 0000 0092 
+; 0000 0093 // Timer/Counter 1 initialization
+; 0000 0094 // Clock source: System Clock
+; 0000 0095 // Clock value: Timer1 Stopped
+; 0000 0096 // Mode: Normal top=0xFFFF
+; 0000 0097 // OC1A output: Discon.
+; 0000 0098 // OC1B output: Discon.
+; 0000 0099 // OC1C output: Discon.
+; 0000 009A // Noise Canceler: Off
+; 0000 009B // Input Capture on Falling Edge
+; 0000 009C // Timer1 Overflow Interrupt: Off
+; 0000 009D // Input Capture Interrupt: Off
+; 0000 009E // Compare A Match Interrupt: Off
+; 0000 009F // Compare B Match Interrupt: Off
+; 0000 00A0 // Compare C Match Interrupt: Off
+; 0000 00A1 TCCR1A=0x00;
+;PCODE: $00000059 VOL: 0
+;PCODE: $0000005A VOL: 0
+; 0000 00A2 TCCR1B=0x00;
+;PCODE: $0000005B VOL: 0
+;PCODE: $0000005C VOL: 0
+; 0000 00A3 TCNT1H=0x00;
+;PCODE: $0000005D VOL: 0
+;PCODE: $0000005E VOL: 0
+; 0000 00A4 TCNT1L=0x00;
+;PCODE: $0000005F VOL: 0
+;PCODE: $00000060 VOL: 0
+; 0000 00A5 ICR1H=0x00;
+;PCODE: $00000061 VOL: 0
+;PCODE: $00000062 VOL: 0
+; 0000 00A6 ICR1L=0x00;
+;PCODE: $00000063 VOL: 0
+;PCODE: $00000064 VOL: 0
+; 0000 00A7 OCR1AH=0x00;
+;PCODE: $00000065 VOL: 0
+;PCODE: $00000066 VOL: 0
+; 0000 00A8 OCR1AL=0x00;
+;PCODE: $00000067 VOL: 0
+;PCODE: $00000068 VOL: 0
+; 0000 00A9 OCR1BH=0x00;
+;PCODE: $00000069 VOL: 0
+;PCODE: $0000006A VOL: 0
+; 0000 00AA OCR1BL=0x00;
+;PCODE: $0000006B VOL: 0
+;PCODE: $0000006C VOL: 0
+; 0000 00AB OCR1CH=0x00;
+;PCODE: $0000006D VOL: 0
+;PCODE: $0000006E VOL: 0
+; 0000 00AC OCR1CL=0x00;
+;PCODE: $0000006F VOL: 0
+;PCODE: $00000070 VOL: 0
+; 0000 00AD 
+; 0000 00AE // Timer/Counter 2 initialization
+; 0000 00AF // Clock source: System Clock
+; 0000 00B0 // Clock value: Timer2 Stopped
+; 0000 00B1 // Mode: Normal top=0xFF
+; 0000 00B2 // OC2 output: Disconnected
+; 0000 00B3 TCCR2=0x00;
+;PCODE: $00000071 VOL: 0
+;PCODE: $00000072 VOL: 0
+; 0000 00B4 TCNT2=0x00;
+;PCODE: $00000073 VOL: 0
+;PCODE: $00000074 VOL: 0
+; 0000 00B5 OCR2=0x00;
+;PCODE: $00000075 VOL: 0
+;PCODE: $00000076 VOL: 0
+; 0000 00B6 
+; 0000 00B7 // Timer/Counter 3 initialization
+; 0000 00B8 // Clock source: System Clock
+; 0000 00B9 // Clock value: Timer3 Stopped
+; 0000 00BA // Mode: Normal top=0xFFFF
+; 0000 00BB // OC3A output: Discon.
+; 0000 00BC // OC3B output: Discon.
+; 0000 00BD // OC3C output: Discon.
+; 0000 00BE // Noise Canceler: Off
+; 0000 00BF // Input Capture on Falling Edge
+; 0000 00C0 // Timer3 Overflow Interrupt: Off
+; 0000 00C1 // Input Capture Interrupt: Off
+; 0000 00C2 // Compare A Match Interrupt: Off
+; 0000 00C3 // Compare B Match Interrupt: Off
+; 0000 00C4 // Compare C Match Interrupt: Off
+; 0000 00C5 TCCR3A=0x00;
+;PCODE: $00000077 VOL: 0
+;PCODE: $00000078 VOL: 0
+; 0000 00C6 TCCR3B=0x00;
+;PCODE: $00000079 VOL: 0
+;PCODE: $0000007A VOL: 0
+; 0000 00C7 TCNT3H=0x00;
+;PCODE: $0000007B VOL: 0
+;PCODE: $0000007C VOL: 0
+; 0000 00C8 TCNT3L=0x00;
+;PCODE: $0000007D VOL: 0
+;PCODE: $0000007E VOL: 0
+; 0000 00C9 ICR3H=0x00;
+;PCODE: $0000007F VOL: 0
+;PCODE: $00000080 VOL: 0
+; 0000 00CA ICR3L=0x00;
+;PCODE: $00000081 VOL: 0
+;PCODE: $00000082 VOL: 0
+; 0000 00CB OCR3AH=0x00;
+;PCODE: $00000083 VOL: 0
+;PCODE: $00000084 VOL: 0
+; 0000 00CC OCR3AL=0x00;
+;PCODE: $00000085 VOL: 0
+;PCODE: $00000086 VOL: 0
+; 0000 00CD OCR3BH=0x00;
+;PCODE: $00000087 VOL: 0
+;PCODE: $00000088 VOL: 0
+; 0000 00CE OCR3BL=0x00;
+;PCODE: $00000089 VOL: 0
+;PCODE: $0000008A VOL: 0
+; 0000 00CF OCR3CH=0x00;
+;PCODE: $0000008B VOL: 0
+;PCODE: $0000008C VOL: 0
+; 0000 00D0 OCR3CL=0x00;
+;PCODE: $0000008D VOL: 0
+;PCODE: $0000008E VOL: 0
+; 0000 00D1 
+; 0000 00D2 // External Interrupt(s) initialization
+; 0000 00D3 // INT0: Off
+; 0000 00D4 // INT1: Off
+; 0000 00D5 // INT2: Off
+; 0000 00D6 // INT3: Off
+; 0000 00D7 // INT4: Off
+; 0000 00D8 // INT5: Off
+; 0000 00D9 // INT6: Off
+; 0000 00DA // INT7: Off
+; 0000 00DB EICRA=0x00;
+;PCODE: $0000008F VOL: 0
+;PCODE: $00000090 VOL: 0
+; 0000 00DC EICRB=0x00;
+;PCODE: $00000091 VOL: 0
+;PCODE: $00000092 VOL: 0
+; 0000 00DD EIMSK=0x00;
+;PCODE: $00000093 VOL: 0
+;PCODE: $00000094 VOL: 0
+; 0000 00DE 
+; 0000 00DF // Timer(s)/Counter(s) Interrupt(s) initialization
+; 0000 00E0 TIMSK=0x00;
+;PCODE: $00000095 VOL: 0
+;PCODE: $00000096 VOL: 0
+; 0000 00E1 
+; 0000 00E2 ETIMSK=0x00;
+;PCODE: $00000097 VOL: 0
+;PCODE: $00000098 VOL: 0
+; 0000 00E3 
+; 0000 00E4 // USART0 initialization
+; 0000 00E5 // Communication Parameters: 8 Data, 1 Stop, No Parity
+; 0000 00E6 // USART0 Receiver: On
+; 0000 00E7 // USART0 Transmitter: On
+; 0000 00E8 // USART0 Mode: Asynchronous
+; 0000 00E9 // USART0 Baud Rate: 1200
+; 0000 00EA UCSR0A=0x00;
+;PCODE: $00000099 VOL: 0
+;PCODE: $0000009A VOL: 0
+; 0000 00EB UCSR0B=0x18;
+;PCODE: $0000009B VOL: 0
+;PCODE: $0000009C VOL: 0
+; 0000 00EC UCSR0C=0x06;
+;PCODE: $0000009D VOL: 0
+;PCODE: $0000009E VOL: 0
+; 0000 00ED UBRR0H=0x02;
+;PCODE: $0000009F VOL: 0
+;PCODE: $000000A0 VOL: 0
+; 0000 00EE UBRR0L=0x3F;
+;PCODE: $000000A1 VOL: 0
+;PCODE: $000000A2 VOL: 0
+; 0000 00EF 
+; 0000 00F0 // USART1 initialization
+; 0000 00F1 // Communication Parameters: 8 Data, 1 Stop, No Parity
+; 0000 00F2 // USART1 Receiver: On
+; 0000 00F3 // USART1 Transmitter: On
+; 0000 00F4 // USART1 Mode: Asynchronous
+; 0000 00F5 // USART1 Baud Rate: 1200
+; 0000 00F6 UCSR1A=0x00;
+;PCODE: $000000A3 VOL: 0
+;PCODE: $000000A4 VOL: 0
+; 0000 00F7 UCSR1B=0x18;
+;PCODE: $000000A5 VOL: 0
+;PCODE: $000000A6 VOL: 0
+; 0000 00F8 UCSR1C=0x06;
+;PCODE: $000000A7 VOL: 0
+;PCODE: $000000A8 VOL: 0
+; 0000 00F9 UBRR1H=0x02;
+;PCODE: $000000A9 VOL: 0
+;PCODE: $000000AA VOL: 0
+; 0000 00FA UBRR1L=0x3F;
+;PCODE: $000000AB VOL: 0
+;PCODE: $000000AC VOL: 0
+; 0000 00FB 
+; 0000 00FC // Analog Comparator initialization
+; 0000 00FD // Analog Comparator: Off
+; 0000 00FE // Analog Comparator Input Capture by Timer/Counter 1: Off
+; 0000 00FF ACSR=0x80;
+;PCODE: $000000AD VOL: 0
+;PCODE: $000000AE VOL: 0
+; 0000 0100 SFIOR=0x00;
+;PCODE: $000000AF VOL: 0
+;PCODE: $000000B0 VOL: 0
+; 0000 0101 
+; 0000 0102 // ADC initialization
+; 0000 0103 // ADC disabled
+; 0000 0104 ADCSRA=0x00;
+;PCODE: $000000B1 VOL: 0
+;PCODE: $000000B2 VOL: 0
+; 0000 0105 
+; 0000 0106 // SPI initialization
+; 0000 0107 // SPI disabled
+; 0000 0108 SPCR=0x00;
+;PCODE: $000000B3 VOL: 0
+;PCODE: $000000B4 VOL: 0
+; 0000 0109 
+; 0000 010A // TWI initialization
+; 0000 010B // TWI disabled
+; 0000 010C TWCR=0x00;
+;PCODE: $000000B5 VOL: 0
+;PCODE: $000000B6 VOL: 0
+; 0000 010D 
+; 0000 010E while (1)
+;PCODE: $000000B7 VOL: 0
+; 0000 010F       {
+; 0000 0110       // Place your code here
+; 0000 0111         for(i=0;i<30;i++)
+;PCODE: $000000B8 VOL: 0
+;PCODE: $000000B9 VOL: 0
+;PCODE: $000000BA VOL: 0
+;PCODE: $000000BB VOL: 0
+;PCODE: $000000BC VOL: 0
+;PCODE: $000000BD VOL: 0
+;PCODE: $000000BE VOL: 0
+;PCODE: $000000BF VOL: 0
+;PCODE: $000000C0 VOL: 0
+; 0000 0112         {
+; 0000 0113             putchar('T');
+;PCODE: $000000C1 VOL: 0
+;PCODE: $000000C2 VOL: 0
+;PCODE: $000000C3 VOL: 0
+; 0000 0114             putchar1('A');
+;PCODE: $000000C4 VOL: 0
+;PCODE: $000000C5 VOL: 0
+;PCODE: $000000C6 VOL: 0
+; 0000 0115         }
+;PCODE: $000000C7 VOL: 0
+;PCODE: $000000C8 VOL: 0
+;PCODE: $000000C9 VOL: 0
+;PCODE: $000000CA VOL: 0
+;PCODE: $000000CB VOL: 0
+;PCODE: $000000CC VOL: 0
+; 0000 0116 
+; 0000 0117       }
+;PCODE: $000000CD VOL: 0
+;PCODE: $000000CE VOL: 0
+; 0000 0118 }
+;PCODE: $000000CF VOL: 0
+;PCODE: $000000D0 VOL: 0
+;PCODE: $000000D1 VOL: 0

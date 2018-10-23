@@ -1,0 +1,37 @@
+RAM Allocation
+Variable                                                          Address   Size
+--------------------------------------------------------------------------------
+rx_buffer                                                         0x0260       8
+tx_buffer                                                         0x0268       8
+sensor_1                                                          0x0270     100
+sensor_2                                                          0x02D4     100
+sensor_3                                                          0x0338     100
+sensor_4                                                          0x039C     100
+
+EEPROM Allocation
+Variable                                                          Address   Size
+--------------------------------------------------------------------------------
+sensor_1_min                                                      0x0000       1
+sensor_2_min                                                      0x0001       1
+sensor_3_min                                                      0x0002       1
+sensor_4_min                                                      0x0003       1
+sensor_1_ave                                                      0x0004       1
+sensor_2_ave                                                      0x0005       1
+sensor_3_ave                                                      0x0006       1
+sensor_4_ave                                                      0x0007       1
+sensor_1_max                                                      0x0008       1
+sensor_2_max                                                      0x0009       1
+sensor_3_max                                                      0x000A       1
+sensor_4_max                                                      0x000B       1
+
+Register Allocation
+Variable                                                          Register  Size
+--------------------------------------------------------------------------------
+rx_wr_index                                                       R5           1
+rx_rd_index                                                       R4           1
+rx_counter                                                        R7           1
+rx_buffer_overflow                                                R2.0      1bit
+tx_wr_index                                                       R6           1
+tx_rd_index                                                       R9           1
+tx_counter                                                        R8           1
+timer1_count                                                      R11          1

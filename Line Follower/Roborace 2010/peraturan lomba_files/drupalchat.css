@@ -1,0 +1,921 @@
+/* $Id: drupalchat.css,v 1.5 2010/07/14 10:31:05 darklrd Exp $ */
+
+/**
+ * @file
+ * Default CSS Stylesheet for the DrupalChat module.
+ */
+ 
+#drupalchat_block {
+  position: relative;
+  text-align: center;
+  line-height: 0;
+}
+
+#drupalchat {
+  position: relative;
+  float: left;
+}
+#drupalchat_bar {
+  position: fixed;
+  z-index: 74;
+  right: 16px;
+  bottom: 0px;
+  height: 25px;
+  line-height: 0;
+  display: block;
+  
+  
+}
+
+#drupalchat_bar_background {
+  position: fixed;
+  z-index: 73;
+  right: 15px;
+  bottom: 0px;
+  height: 24px;
+  background-color: #e5e5e5 !important;
+  background-image: none !important;
+  border-left: 1px #b5b5b5 solid;
+  border-right: 1px #b5b5b5 solid;
+  border-top: 1px #b5b5b5 solid;
+}
+#drupalchat_bar_background_region {
+  height: 1px;
+  background-color: #ffffff !important;
+}
+#drupalchat_block div {
+  line-height: 0;
+  margin: 0;
+  padding: 0;
+  text-align: left;
+  font-size: 0;
+  font-family: "lucida grande",tahoma,verdana,arial,sans-serif;
+  text-decoration: none;
+  font-weight: normal;
+  font-style: normal;
+  white-space: normal;
+  word-wrap: normal;
+}
+.drupalchat_bar_tab_normal {
+  width: 159px;
+  height: 16px;
+  cursor: pointer;
+  padding: 4px 5px 4px 6px !important;
+  border-left: 1px #b5b5b5 solid;
+  border-right: 1px #e0e0e0 solid;
+  margin-top: 1px !important;
+}
+
+.drupalchat_bar_tab_normal_text {
+  width: 145px;
+  height: 16px;
+  padding-left: 14px !important;
+  cursor: pointer;
+  font-size: 11px !important;
+  color: #333333 !important;
+  line-height: 1.2 !important;
+  white-space: pre !important;
+  background-image: none;
+}
+#drupalchat_bar_tab_online_users {
+  float: right;
+  width: 172px;
+  height: 25px;
+}
+.drupalchat_bar_tab_over {
+  width: 159px;
+  height: 16px;
+  cursor: pointer;
+  padding: 4px 5px 4px 6px !important;
+  border-left: 1px #b5b5b5 solid;
+  border-right: 1px #ffffff solid;
+  margin-top: 1px !important;
+  background-color: #ffffff !important;
+}
+
+.drupalchat_bar_tab_over_text {
+  width: 145px;
+  height: 16px;
+  padding-left: 14px !important;
+  cursor: pointer;
+  font-size: 11px !important;
+  color: #000000 !important;
+  line-height: 1.2 !important;
+  white-space: pre !important;
+  background-image: none;
+}
+.drupalchat_bar_tab_open_over {
+  width: 159px;
+  height: 16px;
+  cursor: pointer;
+  padding: 4px 5px 4px 6px !important;
+  border-left: 1px #333333 solid;
+  border-right: 1px #333333 solid;
+  border-bottom: 1px #333333 solid;
+  background-color: #ffffff !important;
+}
+
+.drupalchat_bar_tab_open_over_text {
+  width: 145px;
+  height: 16px;
+  padding-left: 14px !important;
+  cursor: pointer;
+  font-size: 11px !important;
+  color: #000000 !important;
+  line-height: 1.2 !important;
+  white-space: pre !important;
+  background-image: none;
+}
+#drupalchat_chat_window_online_users {
+  position: fixed;
+  z-index: 72;
+  width: 201px;
+  right: 43px;
+  bottom: 25px;
+}
+#drupalchat_chat_window_head_online_users {
+  float: left;
+  width: 199px;
+  height: 20px;
+  border-left: 1px #254588 solid;
+  border-right: 1px #254588 solid;
+  border-top: 1px #254588 solid;
+  background-color: #526ea6 !important;
+}
+
+#drupalchat_chat_window_head_text_online_users {
+  float: left;
+  width: 164px;
+  height: 14px;
+  margin: 3px 8px !important;
+  color: #ffffff !important;
+  font-size: 11px !important;
+  line-height: 1.2 !important;
+  white-space: pre !important;
+  font-weight: bold !important;
+  cursor: default;
+}
+#drupalchat_chat_window_body_online_users {
+  float: left;
+  width: 199px;
+  background-color: #ffffff !important;
+  padding-bottom: 1px !important;
+  border-left: 1px #333333 solid;
+  border-right: 1px #333333 solid;
+  border-bottom: 1px #E5E5E5 solid;
+  background-image: none;
+}
+
+#drupalchat_chat_window_body_box_online_users {
+  float: left;
+  width: 187px;
+  background-color: #eeeeee !important;
+  padding: 4px 6px !important;
+}
+
+#drupalchat_chat_window_body_box_text_online_users {
+  font-size: 11px !important;
+  color: #000000 !important;
+  line-height: 1.1 !important;
+  word-wrap: break-word !important;
+  cursor: default;
+}
+#drupalchat_chat_window_users_block {
+  float: left;
+  width: 199px;
+  height: 195px;
+  padding-top: 2px !important;
+  padding-bottom: 5px !important;
+  background-color: #ffffff !important;
+}
+#drupalchat_chat_window_users {
+  float: left;
+  width: 188px;
+  height: 195px;
+  overflow-x: hidden;
+  overflow-y: scroll;
+}
+
+#drupalchat_chat_window_users_region {
+  float: left;
+}
+.drupalchat_chat_window_users_menu_main_normal {
+  float: left;
+  width: 174px;
+  height: 12px;
+  padding: 4px 5px 4px 9px !important;
+  margin-bottom: 2px !important;
+  cursor: pointer;
+}
+
+.drupalchat_chat_window_users_menu_main_normal_text {
+  font-size: 11px !important;
+  color: #3b5998 !important;
+  line-height: 1.1 !important;
+  white-space: pre !important;
+  word-wrap: break-word !important;
+  cursor: pointer;
+  background-image: none;
+  padding-left: 13px !important;
+}
+
+.drupalchat_chat_window_users_menu_main_press {
+  float: left;
+  width: 174px;
+  height: 12px;
+  padding: 4px 5px 4px 9px !important;
+  margin-bottom: 2px !important;
+  cursor: pointer;
+  background-color: #3b5998 !important;
+}
+
+.drupalchat_chat_window_users_menu_main_press_text {
+  font-size: 11px !important;
+  color: #ffffff !important;
+  line-height: 1.1 !important;
+  white-space: pre !important;
+  word-wrap: break-word !important;
+  cursor: pointer;
+  background-image: none;
+  padding-left: 13px !important;
+}
+
+.drupalchat_chat_window_users_menu_main_over {
+  float: left;
+  width: 174px;
+  height: 12px;
+  padding: 4px 5px 4px 9px !important;
+  margin-bottom: 2px !important;
+  cursor: pointer;
+  background-color: #3b5998 !important;
+}
+
+.drupalchat_chat_window_users_menu_main_over_text {
+  font-size: 11px !important;
+  color: #ffffff !important;
+  line-height: 1.1 !important;
+  white-space: pre !important;
+  word-wrap: break-word !important;
+  cursor: pointer;
+  background-image: none;
+  padding-left: 13px !important;
+}
+.drupalchat_chat_window_users_user_normal {
+  float: left;
+  width: 174px;
+  min-height: 12px;
+  padding: 4px 5px 4px 9px !important;
+  margin-bottom: 2px !important;
+  cursor: pointer;
+}
+
+.drupalchat_chat_window_users_user_normal_text {
+  font-size: 11px !important;
+  color: #3b5998 !important;
+  line-height: 1.1 !important;
+  white-space: pre !important;
+  word-wrap: break-word !important;
+  cursor: pointer;
+}
+
+.drupalchat_chat_window_users_user_press {
+  float: left;
+  width: 174px;
+  min-height: 12px;
+  padding: 4px 5px 4px 9px !important;
+  margin-bottom: 2px !important;
+  cursor: pointer;
+  background-color: #3b5998 !important;
+}
+
+.drupalchat_chat_window_users_user_press_text {
+  font-size: 11px !important;
+  color: #ffffff !important;
+  line-height: 1.1 !important;
+  white-space: pre !important;
+  word-wrap: break-word !important;
+  cursor: pointer;
+}
+
+.drupalchat_chat_window_users_user_over {
+  float: left;
+  width: 174px;
+  min-height: 12px;
+  padding: 4px 5px 4px 9px !important;
+  margin-bottom: 2px !important;
+  cursor: pointer;
+  background-color: #3b5998 !important;
+}
+
+.drupalchat_chat_window_users_user_over_text {
+  font-size: 11px !important;
+  color: #ffffff !important;
+  line-height: 1.1 !important;
+  white-space: pre !important;
+  word-wrap: break-word !important;
+  cursor: pointer;
+}
+.drupalchat_chat_window_users_user_me {
+  float: left;
+  width: 174px;
+  min-height: 12px;
+  padding: 4px 5px 4px 9px !important;
+  margin-bottom: 2px !important;
+}
+
+.drupalchat_chat_window_users_user_me_text {
+  font-size: 11px !important;
+  color: #333333 !important;
+  line-height: 1.1 !important;
+  white-space: pre !important;
+  word-wrap: break-word !important;
+  cursor: default;
+}
+#drupalchat_bar_tab_exit {
+  float: right;
+  width: 27px;
+  height: 24px;
+  margin-top: 1px !important;
+  border-left: 1px #b5b5b5 solid;
+}
+#drupalchat_bar_head_volume_audio {
+  float: right;
+  width: 27px;
+  height: 24px;
+  margin-top: 1px !important;
+  border-left: 1px #b5b5b5 solid;
+}
+#drupalchat_tabs {
+  float: right;
+  height: 25px;
+}
+#drupalchat_tabs_region {
+  float: left;
+  height: 25px;
+  overflow: hidden;
+}
+#drupalchat_tabs_block {
+  height: 25px;
+}
+.drupalchat_tabs_user_normal {
+  float: right;
+  width: 130px;
+  height: 16px;
+  cursor: pointer;
+  padding: 6px 0px 2px 6px !important;
+  border-left: 1px #b5b5b5 solid;
+  border-right: 1px #e0e0e0 solid;
+  margin-top: 1px !important;
+}
+
+.drupalchat_tabs_user_normal_text {
+  float: left;
+  width: 112px;
+  height: 16px;
+  cursor: pointer;
+  font-size: 11px !important;
+  color: #333333 !important;
+  line-height: 1.2 !important;
+  white-space: pre !important;
+  font-weight: bold !important;
+  overflow: hidden;
+}
+.drupalchat_tabs_user_over {
+  float: right;
+  width: 130px;
+  height: 16px;
+  cursor: pointer;
+  padding: 6px 0px 2px 6px !important;
+  border-left: 1px #b5b5b5 solid;
+  border-right: 1px #ffffff solid;
+  margin-top: 1px !important;
+  background-color: #ffffff !important;
+}
+
+.drupalchat_tabs_user_over_text {
+  float: left;
+  width: 112px;
+  height: 16px;
+  cursor: pointer;
+  font-size: 11px !important;
+  color: #000000 !important;
+  text-decoration: underline !important;
+  line-height: 1.2 !important;
+  white-space: pre !important;
+  font-weight: bold !important;
+  overflow: hidden;
+}
+
+.drupalchat_tabs_user_open_normal {
+  float: right;
+  width: 130px;
+  height: 16px;
+  cursor: pointer;
+  padding: 5px 0px 3px 6px !important;
+  border-left: 1px #333333 solid;
+  border-right: 1px #333333 solid;
+  border-bottom: 1px #333333 solid;
+  background-color: #ffffff !important;
+}
+
+.drupalchat_tabs_user_open_normal_text {
+  float: left;
+  width: 112px;
+  height: 16px;
+  cursor: pointer;
+  font-size: 11px !important;
+  color: #333333 !important;
+  line-height: 1.2 !important;
+  white-space: pre !important;
+  font-weight: bold !important;
+  overflow: hidden;
+}
+.drupalchat_tabs_user_open_over {
+  float: right;
+  width: 130px;
+  height: 16px;
+  cursor: pointer;
+  padding: 5px 0px 3px 6px !important;
+  border-left: 1px #333333 solid;
+  border-right: 1px #333333 solid;
+  border-bottom: 1px #333333 solid;
+  background-color: #ffffff !important;
+}
+
+.drupalchat_tabs_user_open_over_text {
+  float: left;
+  width: 112px;
+  height: 16px;
+  cursor: pointer;
+  font-size: 11px !important;
+  color: #000000 !important;
+  text-decoration: underline !important;
+  line-height: 1.2 !important;
+  white-space: pre !important;
+  font-weight: bold !important;
+  overflow: hidden;
+}
+#drupalchat_tab_window {
+  position: fixed;
+  z-index: 72;
+  width: 228px;
+  bottom: 25px;
+  display: none;
+}
+#drupalchat_tab_window_head {
+  float: left;
+  width: 226px;
+  height: 21px;
+  border-left: 1px #254588 solid;
+  border-right: 1px #254588 solid;
+  border-top: 1px #254588 solid;
+  background-color: #526ea6 !important;
+}
+#drupalchat_tab_window_body {
+  float: left;
+  width: 226px;
+  background-color: #ffffff !important;
+  border-left: 1px #333333 solid;
+  border-right: 1px #333333 solid;
+  padding-bottom: 1px !important;
+  background-image: none;
+}
+#drupalchat_tab_receive {
+  clear: both;
+  float: left;
+  width: 226px;
+  border-bottom: 1px #b9c4da solid;
+}
+#drupalchat_tab_receive_text {
+  float: left;
+  width: 226px;
+}
+#drupalchat_tab_text_messages_block {
+  float: left;
+  width: 222px;
+  background-color: #FFFFFF !important;
+  padding: 2px !important;
+}
+#drupalchat_tab_text_messages_block_region {
+  float: left;
+  width: 215px;
+  padding: 0px 4px 0px 6px !important;
+}
+#drupalchat_tab_receive_text_messages {
+  float: left;
+  width: 215px;
+  overflow-x: hidden;
+  overflow-y: scroll;
+  height: 200px;
+}
+#drupalchat_tab_receive_text_messages_region {
+  float: left;
+  width: 199px;
+}
+.drupalchat_tab_receive_normal {
+  height: 208px;
+}
+#drupalchat_tab_send {
+  clear: both;
+  width: 226px;
+  height: 21px;
+  float: left;
+  background-color: #FFFFFF !important;
+  border-top: 1px #93a2c1 solid;
+}
+#drupalchat_tab_input_block {
+  float: left;
+  width: 226px;
+  height: 21px;
+}
+
+#drupalchat_tab_input {
+  width: 226px;
+  height: 21px;
+}
+#drupalchat_tab_send_input_text {
+  width: 198px;
+  height: 13px;
+  font-size: 11px !important;
+  color: #000000 !important;
+  line-height: 1.2 !important;
+  padding: 4px 4px 4px 24px !important;
+  overflow-y: hidden;
+  background-image: url(images/chat.jpg) !important;
+  background-repeat: no-repeat;
+  background-position: -5px 0px;
+  word-wrap: break-word !important;
+}
+#drupalchat_block textarea {
+  line-height: 0;
+  margin: 0;
+  padding: 0;
+  text-align: left;
+  font-size: 0;
+  background-color: transparent;
+  background-image: none;
+  font-family: "lucida grande",tahoma,verdana,arial,sans-serif;
+  text-decoration: none;
+  font-weight: normal;
+  font-style: normal;
+  white-space: normal;
+  word-wrap: normal;
+  border-style: none;
+  outline-style: none;
+  border-width: 0;
+}
+.drupalchat_receive_text_messages_tab {
+  float: left;
+}
+
+.drupalchat_receive_text_messages_message_even {
+  float: left;
+  clear: both;
+  width: 199px;
+}
+
+.drupalchat_receive_text_messages_message_odd {
+  float: left;
+  clear: both;
+  width: 199px;
+}
+
+.drupalchat_receive_text_messages_separator {
+  background-color: #eeeeee !important;
+  margin-top: 5px !important;
+  width: 100%;
+  height: 1px;
+}
+
+.drupalchat_receive_text_messages_me {
+  margin-top: 3px !important;
+  word-wrap: break-word !important;
+}
+
+.drupalchat_receive_text_messages_me_more {
+  margin-top: 6px !important;
+  word-wrap: break-word !important;
+}
+
+.drupalchat_receive_text_messages_me_separator {
+  height: 5px !important;
+}
+
+.drupalchat_receive_text_messages_me_user {
+  display: inline;
+  color: #777777 !important;
+  font-size: 11px !important;
+  line-height: 1.1 !important;
+  white-space: pre !important;
+  word-wrap: break-word !important;
+  font-weight: bold !important;
+}
+
+.drupalchat_receive_text_messages_me_message {
+  display: inline;
+  font-size: 11px !important;
+  color: #000000 !important;
+  line-height: 1.1 !important;
+  word-wrap: break-word !important;
+}
+
+.drupalchat_receive_text_messages_me_message_user {
+  display: inline;
+  font-size: 11px !important;
+  color: #000000 !important;
+  text-decoration: underline !important;
+  line-height: 1.1 !important;
+  cursor: pointer;
+  white-space: pre !important;
+  word-wrap: break-word !important;
+}
+
+.drupalchat_receive_text_messages_me_message_me {
+  display: inline;
+  font-size: 11px !important;
+  color: #000000 !important;
+  text-decoration: underline !important;
+  line-height: 1.1 !important;
+  white-space: pre !important;
+  word-wrap: break-word !important;
+}
+.drupalchat_receive_text_messages_user {
+  margin-top: 3px !important;
+  word-wrap: break-word !important;
+}
+
+.drupalchat_receive_text_messages_user_more {
+  margin-top: 6px !important;
+  word-wrap: break-word !important;
+}
+
+.drupalchat_receive_text_messages_user_separator {
+  height: 5px !important;
+}
+
+.drupalchat_receive_text_messages_user_user_text {
+  display: inline;
+  color: #3b5998 !important;
+  cursor: pointer;
+  font-size: 11px !important;
+  line-height: 1.1 !important;
+  white-space: pre !important;
+  word-wrap: break-word !important;
+  font-weight: bold !important;
+}
+
+.drupalchat_receive_text_messages_user_message {
+  display: inline;
+  font-size: 11px !important;
+  color: #000000 !important;
+  line-height: 1.1 !important;
+  word-wrap: break-word !important;
+}
+
+.drupalchat_receive_text_messages_user_message_user {
+  display: inline;
+  font-size: 11px !important;
+  color: #000000 !important;
+  text-decoration: underline !important;
+  line-height: 1.1 !important;
+  cursor: pointer;
+  white-space: pre !important;
+  word-wrap: break-word !important;
+}
+
+.drupalchat_receive_text_messages_user_message_me {
+  display: inline;
+  font-size: 11px !important;
+  color: #000000 !important;
+  text-decoration: underline !important;
+  line-height: 1.1 !important;
+  white-space: pre !important;
+  word-wrap: break-word !important;
+}
+.drupalchat_bar_tab_exit_normal {
+  width: 17px;
+  height: 16px;
+  cursor: pointer;
+  padding-top: 9px !important;
+  padding-left: 10px !important;
+}
+
+.drupalchat_bar_tab_exit_normal_text {
+  width: 7px;
+  height: 7px;
+  background-image: url(images/grey_cross.png) !important;
+  background-position: 0px 0px;
+  cursor: pointer;
+}
+
+.drupalchat_bar_tab_exit_over {
+  width: 17px;
+  height: 16px;
+  cursor: pointer;
+  padding-top: 9px !important;
+  padding-left: 10px !important;
+  background-color: #ffffff !important;
+}
+
+.drupalchat_bar_tab_exit_over_text {
+  width: 7px;
+  height: 7px;
+  background-image: url(images/black_cross.png) !important;
+  background-position: 0px 0px;
+  cursor: pointer;
+}
+#drupalchat_show {
+  float: right;
+  width: 27px;
+  height: 24px;
+  margin-top: 1px !important;
+  border-left: 1px #b5b5b5 solid;
+  border-top: 1px #b5b5b5 solid;
+  border-right: 1px #b5b5b5 solid;
+  position: fixed;
+  z-index: 74;
+  right: 16px;
+  bottom: 0px;
+  line-height: 0;
+  display: none;
+  background-color: #e5e5e5 !important;
+}
+.drupalchat_show_normal {
+  width: 17px;
+  height: 16px;
+  cursor: pointer;
+  padding-top: 9px !important;
+  padding-left: 10px !important;
+}
+
+.drupalchat_show_normal_text {
+  width: 7px;
+  height: 7px;
+  background-image: url(images/grey_show.png) !important;
+  background-position: 0px 0px;
+  cursor: pointer;
+}
+
+.drupalchat_show_over {
+  width: 17px;
+  height: 16px;
+  cursor: pointer;
+  padding-top: 9px !important;
+  padding-left: 10px !important;
+  background-color: #ffffff !important;
+}
+
+.drupalchat_show_over_text {
+  width: 7px;
+  height: 7px;
+  background-image: url(images/black_show.png) !important;
+  background-position: 0px 0px;
+  cursor: pointer;
+}
+.drupalchat_tab_window_head_text_user, .drupalchat_tab_window_head_text_user:link, .drupalchat_tab_window_head_text_user:visited, .drupalchat_tab_window_head_text_user:hover, .drupalchat_tab_window_head_text_user:active {
+  float: left;
+  width: 169px;
+  height: 14px;
+  margin: 4px 8px 3px 8px !important;
+  color: #ffffff !important;
+  font-size: 11px !important;
+  line-height: 1.2 !important;
+  white-space: pre !important;
+  font-weight: bold !important;
+  cursor: default;
+  overflow: hidden;
+}
+
+.drupalchat_tab_window_head_text_user_link, .drupalchat_tab_window_head_text_user_link:link, .drupalchat_tab_window_head_text_user_link:visited, .drupalchat_tab_window_head_text_user_link:active {
+  float: left;
+  width: 169px;
+  height: 14px;
+  margin: 4px 8px 3px 8px !important;
+  color: #ffffff !important;
+  font-size: 11px !important;
+  line-height: 1.2 !important;
+  white-space: pre !important;
+  font-weight: bold !important;
+  cursor: pointer;
+  overflow: hidden;
+}
+
+.drupalchat_tab_window_head_text_user_link:hover {
+  float: left;
+  width: 169px;
+  height: 14px;
+  margin: 4px 8px 3px 8px !important;
+  color: #ffffff !important;
+  font-size: 11px !important;
+  line-height: 1.2 !important;
+  white-space: pre !important;
+  font-weight: bold !important;
+  cursor: pointer;
+  overflow: hidden;
+  text-decoration: underline !important;
+}
+#drupalchat_tab_window_head_buttons {
+  float: left;
+  width: 41px;
+  height: 19px;
+  padding-top: 1px !important;
+  padding-bottom: 1px !important;
+}
+
+.drupalchat_tab_window_head_buttons_exit_normal {
+  float: right;
+  width: 19px;
+  height: 19px;
+  cursor: pointer;
+}
+
+.drupalchat_tab_window_head_buttons_exit_normal_text {
+  float: left;
+  margin: 6px !important;
+  width: 7px;
+  height: 7px;
+  background-image: url(images/blue_cross.png) !important;
+  background-position: 0px 0px;
+  cursor: pointer;
+}
+
+.drupalchat_tab_window_head_buttons_exit_over {
+  float: right;
+  width: 19px;
+  height: 19px;
+  cursor: pointer;
+}
+
+.drupalchat_tab_window_head_buttons_exit_over_text {
+  float: left;
+  margin: 6px !important;
+  width: 7px;
+  height: 7px;
+  background-image: url(images/white_cross.png) !important;
+  background-position: 0px 0px;
+  cursor: pointer;
+}
+
+.drupalchat_tab_window_head_buttons_minimize_normal {
+  float: right;
+  width: 19px;
+  height: 19px;
+  cursor: pointer;
+  margin-left: 3px !important;
+}
+
+.drupalchat_tab_window_head_buttons_minimize_normal_text {
+  float: left;
+  margin-top: 11px !important;
+  margin-bottom: 6px !important;
+  margin-left: 5px !important;
+  margin-right: 5px !important;
+  width: 9px;
+  height: 2px;
+  background-color: #adbed8 !important;
+  cursor: pointer;
+}
+
+.drupalchat_tab_window_head_buttons_minimize_over {
+  float: right;
+  width: 19px;
+  height: 19px;
+  cursor: pointer;
+  margin-left: 3px !important;
+}
+
+.drupalchat_tab_window_head_buttons_minimize_over_text {
+  float: left;
+  margin-top: 11px !important;
+  margin-bottom: 6px !important;
+  margin-left: 5px !important;
+  margin-right: 5px !important;
+  width: 9px;
+  height: 2px;
+  background-color: #ffffff !important;
+  cursor: pointer;
+}
+.drupalchat_tabs_user_alert {
+  float: right;
+  width: 130px;
+  height: 16px;
+  cursor: pointer;
+  padding: 6px 0px 2px 6px !important;
+  border-left: 1px #3b5998 solid;
+  border-right: 1px #3b5998 solid;
+  border-top: 1px #3b5998 solid;
+  background-color: #526ea6 !important;
+}
+
+.drupalchat_tabs_user_alert_text {
+  float: left;
+  width: 112px;
+  height: 16px;
+  cursor: pointer;
+  font-size: 11px !important;
+  color: #ffffff !important;
+  line-height: 1.2 !important;
+  white-space: pre !important;
+  font-weight: bold !important;
+  overflow: hidden;
+}

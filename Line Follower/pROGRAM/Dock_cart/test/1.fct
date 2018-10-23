@@ -1,0 +1,7 @@
+main DSTACK_USAGE:0 DSTACK_LEVEL:0 FILE:"..\..\oTHER source\Bikin Ndiri.c" LINE:1636
+tampil_siap DSTACK_USAGE:0 DSTACK_LEVEL:0 FILE:"..\..\oTHER source\Bikin Ndiri.c" LINE:1553
+tampil_menu DSTACK_USAGE:0 DSTACK_LEVEL:0 FILE:"..\..\oTHER source\Bikin Ndiri.c" LINE:1481
+tampil_auto_set1 DSTACK_USAGE:0 DSTACK_LEVEL:0 FILE:"..\..\oTHER source\Bikin Ndiri.c" LINE:760
+sprintf DSTACK_USAGE:14 DSTACK_LEVEL:14 FILE:"D:\cvavr2\lib\stdio.lib" LINE:1402
+_print DSTACK_USAGE:20 DSTACK_LEVEL:34 FILE:"D:\cvavr2\lib\stdio.lib" LINE:503
+strlen DSTACK_USAGE:2 DSTACK_LEVEL:36 FILE:"D:\cvavr2\lib\string.lib" LINE:1659

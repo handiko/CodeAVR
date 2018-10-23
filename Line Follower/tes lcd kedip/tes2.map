@@ -1,0 +1,64 @@
+RAM Allocation
+Variable                                                          Address   Size
+--------------------------------------------------------------------------------
+lcd_buffer                                                        0x0160      33
+kursorSpeed                                                       0x0181       1
+kursorGaris                                                       0x0182       1
+xcount                                                            0x0183       1
+lpwm                                                              0x0184       2
+rpwm                                                              0x0186       2
+MAXPWM                                                            0x0188       2
+MINPWM                                                            0x018A       2
+intervalPWM                                                       0x018C       2
+diffPWM                                                           0x018E       1
+s0_cent                                                           0x018F       1
+s1_cent                                                           0x0190       1
+s2_cent                                                           0x0191       1
+s3_cent                                                           0x0192       1
+s4_cent                                                           0x0193       1
+s5_cent                                                           0x0194       1
+s6_cent                                                           0x0195       1
+s7_cent                                                           0x0196       1
+MV                                                                0x0197       2
+P                                                                 0x0199       2
+I                                                                 0x019B       2
+D                                                                 0x019D       2
+PV                                                                0x019F       2
+error                                                             0x01A1       2
+last_error                                                        0x01A3       2
+rate                                                              0x01A5       2
+var_Kp                                                            0x01A7       2
+var_Ki                                                            0x01A9       2
+var_Kd                                                            0x01AB       2
+SP                                                                0x01AD       1
+hitungSiku                                                        0x01AE       2
+_base_y                                                           0x01B0       4
+_lcd_x                                                            0x01B4       1
+_lcd_y                                                            0x01B5       1
+_lcd_maxx                                                         0x01B6       1
+
+EEPROM Allocation
+Variable                                                          Address   Size
+--------------------------------------------------------------------------------
+Kp                                                                0x0000       1
+Ki                                                                0x0001       1
+Kd                                                                0x0002       1
+MAXSpeed                                                          0x0003       1
+MINSpeed                                                          0x0004       1
+WarnaGaris                                                        0x0005       1
+SensLine                                                          0x0006       1
+Skenario                                                          0x0007       1
+
+Register Allocation
+Variable                                                          Register  Size
+--------------------------------------------------------------------------------
+s0                                                                R5           1
+s1                                                                R4           1
+s2                                                                R7           1
+s3                                                                R6           1
+s4                                                                R9           1
+s5                                                                R8           1
+s6                                                                R11          1
+s7                                                                R10          1
+sensor                                                            R13          1
+kursorPID                                                         R12          1

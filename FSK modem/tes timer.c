@@ -1,0 +1,41 @@
+/*****************************************************
+This program was produced by the
+CodeWizardAVR V1.25.3 Professional
+Automatic Program Generator
+© Copyright 1998-2007 Pavel Haiduc, HP InfoTech s.r.l.
+http://www.hpinfotech.com
+
+Project : 
+Version : 
+Date    : 10/17/2010
+Author  : F4CG                            
+Company : F4CG                            
+Comments: 
+
+
+Chip type           : ATmega16
+Program type        : Application
+Clock frequency     : 1.000000 MHz
+Memory model        : Small
+External SRAM size  : 0
+Data Stack size     : 256
+*****************************************************/
+
+#include <mega16.h>
+
+void main(void)
+{       PORTD=0b00000000;
+        DDRD =0b11111111;
+
+        TCCR1A=0xA1;
+        TCCR1B=0x01;
+        //TCCR1B=0x02;
+
+
+        ACSR=0x80;
+        SFIOR=0x00;
+
+        while (1)
+        {       OCR1AL=150;
+        };
+}

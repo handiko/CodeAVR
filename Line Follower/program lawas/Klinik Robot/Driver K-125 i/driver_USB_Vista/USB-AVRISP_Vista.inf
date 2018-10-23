@@ -1,0 +1,88 @@
+; Windows USB klinikrobot Setup File (Vista)
+; Copyright (c) 2008 Klinik Robot Corporation
+
+[Version] 
+Signature	= "$Windows NT$"
+Provider	= %COMPANY%
+DriverVer	= 06/30/2008,1.0.0.1
+
+Class=Ports
+ClassGuid	= {4D36E978-E325-11CE-BFC1-08002BE10318}
+
+[Manufacturer] 
+%MFGNAME%	= Devices,NT,NTamd64
+
+;--------------------------------------------------------------------------
+; Files
+;--------------------------------------------------------------------------
+
+[DestinationDirs]
+DefaultDestDir	= 12
+
+;--------------------------------------------------------------------------
+; Device driver
+;--------------------------------------------------------------------------
+
+[DriverInstall.NT]
+Include	= mdmcpq.inf
+CopyFiles	= DriverInstall.NT.CopyFiles
+AddReg		= DriverInstall.NT.AddReg
+
+[DriverInstall.NT.CopyFiles]
+usbser.sys
+usbku.sys
+
+[DriverInstall.NT.Services]
+AddService	= usbser, 0x00000002, DriverServiceInst
+AddService	= usbku, 0x00000000, DriverLower.AddService
+
+[DriverInstall.NT.AddReg]
+HKR,,DevLoader,,*ntkern
+HKR,,NTMPDriver,,usbser.sys
+HKR,,EnumPropPages32,,"MsPorts.dll,SerialPortPropPageProvider"
+
+[DriverInstall.NT.HW]
+AddReg=DriverLower.HW
+
+[DriverLower.HW]
+HKR,,LowerFilters, 0x00010000, "usbku"
+
+;--------------------------------------------------------------------------
+; Services
+;--------------------------------------------------------------------------
+
+[DriverServiceInst]
+DisplayName	= %SERVICE%
+ServiceType	= 1
+StartType	= 3
+ErrorControl	= 1
+ServiceBinary	= %12%\usbser.sys
+LoadOrderGroup	= PNP Filter
+
+[DriverLower.AddService]
+DisplayName	= %SERVICE2%
+ServiceType	= 1
+StartType	= 3
+ErrorControl	= 1
+ServiceBinary	= %12%\usbku.sys 
+
+;--------------------------------------------------------------------------
+; Devices
+;--------------------------------------------------------------------------
+
+[Devices.NT]
+%DESCRIPTION%	= DriverInstall,USB\VID_16C0&PID_05E1
+
+[Devices.NTamd64]
+%DESCRIPTION%	= DriverInstall,USB\VID_16C0&PID_05E1
+
+;--------------------------------------------------------------------------
+; Strings
+;--------------------------------------------------------------------------
+
+[Strings] 
+COMPANY	= "Klinik+Robot USB"
+MFGNAME	= "www.Bengkel-ide.com"
+DESCRIPTION	= "Klinik Robot USB"
+SERVICE	= "USB RS-232 Emulation Driver"
+SERVICE2	= "Low-Speed USB Transfer Interface"

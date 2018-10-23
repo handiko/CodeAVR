@@ -1,0 +1,60 @@
+RAM Allocation
+Variable                                                          Address   Size
+--------------------------------------------------------------------------------
+hi6                                                               0x0260       1
+hi7                                                               0x0261       1
+hi8                                                               0x0262       1
+lo1                                                               0x0263       1
+lo2                                                               0x0264       1
+lo3                                                               0x0265       1
+lo4                                                               0x0266       1
+lo5                                                               0x0267       1
+lo6                                                               0x0268       1
+lo7                                                               0x0269       1
+lo8                                                               0x026A       1
+ref1                                                              0x026B       1
+ref2                                                              0x026C       1
+ref3                                                              0x026D       1
+ref4                                                              0x026E       1
+ref5                                                              0x026F       1
+ref6                                                              0x0270       1
+ref7                                                              0x0271       1
+ref8                                                              0x0272       1
+buf                                                               0x0273      33
+level                                                             0x0294       2
+_base_y                                                           0x0296       4
+_lcd_x                                                            0x029A       1
+_lcd_y                                                            0x029B       1
+_lcd_maxx                                                         0x029C       1
+_seed                                                             0x029D       4
+
+EEPROM Allocation
+Variable                                                          Address   Size
+--------------------------------------------------------------------------------
+ekp                                                               0x0000       1
+ekd                                                               0x0001       1
+espeed                                                            0x0002       1
+estart                                                            0x0003       1
+eref1                                                             0x0004       1
+eref2                                                             0x0005       1
+eref3                                                             0x0006       1
+eref4                                                             0x0007       1
+eref5                                                             0x0008       1
+eref6                                                             0x0009       1
+eref7                                                             0x000A       1
+eref8                                                             0x000B       1
+elevel                                                            0x000C       2
+
+Register Allocation
+Variable                                                          Register  Size
+--------------------------------------------------------------------------------
+kp                                                                R5           1
+kd                                                                R4           1
+lines                                                             R7           1
+speed                                                             R6           1
+start                                                             R9           1
+hi1                                                               R8           1
+hi2                                                               R11          1
+hi3                                                               R10          1
+hi4                                                               R13          1
+hi5                                                               R12          1

@@ -1,0 +1,5 @@
+main DSTACK_USAGE:0 DSTACK_LEVEL:0 FILE:"penyisihan.c" LINE:397
+set DSTACK_USAGE:1 DSTACK_LEVEL:1 FILE:"penyisihan.c" LINE:239
+sprintf DSTACK_USAGE:14 DSTACK_LEVEL:15 FILE:"C:\cvavreval\lib\stdio.lib" LINE:1410
+_print DSTACK_USAGE:20 DSTACK_LEVEL:35 FILE:"C:\cvavreval\lib\stdio.lib" LINE:503
+strlen DSTACK_USAGE:2 DSTACK_LEVEL:37 FILE:"C:\cvavreval\lib\string.lib" LINE:1707

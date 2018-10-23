@@ -1,0 +1,39 @@
+RAM Allocation
+Variable                                                          Address   Size
+--------------------------------------------------------------------------------
+select                                                            0260h        1
+adc_menu                                                          0261h        1
+_base_y                                                           0262h        4
+_lcd_x                                                            0266h        1
+_lcd_y                                                            0267h        1
+_lcd_maxx                                                         0268h        1
+_seed                                                             0269h        4
+
+EEPROM Allocation
+Variable                                                          Address   Size
+--------------------------------------------------------------------------------
+
+Register Allocation
+Variable                                                          Register  Size
+--------------------------------------------------------------------------------
+dir_kanan                                                         R5           1
+dir_kiri                                                          R4           1
+adc_frontkanan                                                    R7           1
+adc_frontkiri                                                     R6           1
+adc_rearkanan                                                     R9           1
+adc_rearkiri                                                      R8           1
+front_sensor                                                      R11          1
+rear_sensor                                                       R10          1
+i                                                                 R13          1
+adc_tres1_fkanan                                                  R12          1
+data_right                                                        R2.0      1bit
+data_right1                                                       R2.1      1bit
+data_right2                                                       R2.2      1bit
+front_kanan                                                       R2.3      1bit
+front_kiri                                                        R2.4      1bit
+data_left                                                         R2.5      1bit
+data_left1                                                        R2.6      1bit
+data_left2                                                        R2.7      1bit
+rear_kanan                                                        R3.0      1bit
+rear_kiri                                                         R3.1      1bit
+depan                                                             R3.2      1bit

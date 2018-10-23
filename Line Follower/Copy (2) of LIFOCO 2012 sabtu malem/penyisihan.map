@@ -1,0 +1,94 @@
+RAM Allocation
+Variable                                                          Address   Size
+--------------------------------------------------------------------------------
+lcd                                                               0x0260      32
+adc6                                                              0x0280       1
+adc7                                                              0x0281       1
+xcount                                                            0x0282       1
+SP                                                                0x0283       1
+lpwm                                                              0x0284       2
+rpwm                                                              0x0286       2
+MAXPWM                                                            0x0288       2
+MINPWM                                                            0x028A       2
+_MINPWM                                                           0x028C       2
+intervalPWM                                                       0x028E       2
+MV                                                                0x0290       2
+P                                                                 0x0292       2
+I                                                                 0x0294       2
+D                                                                 0x0296       2
+PV                                                                0x0298       2
+error                                                             0x029A       2
+last_error                                                        0x029C       2
+rate                                                              0x029E       2
+var_Kp                                                            0x02A0       2
+var_Ki                                                            0x02A2       2
+var_Kd                                                            0x02A4       2
+_base_y                                                           0x02A6       4
+_lcd_x                                                            0x02AA       1
+_lcd_y                                                            0x02AB       1
+_lcd_maxx                                                         0x02AC       1
+
+EEPROM Allocation
+Variable                                                          Address   Size
+--------------------------------------------------------------------------------
+Kp                                                                0x0000       1
+Ki                                                                0x0001       1
+Kd                                                                0x0002       1
+tempKp                                                            0x0003       1
+tempKi                                                            0x0004       1
+tempKd                                                            0x0005       1
+MAXSpeed                                                          0x0006       1
+MINSpeed                                                          0x0007       1
+WarnaGaris                                                        0x0008       1
+SensLine                                                          0x0009       1
+Skenario                                                          0x000A       1
+Mode                                                              0x000B       1
+NoStrategi                                                        0x000C       1
+bt7                                                               0x000D       1
+bt6                                                               0x000E       1
+bt5                                                               0x000F       1
+bt4                                                               0x0010       1
+bt3                                                               0x0011       1
+bt2                                                               0x0012       1
+bt1                                                               0x0013       1
+bt0                                                               0x0014       1
+ba7                                                               0x0015       1
+ba6                                                               0x0016       1
+ba5                                                               0x0017       1
+ba4                                                               0x0018       1
+ba3                                                               0x0019       1
+ba2                                                               0x001A       1
+ba1                                                               0x001B       1
+ba0                                                               0x001C       1
+bb7                                                               0x001D       1
+bb6                                                               0x001E       1
+bb5                                                               0x001F       1
+bb4                                                               0x0020       1
+bb3                                                               0x0021       1
+bb2                                                               0x0022       1
+bb1                                                               0x0023       1
+bb0                                                               0x0024       1
+
+Register Allocation
+Variable                                                          Register  Size
+--------------------------------------------------------------------------------
+s0                                                                R2.0      1bit
+s1                                                                R2.1      1bit
+s2                                                                R2.2      1bit
+s3                                                                R2.3      1bit
+s4                                                                R2.4      1bit
+s5                                                                R2.5      1bit
+s6                                                                R2.6      1bit
+s7                                                                R2.7      1bit
+sKa                                                               R3.0      1bit
+sKi                                                               R3.1      1bit
+kursorPID                                                         R5           1
+kursorSpeed                                                       R4           1
+kursorGaris                                                       R7           1
+sensor                                                            R6           1
+adc0                                                              R9           1
+adc1                                                              R8           1
+adc2                                                              R11          1
+adc3                                                              R10          1
+adc4                                                              R13          1
+adc5                                                              R12          1

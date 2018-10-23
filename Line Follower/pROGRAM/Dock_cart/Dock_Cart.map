@@ -1,0 +1,91 @@
+RAM Allocation
+Variable                                                          Address   Size
+--------------------------------------------------------------------------------
+d_d_error                                                         0160h        2
+d_error                                                           0162h        2
+min_kp                                                            0164h        2
+max_kp                                                            0166h        2
+kp                                                                0168h        2
+kd                                                                016Ah        2
+speed_ka                                                          016Ch        2
+speed_ki                                                          016Eh        2
+temp_speed                                                        0170h        2
+menu                                                              0172h        1
+kp_div                                                            0173h        1
+menu_slave                                                        0174h        1
+strategi                                                          0175h        1
+temp_adc_menu                                                     0176h        1
+adc_result1                                                       0177h        8
+adc_result2                                                       017Fh        8
+adc_tres1                                                         0187h        8
+adc_tres2                                                         018Fh        8
+adc_menu                                                          0197h        1
+lcd                                                               0198h       16
+max_adc1                                                          01A8h        8
+max_adc2                                                          01B0h        8
+min_adc1                                                          01B8h        8
+min_adc2                                                          01C0h        8
+langkah_cepat                                                     01C8h       20
+langkah_nos                                                       01DCh       20
+boleh_nos                                                         01F0h        1
+i                                                                 01F1h        1
+j                                                                 01F2h        1
+n                                                                 01F3h        1
+front_sensor                                                      01F4h        1
+rear_sensor                                                       01F5h        1
+disp_sensor                                                       01F6h        1
+backlight_on                                                      01F7h        1
+led_on                                                            01F8h        1
+right_back                                                        01F9h        1
+left_back                                                         01FAh        1
+set_per4an                                                        01FBh        1
+per4an                                                            01FCh        1
+siku                                                              01FDh        1
+per4an_dir                                                        01FEh        6
+temp_kp_div                                                       0204h        1
+time                                                              0205h        2
+count                                                             0207h        2
+langkah_kanan                                                     0209h        2
+langkah_kiri                                                      020Bh        2
+langkah                                                           020Dh        2
+step                                                              020Fh        2
+sigma_langkah                                                     0211h        2
+_seed                                                             0213h        4
+_base_y                                                           0217h        4
+_lcd_x                                                            021Bh        1
+_lcd_y                                                            021Ch        1
+_lcd_maxx                                                         021Dh        1
+p                                                                 021Eh        2
+
+EEPROM Allocation
+Variable                                                          Address   Size
+--------------------------------------------------------------------------------
+e_speed                                                           0000h        2
+e_min_kp                                                          0002h        2
+e_max_kp                                                          0004h        2
+e_adc_tres1                                                       0006h        8
+e_adc_tres2                                                       000Eh        8
+e_kp_div                                                          0016h        1
+e_per4an_dir                                                      0017h        6
+e_per4an_enable                                                   001Dh        1
+e_langkah_nos                                                     001Eh       20
+e_langkah_cepat                                                   0032h       20
+
+Register Allocation
+Variable                                                          Register  Size
+--------------------------------------------------------------------------------
+status_error_lalu                                                 R2.0      1bit
+status_error                                                      R2.1      1bit
+pwm_en                                                            R2.2      1bit
+black_line                                                        R2.3      1bit
+per4an_enable                                                     R2.4      1bit
+status_nos                                                        R2.5      1bit
+white_line                                                        R2.6      1bit
+berhasil                                                          R2.7      1bit
+flag_per4an                                                       R3.0      1bit
+flag_siku                                                         R3.1      1bit
+i_speed                                                           R4,R5        2
+speed                                                             R6,R7        2
+MV                                                                R8,R9        2
+error                                                             R10,R11      2
+error_before                                                      R12,R13      2

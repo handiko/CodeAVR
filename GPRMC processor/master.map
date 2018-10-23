@@ -1,0 +1,17 @@
+CodeVisionAVR C Compiler V1.25.3 Professional
+(C) Copyright 1998-2007 Pavel Haiduc, HP InfoTech s.r.l.
+http://www.hpinfotech.com
+
+File: D:\Punya Koko\LPKTA\GPRMC processor\master.c
+Global variables memory map:
+
+Variable                          Address   Size
+last_marker                                                          R4,R5      2
+i                                                                    R6,R7      2
+digit                                                                 260h     10
+info                                                                  26Ah     45
+GPRMC                                                                 297h   1000
+_base_y_G2                                                            67Fh      4
+_lcd_x                                                                  R9      1
+_lcd_y                                                                  R8      1
+_lcd_maxx                                                              R11      1

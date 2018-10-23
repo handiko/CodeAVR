@@ -1,0 +1,81 @@
+/*****************************************************
+This program was produced by the
+CodeWizardAVR V1.25.3 Professional
+Automatic Program Generator
+© Copyright 1998-2007 Pavel Haiduc, HP InfoTech s.r.l.
+http://www.hpinfotech.com
+
+Project : 
+Version : 
+Date    : 12/9/2011
+Author  : F4CG                            
+Company : F4CG                            
+Comments: 
+
+
+Chip type           : ATmega16
+Program type        : Application
+Clock frequency     : 12.000000 MHz
+Memory model        : Small
+External SRAM size  : 0
+Data Stack size     : 256
+*****************************************************/
+
+#include <mega16.h>
+#include <delay.h> 
+
+#define tom(t)  PIND.(t) 
+
+int i;
+
+void pilih_segment(int seg_ke)
+{       
+        for(i=0;i<8;i++)
+        {       
+                if(seg_ke==i)
+                {       
+                        PORTA=seg_ke;
+                        PORTA=PORTA<<4;             
+                }
+        }
+}
+
+void tampilkan_nilai(int nilai)
+{       
+        PORTA=PORTA|nilai;
+}   
+
+void baca_tombol()
+{       
+        for(i=0;i<8;i++)
+        { 
+                if(!tom(i))
+                {       
+                        delay_ms(200);
+                        pilih_segment(i);
+                        tampilkan_nilai(i);
+                }      
+        }
+}
+
+void main(void)
+{       PORTA=0x00;  // output segment dan selector
+        DDRA=0xFF;
+
+        PORTB=0x00;
+        DDRB=0x00;
+
+        PORTC=0x00;
+        DDRC=0x00;
+
+        PORTD=0xFF;  // input tombol
+        DDRD=0x00;
+
+        ACSR=0x80;
+        SFIOR=0x00;
+
+        while (1)
+        {
+                baca_tombol();
+        };
+}

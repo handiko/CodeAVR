@@ -1,0 +1,16 @@
+CodeVisionAVR C Compiler V1.25.9 Evaluation
+(C) Copyright 1998-2008 Pavel Haiduc, HP InfoTech s.r.l.
+http://www.hpinfotech.com
+
+File: D:\Punya Koko\document\bermacam - macam\line follower\Roborace 2010\TES_WARNA.c
+Global variables memory map:
+
+Variable                          Address   Size
+lcd                                                                   160h     16
+lcd_buffer                                                            170h     33
+sensor                                                               R4,R5      2
+_base_y_G2                                                            191h      4
+_lcd_x                                                                  R7      1
+_lcd_y                                                                  R6      1
+_lcd_maxx                                                               R9      1
+*p_S59                                                                195h      2

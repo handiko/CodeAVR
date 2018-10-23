@@ -1,0 +1,103 @@
+pos
+gnd
+11en   	D7
+6 EN	D6
+12dirA	D5
+10dirB	D4m
+7DIRA	D3m
+5DIRB	D2
+
+#define Enki    PORTD.7
+#define kirplus PORTD.5
+#define kirmin  PORTD.4
+
+#define Enka    PORTD.6
+#define kaplus  PORTD.3
+#define kamin   PORTD.2
+
+-------------YONATAN-------------
+
+void ikuti_garis()
+{
+        baca_sensor();
+
+        if((sensor==0b00000001) || (0b11111110)){bkan();      error = 15;     x=1;}  //kanan
+        if((sensor==0b00000011) || (0b11111100)){maju();      error = 10;     x=1;}
+        if((sensor==0b00000010) || (0b11111101)){maju();      error = 8;      x=1;}
+        if((sensor==0b00000110) || (0b11111001)){maju();      error = 5;      x=1;}
+        if((sensor==0b00000100) || (0b11111011)){maju();      error = 3;      x=1;}
+        if((sensor==0b00001100) || (0b11110011)){maju();      error = 2;      x=1;}
+        if((sensor==0b00001000) || (0b11110111)){maju();      error = 1;      x=1;}
+
+        if((sensor==0b00010000) || (0b11101111)){maju();      error = -1;     x=0;}
+        if((sensor==0b00110000) || (0b11001111)){maju();      error = -2;     x=0;}
+        if((sensor==0b00100000) || (0b11011111)){maju();      error = -3;     x=0;}
+        if((sensor==0b01100000) || (0b1001111)){maju();      error = -5;     x=0;}
+        if((sensor==0b01000000) || (0b10111111)){maju();      error = -8;     x=0;}
+        if((sensor==0b11000000) || (0b00111111)){maju();      error = -10;    x=0;}
+        if((sensor==0b10000000) || (0b01111111)){bkir();      error = -15;    x=0;}  //kiri
+        
+        if(
+                (sensor==0b10000001) || 
+                (sensor==0b11000011) || 
+                (sensor==0b01000010)
+                ||
+                (sensor==0b01111110) || 
+                (sensor==0b00111100) || 
+                (sensor==0b10111101))
+                {       
+                        bkir(); 
+                        error = -20;
+                } 
+    
+        d_error = error-last_error;
+        PV      = (Kp*error)+(Kd*d_error);
+
+        rpwm=intervalPWM+PV;
+        lpwm=intervalPWM-PV;
+
+        last_error=error;
+
+        if(lpwm>=255)       lpwm = 255;
+        if(lpwm<=0)         lpwm = 0;
+    
+        if(rpwm>=255)       rpwm = 255;
+        if(rpwm<=0)         rpwm = 0;
+
+        sprintf(lcd_buffer,"%d   %d",lpwm, rpwm);
+        lcd_gotoxy(0, 0);
+        //lcd_putsf("                ");
+        //lcd_gotoxy(0, 0);
+        lcd_puts(lcd_buffer);
+        delay_ms(5);
+}  
+
+
+
+----------------- YUSRON---------------
+
+
+
+POS
+GND
+6 EN	7
+11en	6
+5 DIRA	5
+7 DIRB	4
+10 dirA	3
+12 dirB	2
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

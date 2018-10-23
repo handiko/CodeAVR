@@ -1,0 +1,50 @@
+RAM Allocation
+Variable                                                          Address   Size
+--------------------------------------------------------------------------------
+temp                                                              0x0380       7
+volt                                                              0x0387       7
+bit_stuff                                                         0x038E       1
+comp_lat                                                          0x038F       4
+comp_long                                                         0x0393       4
+comp_cst                                                          0x0397       3
+crc_lo                                                            0x039A       1
+crc_hi                                                            0x039B       1
+xor_in                                                            0x039C       2
+buff_posisi                                                       0x039E      20
+buff_altitude                                                     0x03B2       9
+_seed                                                             0x03BB       4
+
+EEPROM Allocation
+Variable                                                          Address   Size
+--------------------------------------------------------------------------------
+GAP_TIME_                                                         0x0000       2
+SYM_TAB_OVL_                                                      0x0002       1
+SYM_CODE_                                                         0x0003       1
+ketinggian                                                        0x0004       2
+add_aprs                                                          0x0006       7
+mycall                                                            0x000D       8
+mydigi1                                                           0x0015       8
+mydigi2                                                           0x001D       8
+mydigi3                                                           0x0025       8
+posisi_lat                                                        0x002D       9
+posisi_long                                                       0x0036      10
+altitude                                                          0x0040       6
+beacon_stat                                                       0x0046       1
+battvoltincomm                                                    0x0047       1
+tempincomm                                                        0x0048       1
+komentar                                                          0x0049     100
+status                                                            0x00AD     100
+timeIntv                                                          0x0111       2
+compstat                                                          0x0113       1
+sendalt                                                           0x0114       1
+gps                                                               0x0115       1
+sendtopc                                                          0x0116       1
+commsize                                                          0x0117       1
+statsize                                                          0x0118       1
+
+Register Allocation
+Variable                                                          Register  Size
+--------------------------------------------------------------------------------
+xcount                                                            R7           1
+nada                                                              R2.0      1bit
+crc                                                               R8,R9        2

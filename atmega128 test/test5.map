@@ -1,0 +1,28 @@
+RAM Allocation
+Variable                                                          Address   Size
+--------------------------------------------------------------------------------
+rx_buffer0                                                        0x0500       8
+tx_buffer0                                                        0x0508       8
+s1                                                                0x0510       9
+s2                                                                0x0519       9
+s3                                                                0x0522       9
+s4                                                                0x052B       9
+s5                                                                0x0534       9
+s6                                                                0x053D       9
+s8                                                                0x0546       9
+_seed                                                             0x054F       4
+
+EEPROM Allocation
+Variable                                                          Address   Size
+--------------------------------------------------------------------------------
+
+Register Allocation
+Variable                                                          Register  Size
+--------------------------------------------------------------------------------
+rx_wr_index0                                                      R5           1
+rx_rd_index0                                                      R4           1
+rx_counter0                                                       R7           1
+rx_buffer_overflow0                                               R2.0      1bit
+tx_wr_index0                                                      R6           1
+tx_rd_index0                                                      R9           1
+tx_counter0                                                       R8           1

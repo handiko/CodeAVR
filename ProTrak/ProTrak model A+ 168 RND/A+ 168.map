@@ -1,0 +1,67 @@
+RAM Allocation
+Variable                                                          Address   Size
+--------------------------------------------------------------------------------
+temp                                                              0x03BC       7
+volt                                                              0x03C3       7
+comp_cst                                                          0x03CA       3
+norm_alt                                                          0x03CD      10
+bit_stuff                                                         0x03D7       1
+seq_num                                                           0x03D8       3
+ch1                                                               0x03DB       3
+ch2                                                               0x03DE       3
+ch3                                                               0x03E1       3
+alti                                                              0x03E4       3
+crc_lo                                                            0x03E7       1
+crc_hi                                                            0x03E8       1
+xor_in                                                            0x03E9       2
+_seed                                                             0x03EB       4
+
+EEPROM Allocation
+Variable                                                          Address   Size
+--------------------------------------------------------------------------------
+SYM_TAB_OVL_                                                      0x0000       1
+SYM_CODE_                                                         0x0001       1
+add_aprs                                                          0x0002       7
+add_tel                                                           0x0009       7
+add_beacon                                                        0x0010       7
+mycall                                                            0x0017       8
+mydigi1                                                           0x001F       8
+mydigi2                                                           0x0027       8
+mydigi3                                                           0x002F       8
+comment                                                           0x0037     100
+status                                                            0x009B     100
+posisi_lat                                                        0x00FF       9
+posisi_long                                                       0x0108      10
+message_head                                                      0x0112      12
+param                                                             0x011E      22
+unit                                                              0x0134      21
+eqns                                                              0x0149      28
+altitude                                                          0x0165       2
+m_int                                                             0x0167       1
+tel_int                                                           0x0168       2
+comp_lat                                                          0x016A       4
+comp_long                                                         0x016E       4
+seq                                                               0x0172       2
+timeIntv                                                          0x0174       2
+compstat                                                          0x0176       1
+battvoltincomm                                                    0x0177       1
+tempincomm                                                        0x0178       1
+sendalt                                                           0x0179       1
+sendtel                                                           0x017A       1
+gps                                                               0x017B       1
+pri1                                                              0x017C       1
+pri2                                                              0x017D       1
+pri3                                                              0x017E       1
+pri4                                                              0x017F       1
+pri5                                                              0x0180       1
+commsize                                                          0x0181       1
+statsize                                                          0x0182       1
+sendtopc                                                          0x0183       1
+
+Register Allocation
+Variable                                                          Register  Size
+--------------------------------------------------------------------------------
+beacon_stat                                                       R6           1
+nada                                                              GPIOR0.0  1bit
+crc                                                               R7,R8        2
+tcnt1c                                                            R5           1

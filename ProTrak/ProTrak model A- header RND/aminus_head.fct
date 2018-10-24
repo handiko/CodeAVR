@@ -1,0 +1,9 @@
+main DSTACK_USAGE:0 DSTACK_LEVEL:0 FILE:"aminus_head.c" LINE:978
+read_temp DSTACK_USAGE:6 DSTACK_LEVEL:6 FILE:"aminus_head.c" LINE:97
+read_adc DSTACK_USAGE:1 DSTACK_LEVEL:7 FILE:"aminus_head.c" LINE:374
+timer1_ovf_isr DSTACK_USAGE:12 DSTACK_LEVEL:19 FILE:"aminus_head.c" LINE:953
+extractGPS DSTACK_USAGE:21 DSTACK_LEVEL:40 FILE:"aminus_head.c" LINE:854
+config DSTACK_USAGE:513 DSTACK_LEVEL:553 FILE:"aminus_head.c" LINE:545
+mem_display DSTACK_USAGE:1 DSTACK_LEVEL:554 FILE:"aminus_head.c" LINE:399
+putsf DSTACK_USAGE:3 DSTACK_LEVEL:557 FILE:"C:\cvavreval\lib\stdio.lib" LINE:225
+putchar DSTACK_USAGE:1 DSTACK_LEVEL:558 FILE:"C:\cvavreval\lib\stdio.lib" LINE:204

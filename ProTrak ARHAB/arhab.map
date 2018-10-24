@@ -1,0 +1,54 @@
+RAM Allocation
+Variable                                                          Address   Size
+--------------------------------------------------------------------------------
+temp                                                              0x0160       7
+volt                                                              0x0167       7
+comp_cst                                                          0x016E       3
+norm_alt                                                          0x0171      10
+bit_stuff                                                         0x017B       1
+seq_num                                                           0x017C       3
+ch1                                                               0x017F       3
+ch2                                                               0x0182       3
+ch3                                                               0x0185       3
+alti                                                              0x0188       3
+crc_lo                                                            0x018B       1
+crc_hi                                                            0x018C       1
+xor_in                                                            0x018D       2
+_seed                                                             0x018F       4
+
+EEPROM Allocation
+Variable                                                          Address   Size
+--------------------------------------------------------------------------------
+SYM_TAB_OVL_                                                      0x0000       1
+SYM_CODE_                                                         0x0001       1
+add_aprs                                                          0x0002       7
+add_beacon                                                        0x0009       7
+add_tel                                                           0x0010       7
+data_1                                                            0x0017      14
+status                                                            0x0025      42
+message_head                                                      0x004F      12
+param                                                             0x005B      22
+unit                                                              0x0071      21
+eqns                                                              0x0086      28
+posisi_lat                                                        0x00A2       9
+posisi_long                                                       0x00AB      10
+altitude                                                          0x00B5       2
+m_int                                                             0x00B7       1
+comp_lat                                                          0x00B8       4
+comp_long                                                         0x00BC       4
+seq                                                               0x00C0       2
+timeIntv                                                          0x00C2       2
+gps                                                               0x00C4       1
+pri1                                                              0x00C5       1
+pri2                                                              0x00C6       1
+pri3                                                              0x00C7       1
+pri4                                                              0x00C8       1
+pri5                                                              0x00C9       1
+
+Register Allocation
+Variable                                                          Register  Size
+--------------------------------------------------------------------------------
+beacon_stat                                                       R7           1
+nada                                                              R2.0      1bit
+crc                                                               R8,R9        2
+tcnt1c                                                            R6           1

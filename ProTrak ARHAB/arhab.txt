@@ -1,0 +1,257 @@
+void kirim_paket(void)
+{
+	char i;
+
+        read_temp();
+        read_volt();
+        base91_lat();
+        base91_long();
+        base91_alt();
+        calc_tel_data();
+        normal_alt();
+
+	MERAH = 1;
+        HIJAU = 0;
+        if(compstat=='Y')
+        {
+        	beacon_stat++;
+                if(beacon_stat==1)
+                {
+                	prepare();
+                        kirim_status();
+
+                        goto tutup;
+                }
+                if(beacon_stat==2)
+                {
+                	prepare();
+                        kirim_add_aprs();
+                	kirim_ax25_head();
+                	kirim_karakter(TD_POSISI_);
+        		kirim_karakter(SYM_TAB_OVL_);
+        		for(i=0;i<4;i++)kirim_karakter(comp_lat[i]);
+        		for(i=0;i<4;i++)kirim_karakter(comp_long[i]);
+			kirim_karakter(SYM_CODE_);
+        		for(i=0;i<3;i++)kirim_karakter(comp_cst[i]);
+                        if(tempincomm=='Y')
+                        {for(i=0;i<6;i++){if(temp[i]!='!')kirim_karakter(temp[i]);}kirim_karakter(' ');}
+                        if(battvoltincomm=='Y')
+                        {for(i=0;i<6;i++){if(volt[i]!='!')kirim_karakter(volt[i]);}kirim_karakter(' ');}
+                        for(i=0;i<sizeof(comment);i++)
+                        	kirim_karakter(comment[i]);
+
+                        goto tutup;
+                }
+                if(sendtel=='Y')
+                {
+                	if((beacon_stat%tel_int)==0)
+                        {
+                        	prepare();
+                                kirim_tele_data();
+
+                                goto tutup;
+                        }
+                        if(((beacon_stat-1)%(10*tel_int))==0)
+                        {
+                        	prepare();
+                                kirim_tele_param();
+
+                                goto tutup;
+                        }
+                	if(((beacon_stat-2)%(10*tel_int))==0)
+                        {
+                        	prepare();
+                                kirim_tele_unit();
+
+                                goto tutup;
+                        }
+                	if(((beacon_stat-3)%(10*tel_int))==0)
+                        {
+                        	prepare();
+                                kirim_tele_eqns();
+
+                                goto tutup;
+                        }
+                        if((beacon_stat%m_int)==0)
+                        {
+                        	prepare();
+                                kirim_status();
+
+                        	goto tutup;
+                        }
+
+                        prepare();
+                        kirim_add_aprs();
+                	kirim_ax25_head();
+                	kirim_karakter(TD_POSISI_);
+        		kirim_karakter(SYM_TAB_OVL_);
+        		for(i=0;i<4;i++)kirim_karakter(comp_lat[i]);
+        		for(i=0;i<4;i++)kirim_karakter(comp_long[i]);
+			kirim_karakter(SYM_CODE_);
+        		for(i=0;i<3;i++)kirim_karakter(comp_cst[i]);
+                        if(tempincomm=='Y')
+                        {for(i=0;i<6;i++){if(temp[i]!='!')kirim_karakter(temp[i]);}kirim_karakter(' ');}
+                        if(battvoltincomm=='Y')
+                        {for(i=0;i<6;i++){if(volt[i]!='!')kirim_karakter(volt[i]);}kirim_karakter(' ');}
+                        for(i=0;i<sizeof(comment);i++)
+                        	kirim_karakter(comment[i]);
+
+                        goto tutup;
+                }
+                if(sendtel=='N')
+                {
+                	if((beacon_stat%m_int)==0)
+                        {
+                        	prepare();
+                                kirim_status();
+
+                        	goto tutup;
+                        }
+
+                        prepare();
+                        kirim_add_aprs();
+                	kirim_ax25_head();
+                	kirim_karakter(TD_POSISI_);
+        		kirim_karakter(SYM_TAB_OVL_);
+        		for(i=0;i<4;i++)kirim_karakter(comp_lat[i]);
+        		for(i=0;i<4;i++)kirim_karakter(comp_long[i]);
+			kirim_karakter(SYM_CODE_);
+        		for(i=0;i<3;i++)kirim_karakter(comp_cst[i]);
+                        if(tempincomm=='Y')
+                        {for(i=0;i<6;i++){if(temp[i]!='!')kirim_karakter(temp[i]);}kirim_karakter(' ');}
+                        if(battvoltincomm=='Y')
+                        {for(i=0;i<6;i++){if(volt[i]!='!')kirim_karakter(volt[i]);}kirim_karakter(' ');}
+                        for(i=0;i<sizeof(comment);i++)
+                        	kirim_karakter(comment[i]);
+
+                        goto tutup;
+                }
+        }
+        else
+        {
+        	beacon_stat++;
+                if(beacon_stat==1)
+                {
+                	prepare();
+                        kirim_status();
+
+                        goto tutup;
+                }
+                if(beacon_stat==2)
+                {
+                	prepare();
+                        kirim_add_aprs();
+                	kirim_ax25_head();
+                	kirim_karakter(TD_POSISI_);
+			for(i=0;i<8;i++)kirim_karakter(posisi_lat[i]);
+			kirim_karakter(SYM_TAB_OVL_);
+			for(i=0;i<9;i++)kirim_karakter(posisi_long[i]);
+			kirim_karakter(SYM_CODE_);
+                        if(tempincomm=='Y')
+                        {for(i=0;i<6;i++){if(temp[i]!='!')kirim_karakter(temp[i]);}kirim_karakter(' ');}
+                        if(battvoltincomm=='Y')
+                        {for(i=0;i<6;i++){if(volt[i]!='!')kirim_karakter(volt[i]);}kirim_karakter(' ');}
+                        if(sendalt=='Y')
+                        {for(i=0;i<9;i++)kirim_karakter(norm_alt[i]);}
+                        for(i=0;i<sizeof(comment);i++)
+                        	kirim_karakter(comment[i]);
+
+                        goto tutup;
+                }
+                if(sendtel=='Y')
+                {
+                	if((beacon_stat%tel_int)==0)
+                        {
+                        	prepare();
+                                kirim_tele_data();
+
+                                goto tutup;
+                        }
+                        if(((beacon_stat-1)%(10*tel_int))==0)
+                        {
+                        	prepare();
+                                kirim_tele_param();
+
+                                goto tutup;
+                        }
+                	if(((beacon_stat-2)%(10*tel_int))==0)
+                        {
+                        	prepare();
+                                kirim_tele_unit();
+
+                                goto tutup;
+                        }
+                	if(((beacon_stat-3)%(10*tel_int))==0)
+                        {
+                        	prepare();
+                                kirim_tele_eqns();
+
+                                goto tutup;
+                        }
+                        if((beacon_stat%m_int)==0)
+                        {
+                        	prepare();
+                                kirim_status();
+
+                        	goto tutup;
+                        }
+
+                        prepare();
+                        kirim_add_aprs();
+                	kirim_ax25_head();
+                	kirim_karakter(TD_POSISI_);
+			for(i=0;i<8;i++)kirim_karakter(posisi_lat[i]);
+			kirim_karakter(SYM_TAB_OVL_);
+			for(i=0;i<9;i++)kirim_karakter(posisi_long[i]);
+			kirim_karakter(SYM_CODE_);
+                        if(tempincomm=='Y')
+                        {for(i=0;i<6;i++){if(temp[i]!='!')kirim_karakter(temp[i]);}kirim_karakter(' ');}
+                        if(battvoltincomm=='Y')
+                        {for(i=0;i<6;i++){if(volt[i]!='!')kirim_karakter(volt[i]);}kirim_karakter(' ');}
+                        if(sendalt=='Y')
+                        {for(i=0;i<9;i++)kirim_karakter(norm_alt[i]);}
+                        for(i=0;i<sizeof(comment);i++)
+                        	kirim_karakter(comment[i]);
+
+                        goto tutup;
+                }
+                if(sendtel=='N')
+                {
+                	if((beacon_stat%m_int)==0)
+                        {
+                        	prepare();
+                                kirim_status();
+
+                        	goto tutup;
+                        }
+
+                        prepare();
+                        kirim_add_aprs();
+                	kirim_ax25_head();
+                	kirim_karakter(TD_POSISI_);
+			for(i=0;i<8;i++)kirim_karakter(posisi_lat[i]);
+			kirim_karakter(SYM_TAB_OVL_);
+			for(i=0;i<9;i++)kirim_karakter(posisi_long[i]);
+			kirim_karakter(SYM_CODE_);
+                        if(tempincomm=='Y')
+                        {for(i=0;i<6;i++){if(temp[i]!='!')kirim_karakter(temp[i]);}kirim_karakter(' ');}
+                        if(battvoltincomm=='Y')
+                        {for(i=0;i<6;i++){if(volt[i]!='!')kirim_karakter(volt[i]);}kirim_karakter(' ');}
+                        if(sendalt=='Y')
+                        {for(i=0;i<9;i++)kirim_karakter(norm_alt[i]);}
+                        for(i=0;i<sizeof(comment);i++)
+                        	kirim_karakter(comment[i]);
+
+                        goto tutup;
+                }
+        }
+        //*/
+
+        tutup:
+	kirim_crc();
+        kirim_karakter(FLAG_);
+        kirim_karakter(FLAG_);
+        PTT = 0;
+        MERAH = 0;
+        HIJAU = 0;
+}

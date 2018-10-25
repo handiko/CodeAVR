@@ -1,0 +1,9 @@
+main DSTACK_USAGE:0 DSTACK_LEVEL:0 FILE:"master.c" LINE:113
+queue DSTACK_USAGE:0 DSTACK_LEVEL:0 FILE:"master.c" LINE:51
+try_transmit DSTACK_USAGE:2 DSTACK_LEVEL:2 FILE:"master.c" LINE:102
+transmit DSTACK_USAGE:2 DSTACK_LEVEL:4 FILE:"master.c" LINE:65
+lcd_putsf DSTACK_USAGE:3 DSTACK_LEVEL:7 FILE:"C:\cvavreval\lib\lcd.lib" LINE:217
+lcd_putchar DSTACK_USAGE:1 DSTACK_LEVEL:8 FILE:"C:\cvavreval\lib\lcd.lib" LINE:178
+lcd_gotoxy DSTACK_USAGE:2 DSTACK_LEVEL:10 FILE:"C:\cvavreval\lib\lcd.lib" LINE:158
+_lcd_write_data DSTACK_USAGE:1 DSTACK_LEVEL:11 FILE:"C:\cvavreval\lib\lcd.lib" LINE:77
+usart_rx_isr DSTACK_USAGE:5 DSTACK_LEVEL:16 FILE:"C:\cvavreval\inc\usartMEGA32.h" LINE:30

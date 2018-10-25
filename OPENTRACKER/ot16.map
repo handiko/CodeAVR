@@ -1,0 +1,43 @@
+RAM Allocation
+Variable                                                          Address   Size
+--------------------------------------------------------------------------------
+destination_final                                                 0x00E0       7
+source_final                                                      0x00E7       7
+digi_final                                                        0x00EE       7
+gpsString_buff                                                    0x00F5     300
+tx_buffer                                                         0x0221       8
+rx_buffer                                                         0x0229       8
+fcs_arr                                                           0x0231       4
+tx_rd_index                                                       0x0235       1
+tx_counter                                                        0x0236       1
+
+EEPROM Allocation
+Variable                                                          Address   Size
+--------------------------------------------------------------------------------
+destination                                                       0x0000       7
+source                                                            0x0007       7
+digi                                                              0x000E       7
+latitude                                                          0x0015       8
+symbol_table                                                      0x001D       1
+longitude                                                         0x001E       9
+symbol_code                                                       0x0027       1
+comment                                                           0x0028      43
+gpsString                                                         0x0053     300
+
+Register Allocation
+Variable                                                          Register  Size
+--------------------------------------------------------------------------------
+rx_buffer_overflow                                                R2.0      1bit
+usart_status_                                                     R2.1      1bit
+flag_state                                                        R2.2      1bit
+crc_flag                                                          R2.3      1bit
+gps_status                                                        R2.4      1bit
+tone                                                              R4,R5        2
+fcshi                                                             R7           1
+fcslo                                                             R6           1
+count_1                                                           R9           1
+x_counter                                                         R8           1
+rx_wr_index                                                       R11          1
+rx_rd_index                                                       R10          1
+rx_counter                                                        R13          1
+tx_wr_index                                                       R12          1

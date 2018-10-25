@@ -1,0 +1,28 @@
+CodeVisionAVR C Compiler V1.25.3 Professional
+(C) Copyright 1998-2007 Pavel Haiduc, HP InfoTech s.r.l.
+http://www.hpinfotech.com
+
+File: D:\Punya Koko\LPKTA\USART multi string\master.c
+Global variables memory map:
+
+Variable                          Address   Size
+rx_buffer_overflow                                                    R2.0    1/8
+rx_buffer                                                             260h      8
+tx_buffer                                                             268h      8
+rx_wr_index                                                             R5      1
+rx_rd_index                                                             R4      1
+rx_counter                                                              R7      1
+tx_wr_index                                                             R6      1
+tx_rd_index                                                             R9      1
+tx_counter                                                              R8      1
+i                                                                  R10,R11      2
+j                                                                  R12,R13      2
+k                                                                     270h      2
+m                                                                     272h      2
+z                                                                     274h      2
+kalimat                                                               276h    560
+kalimat2                                                              4A6h    500
+_base_y_G2                                                            69Ah      4
+_lcd_x                                                                69Eh      1
+_lcd_y                                                                69Fh      1
+_lcd_maxx                                                             6A0h      1

@@ -34,3 +34,7 @@ right back up.
 If you have questions or comments (such as a suggestion on how to create
 the eeprom file using make <- I'm sure it's possible, but I haven't done it
 yet) please feel free to e-mail me at me@garydion.com.
+
+----------------------------------------------------------------
+
+http://www.garydion.com/projects/whereavr/

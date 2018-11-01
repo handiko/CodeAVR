@@ -1,0 +1,9 @@
+main DSTACK_USAGE:0 DSTACK_LEVEL:0 FILE:"m.c" LINE:198
+ready_to_set DSTACK_USAGE:0 DSTACK_LEVEL:0 FILE:"m.c" LINE:81
+sprintf DSTACK_USAGE:14 DSTACK_LEVEL:14 FILE:"C:\cvavreval\lib\stdio.lib" LINE:1410
+_print DSTACK_USAGE:20 DSTACK_LEVEL:34 FILE:"C:\cvavreval\lib\stdio.lib" LINE:503
+strlen DSTACK_USAGE:2 DSTACK_LEVEL:36 FILE:"C:\cvavreval\lib\string.lib" LINE:1707
+ext_int1_isr DSTACK_USAGE:12 DSTACK_LEVEL:48 FILE:"m.c" LINE:62
+sprintf DSTACK_USAGE:14 DSTACK_LEVEL:62 FILE:"C:\cvavreval\lib\stdio.lib" LINE:1410
+_print DSTACK_USAGE:20 DSTACK_LEVEL:82 FILE:"C:\cvavreval\lib\stdio.lib" LINE:503
+strlen DSTACK_USAGE:2 DSTACK_LEVEL:84 FILE:"C:\cvavreval\lib\string.lib" LINE:1707

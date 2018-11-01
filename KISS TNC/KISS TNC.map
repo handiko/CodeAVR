@@ -1,0 +1,22 @@
+RAM Allocation
+Variable                                                          Address   Size
+--------------------------------------------------------------------------------
+data_stream                                                       0x0160     512
+
+EEPROM Allocation
+Variable                                                          Address   Size
+--------------------------------------------------------------------------------
+
+Register Allocation
+Variable                                                          Register  Size
+--------------------------------------------------------------------------------
+last_bit_in                                                       R2.0      1bit
+bit_in                                                            R2.1      1bit
+binary_data                                                       R2.2      1bit
+valid                                                             R2.3      1bit
+flag_det                                                          R2.4      1bit
+data_det                                                          R2.5      1bit
+data_index                                                        R5           1
+bit_stuff                                                         R4           1
+byte_data                                                         R7           1
+index_ds                                                          R8,R9        2

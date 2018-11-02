@@ -1,0 +1,22 @@
+RAM Allocation
+Variable                                                          Address   Size
+--------------------------------------------------------------------------------
+
+EEPROM Allocation
+Variable                                                          Address   Size
+--------------------------------------------------------------------------------
+data_stream                                                       0x0000     128
+
+Register Allocation
+Variable                                                          Register  Size
+--------------------------------------------------------------------------------
+last_bit_in                                                       GPIOR0.0  1bit
+bit_in                                                            GPIOR0.1  1bit
+binary_data                                                       GPIOR0.2  1bit
+valid                                                             GPIOR0.3  1bit
+flag_det                                                          GPIOR0.4  1bit
+data_det                                                          GPIOR0.5  1bit
+data_index                                                        R3           1
+bit_stuff                                                         R2           1
+byte_data                                                         R5           1
+index_ds                                                          R4           1

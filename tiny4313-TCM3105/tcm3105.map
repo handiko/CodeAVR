@@ -1,0 +1,19 @@
+RAM Allocation
+Variable                                                          Address   Size
+--------------------------------------------------------------------------------
+
+EEPROM Allocation
+Variable                                                          Address   Size
+--------------------------------------------------------------------------------
+
+Register Allocation
+Variable                                                          Register  Size
+--------------------------------------------------------------------------------
+matrix_fasa                                                       R3           1
+cls_flag                                                          R2           1
+int_anacomp                                                       R5           1
+t                                                                 R4           1
+t_2200                                                            R7           1
+t1_count                                                          R6           1
+dac_stat                                                          GPIOR0.0  1bit
+dat_out                                                           GPIOR0.1  1bit

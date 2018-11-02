@@ -1,0 +1,101 @@
+body, td, th, p, li {font-family:verdana,geneva,lucida,'lucida grande',arial,helvetica,sans-serif !important;font-size:10pt;}
+body{margin:0px; background:#eae5ce;}
+.page{background-color:transparent !important;}
+#Middleorgna {line-height:9px; background:url(../newhomeimages/header.gif) 0px -21px repeat-x;}
+#Textatas {height:25px; padding:5px 0 0 140px;font-size:13px; color:#666666; background:#fff; }
+#Textatas1 { font-weight:bold; padding:2px 0 4px 143px;font-size:9px; color:#666666; background:#EAE5CE; width:736px; }
+#Textatas1 a, #Textatas1 a:visited, #Textatas1 a:active { color:#666666; text-decoration:none; }
+#Textatas1 a:hover { color:#FF3300; text-decoration:none;}
+#Textatasis {font-size:12px; color:#666666; text-decoration:none;}
+#Textatasis a, #Textatasis a:hover, #Textatasis a:visited, #Textatasis a:active{font-size:11px; color:#666666 !important; text-decoration:none; }
+#TextInfo{height:92px; padding-left:132px;}
+#TextInfo, .TextInfo01, .TextInfo02, #InfoTablle02, #SearchNya{color:#999999; font-size:9px; font-weight:bold; background:#fff}
+#InfoTablle01{height:43px; width:11px;background:url(../newhomeimages/header.gif) -56px -73px no-repeat; }
+#InfoTablle02 {background:url(../newhomeimages/header.gif) 0px -133px repeat-x;}
+#InfoTablle03 {width:11px; background:url(../newhomeimages/header.gif) -69px -73px no-repeat;}
+#InfoTextIsi {border-left:1px solid #c5c5c5;border-right:1px solid #c5c5c5; margin-top:2px; padding:0 2px;}
+.TextInfo01 {margin-top:2px;}
+.TextInfo02 {color:#ffcc00; font-size:13px;}
+.TextInput {background:url(../newhomeimages/header.gif) 0px 0px repeat-x; border:1px solid #999999; margin-top:1px; width:138px}
+.navborderright, .navborderleft{border-left:1px solid #c5c5c5;}
+.navpadding{height:20px;padding:8px 0 0 6px;}
+.navbar, .navbar a, .navbar a:hover, .navbar a:visited, .navbar a:active{color:#fff !important; font-size:10px; font-weight:bold;text-decoration:none;}
+.navbar1 a, .navbar1 a:hover, .navbar1 a:visited, .navbar1 a:active{color:#0066CC !important; font-size:9px; font-weight:bold;text-decoration:none; padding:0px;}
+.TextInterest, .TextInterest a, .TextInterest a:hover, .TextInterest a:visited, .TextInterest a:active{width:191px;font-size:12px; color:#FF0000; font-weight:bold;text-decoration:none; }
+#navlist { display:block;margin:19px 0 0 0 ; padding:0 0 0 36px;}
+#navlist ul, #navlist li { display: inline;margin:0 ;padding:0;}
+#SearchNya{ height:20px; padding:8px 0 0 6px; width:53px;}
+.Froumnyah {position:absolute; width:678px; top:0px; left:0px; border-left:1px solid #9b9b9b; border-right:1px solid #9b9b9b; border-bottom:1px solid #9b9b9b; background: url(../newhomeimages/jual-beli_bg.png) top repeat-x; font-size:11px; visibility:hidden;z-index:50;}
+.LinkForum {margin:0px; padding-right:4px; font-weight:bold; }
+.LinkForum span { font-weight:normal;}
+.Newnya { color:#ff9e00; font-style:italic; font-weight:bold;}
+.Jualnyah {position:absolute; width:530px; top:0px; left:0px; border-left:1px solid #9b9b9b; border-right:1px solid #9b9b9b; border-bottom:1px solid #9b9b9b; background: url(../newhomeimages/jual-beli_bg.png) top repeat-x ; font-size:11px; visibility:hidden;z-index:50;}
+.LinkJualisi {margin:-8px 0 0 -14px; padding-right:8px; font-weight:bold;}
+.LinkJualisi span {font-weight:normal;}
+#navforumisi  {color:#000000;font-size:11px;text-decoration:none;}
+#navforumisi ul li a, #navforumisi ul li a:active, #navforumisi ul li a:visited { font-size:11px; color: #000000;text-decoration: none; font-weight:normal;}
+#navforumisi ul li a:hover {color:#000000; text-decoration:none; }
+#navforum {line-height:normal;}
+#navforum a, #navforum a:active, #navforum a:visited { font-size:11px; line-height:inherit;color: #414141;text-decoration: none;}
+#navforum a:hover {color:#000000; text-decoration:none; }
+.navicon{padding-left:10px;width:25px; padding-top:3px; vertical-align:top;}
+.navtitle{padding-top:3px; padding-left:7px;}
+
+#RightNya {padding:16px 0 0 0; position:absolute; left: 871px; top: 123px;}
+#RightGrupe {padding:0 3px 0 0px}
+#RightEnjoy {padding:8px 3px 3px 0px;}
+#Kaskuser {margin:3px 0 0 -1px;}
+#KaskuserAts {background:url(../newhomeimages/left_top.png) no-repeat;}
+#KaskuserMid {background:url(../newhomeimages/left_bgnya.png) repeat-y center;padding-top:5px}
+#KaskuserIsi {padding:8px; color:#000000; font-size:10px;}
+#MaujdKaskuser {font-size:8px; color:#cc0000; padding-top:9pt;}
+#KaskuserBwh {background:url(../newhomeimages/left_bottom.png) no-repeat;}
+#BannerLeft {margin-top:1px;}
+
+#BannerAts {width:133px; height:8px;background:url(../newhomeimages/middle.jpg) -7px -426px no-repeat;}
+#BannerMid {width:133px; background:url(../newhomeimages/hmiddle.jpg) -12px 0px repeat-y;}
+#BannerIsi {padding-left:7px; width:120px;}
+#BannerBwh {width:133px; height:8px; background:url(../newhomeimages/middle.jpg) -7px -434px no-repeat;}
+
+#drForum {margin-bottom:-14px; padding:6px 0 0 132px;}
+#dfFooter {margin-top: 28px;padding:0px 0 0 132px;}
+
+#LingBawah {width:728px; margin:6px 0 2px 4px;}
+.LingBawahJdl {font-size:13px; font-weight:bold; color:#333300;}
+.LingBawahJdlLeft {margin-left:-18px; font-size:11px;}
+.LingBawahJdlright {margin-left:-24px; font-size:11px;}
+#Grsbawahna {height:2px; font-size:2px; background:url(../newhomeimages/vmiddle.jpg) 0px -391px repeat-x;}
+.casciscus_style a {color:#333300; text-decoration:none;}
+.forumicons li a{margin-right:3px;}
+#LinkForumText2nd {height:164px;color:#333300; font-size:10px; font-weight:bold; margin-top:4px; line-height:20px; border-right:1px solid #cfc997; padding-top:8px;}
+.LinkTextBiggest{ font-size:13px;}
+.LinkTextBig { font-size:12px;}
+.LinkTextMedium{ font-size:11px;}
+.LinkTextSmall{ font-size:10px;}
+.LinkTextSmallest{ font-size:9px;}
+a.clouds, a.clouds:active, a.clouds:visited{text-decoration:none;color:#333300;}
+a.clouds:hover{color:#FF3300;}
+
+.MenuBawahna { width:730px;margin-top:6px;}
+.LingBottom { width:730px;}
+#navbawah ul, #navbawah ul li { list-style: none; margin:0; padding:13px 0 13px 0; font-size:11px;}
+#navbawah ul {text-align:center;color: #cc0033 }
+#navbawah ul li {display: inline; padding:4px; }
+#navbawah ul li a {color: #cc0033;text-decoration: none;}
+#navbawah ul li a:hover {color: #d43d5c; text-decoration:underline; }
+
+#menubwh ul, #menubwh ul li , #menubwh2 ul, #menubwh2 ul li { list-style: none; margin:0; padding:0; font-size:11px;}
+#menubwh ul li , #menubwhjb ul li {display:inline;}
+#menubwhjb ul, #menubwhjb ul li { list-style: none; margin:0; padding:0; font-size:4px;}
+
+#menubwh2 ul li a, #menubwh2 ul li a:hover, #menubwh2 ul li a:active, #menubwh2 ul li a:visited{color:#666633; text-decoration:none;}
+#menubwh2 ul li {display:inline; vertical-align:middle;}
+.MenuBawahna2 { width:730px;margin-top:6px;}
+#navbawah1 { font-size:10px; color:#666633;}
+#navbawah1 a:hover { font-size:10px; color:#990000;}
+
+.InputLogin {width:110px; height:12px; font-size:9px; border:1px solid #c5c5c5; color:#a0a0a0;}
+.middle736_nopad{width:736px;}
+.kurs, .kurs td{font-size:9px;}
+table.kurs tbody td{text-align:right;}
+table.kurs thead td{background-color:#99F;font-weight:bold;}

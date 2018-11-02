@@ -1,0 +1,2 @@
+main DSTACK_USAGE:0 DSTACK_LEVEL:0 FILE:"siren.c" LINE:51
+timer0_compa_isr DSTACK_USAGE:2 DSTACK_LEVEL:2 FILE:"siren.c" LINE:33

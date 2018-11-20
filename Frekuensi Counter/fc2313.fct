@@ -1,0 +1,7 @@
+main DSTACK_USAGE:0 DSTACK_LEVEL:0 FILE:"fc2313.c" LINE:96
+lcd_init DSTACK_USAGE:1 DSTACK_LEVEL:1 FILE:"C:\cvavreval\lib\lcd.lib" LINE:252
+_lcd_init_write DSTACK_USAGE:1 DSTACK_LEVEL:2 FILE:"C:\cvavreval\lib\lcd.lib" LINE:234
+timer1_ovf_isr DSTACK_USAGE:44 DSTACK_LEVEL:46 FILE:"fc2313.c" LINE:36
+sprintf DSTACK_USAGE:11 DSTACK_LEVEL:57 FILE:"C:\cvavreval\lib\stdio.lib" LINE:1410
+_print DSTACK_USAGE:18 DSTACK_LEVEL:75 FILE:"C:\cvavreval\lib\stdio.lib" LINE:503
+strlenf DSTACK_USAGE:2 DSTACK_LEVEL:77 FILE:"C:\cvavreval\lib\string.lib" LINE:1807

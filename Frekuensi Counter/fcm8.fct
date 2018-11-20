@@ -1,0 +1,8 @@
+main DSTACK_USAGE:0 DSTACK_LEVEL:0 FILE:"fcm8.c" LINE:113
+lcd_init DSTACK_USAGE:1 DSTACK_LEVEL:1 FILE:"C:\cvavreval\lib\lcd.lib" LINE:266
+_lcd_init_write DSTACK_USAGE:1 DSTACK_LEVEL:2 FILE:"C:\cvavreval\lib\lcd.lib" LINE:248
+timer1_ovf_isr DSTACK_USAGE:12 DSTACK_LEVEL:14 FILE:"fcm8.c" LINE:42
+tampil_nilai_digit DSTACK_USAGE:8 DSTACK_LEVEL:22 FILE:"fcm8.c" LINE:59
+sprintf DSTACK_USAGE:14 DSTACK_LEVEL:36 FILE:"C:\cvavreval\lib\stdio.lib" LINE:1410
+_print DSTACK_USAGE:20 DSTACK_LEVEL:56 FILE:"C:\cvavreval\lib\stdio.lib" LINE:503
+strlen DSTACK_USAGE:2 DSTACK_LEVEL:58 FILE:"C:\cvavreval\lib\string.lib" LINE:1707

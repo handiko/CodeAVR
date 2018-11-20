@@ -1,0 +1,12 @@
+VERSION:3 SOURCE_TIMESTAMP:4051844A
+NODE:I LEVEL:0 LINE:23 "C:\cvavreval\inc\tiny2313.h"
+NODE:I LEVEL:0 LINE:24 "C:\cvavreval\inc\lcd.h"
+NODE:I LEVEL:0 LINE:25 "C:\cvavreval\inc\stdio.h"
+NODE:M LEVEL:0 LINE:31 "INPUT"
+NODE:V LEVEL:0 LINE:33 "hitung -> RAM:????"
+NODE:V LEVEL:0 LINE:34 "frek -> RAM:????"
+NODE:F LEVEL:0 LINE:36 "timer1_ovf_isr(void)"
+NODE:F LEVEL:0 LINE:52 "init_ports(void)"
+NODE:F LEVEL:0 LINE:60 "init_timer(void)"
+NODE:F LEVEL:0 LINE:86 "init_clock(void)"
+NODE:F LEVEL:0 LINE:96 "main(void)"

@@ -1,0 +1,26 @@
+RAM Allocation
+Variable                                                          Address   Size
+--------------------------------------------------------------------------------
+f_count                                                           0x0160       4
+act_f                                                             0x0164       4
+delta                                                             0x0168       4
+buff                                                              0x016C      32
+_seed                                                             0x018C       4
+_base_y                                                           0x0190       4
+_lcd_maxx                                                         0x0194       1
+
+EEPROM Allocation
+Variable                                                          Address   Size
+--------------------------------------------------------------------------------
+f_set                                                             0x0000       4
+step                                                              0x0004       4
+
+Register Allocation
+Variable                                                          Register  Size
+--------------------------------------------------------------------------------
+t_count                                                           R4,R5        2
+PWM                                                               R6,R7        2
+PWM_1                                                             R8,R9        2
+PWM_2                                                             R10,R11      2
+_lcd_x                                                            R13          1
+_lcd_y                                                            R12          1

@@ -1,0 +1,17 @@
+RAM Allocation
+Variable                                                          Address   Size
+--------------------------------------------------------------------------------
+
+EEPROM Allocation
+Variable                                                          Address   Size
+--------------------------------------------------------------------------------
+
+Register Allocation
+Variable                                                          Register  Size
+--------------------------------------------------------------------------------
+samp_idx                                                          R3           1
+slow_sample                                                       GPIOR0.0  1bit
+samp_delay1                                                       GPIOR0.1  1bit
+samp_delay2                                                       GPIOR0.2  1bit
+fast_sample                                                       R2           1
+matrix_idx                                                        R5           1

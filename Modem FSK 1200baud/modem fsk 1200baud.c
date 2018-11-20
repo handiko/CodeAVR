@@ -1,0 +1,195 @@
+/*****************************************************
+This program was produced by the
+CodeWizardAVR V2.05.0 Professional
+Automatic Program Generator
+© Copyright 1998-2010 Pavel Haiduc, HP InfoTech s.r.l.
+http://www.hpinfotech.com
+
+Project : 
+Version : 
+Date    : 10/13/2012
+Author  : 
+Company : 
+Comments: 
+
+
+Chip type               : ATtiny2313
+AVR Core Clock frequency: 12.000000 MHz
+Memory model            : Tiny
+External RAM size       : 0
+Data Stack size         : 32
+*****************************************************/
+
+#include <tiny2313.h>
+
+char samp_idx = 0;
+bit slow_sample = 0;
+bit samp_delay1 = 0;
+bit samp_delay2 = 0;
+unsigned char fast_sample = 0;
+
+#define DATA_OUT        PORTD.5
+#define DATA_IN         PIND.4 
+
+#define DAC_0   PORTB.7
+#define DAC_1   PORTB.6
+#define DAC_2   PORTB.5
+#define DAC_3   PORTB.4      
+
+// Timer 0 overflow interrupt service routine
+interrupt [TIM0_OVF] void timer0_ovf_isr(void)
+{
+        // Reinitialize Timer 0 value
+        TCNT0=0x83;
+        
+        // Place your code here 
+        samp_idx++;      
+        
+        if(ACO)
+                fast_sample += 11;
+                   
+        if(samp_idx == 20)    
+        {
+                samp_idx = 0;  
+                                 
+                slow_sample = 1; 
+                
+                if(fast_sample < 110)    
+                        slow_sample = 0;
+                        
+                fast_sample = 0;
+                
+                samp_delay2 = samp_delay1;
+                samp_delay1 = slow_sample;
+                             
+                if(slow_sample ^ samp_delay2)
+                        DATA_OUT = 1;
+                else
+                        DATA_OUT = 0; 
+        }
+}
+
+flash char matrix[16] = {7,10,13,14,15,14,13,10,7,5,2,1,0,1,2,5};
+char matrix_idx = 0;
+
+void set_dac(char value);
+
+// Timer1 overflow interrupt service routine
+interrupt [TIM1_OVF] void timer1_ovf_isr(void)
+{
+        // Place your code here  
+        if(DATA_IN)
+        {
+                // Reinitialize Timer1 value
+                TCNT1H=0xFD8F >> 8;
+                TCNT1L=0xFD8F & 0xff;
+        }
+        
+        else
+        {    
+                // Reinitialize Timer1 value
+                TCNT1H=0xFEAB >> 8;
+                TCNT1L=0xFEAB & 0xff;
+        }
+        
+        set_dac(matrix[matrix_idx]);
+        matrix_idx++;
+        if(matrix_idx==16) 
+                matrix_idx=0;
+}
+
+void set_dac(char value)
+{
+        DAC_0 = value & 0x01;
+        DAC_1 =( value >> 1 ) & 0x01;
+        DAC_2 =( value >> 2 ) & 0x01;
+        DAC_3 =( value >> 3 ) & 0x01;
+}
+
+// Declare your global variables here
+
+void main(void)
+{
+// Declare your local variables here
+
+// Crystal Oscillator division factor: 1
+#pragma optsize-
+        CLKPR=0x80;
+        CLKPR=0x00;
+        #ifdef _OPTIMIZE_SIZE_
+#pragma optsize+
+        #endif
+
+        // Input/Output Ports initialization
+        // Port A initialization
+        // Func2=In Func1=In Func0=In 
+        // State2=T State1=T State0=T 
+        PORTA=0x00;
+        DDRA=0x00;
+
+        // Port B initialization
+        // Func7=Out Func6=Out Func5=Out Func4=Out Func3=Out Func2=In Func1=In Func0=In 
+        // State7=0 State6=0 State5=0 State4=0 State3=0 State2=T State1=T State0=T 
+        PORTB=0x00;
+        DDRB=0xF8;
+
+        // Port D initialization
+        // Func6=Out Func5=Out Func4=In Func3=In Func2=In Func1=Out Func0=In 
+        // State6=1 State5=1 State4=P State3=P State2=P State1=1 State0=P 
+        PORTD=0x7F;
+        DDRD=0x62;
+
+        // Timer/Counter 0 initialization
+        // Clock source: System Clock
+        // Clock value: 12000.000 kHz
+        // Mode: Normal top=0xFF
+        // OC0A output: Disconnected
+        // OC0B output: Disconnected
+        TCCR0A=0x00;
+        TCCR0B=0x01;
+        TCNT0=0x83;
+
+        // Timer/Counter 1 initialization
+        // Clock source: System Clock
+        // Clock value: 12000.000 kHz
+        // Mode: Normal top=0xFFFF
+        // OC1A output: Discon.
+        // OC1B output: Discon.
+        // Noise Canceler: Off
+        // Input Capture on Falling Edge
+        // Timer1 Overflow Interrupt: On
+        // Input Capture Interrupt: Off
+        // Compare A Match Interrupt: Off
+        // Compare B Match Interrupt: Off
+        TCCR1A=0x00;
+        TCCR1B=0x01;
+        if(DATA_IN)
+        {
+                TCNT1H=0xFD8F >> 8;
+                TCNT1L=0xFD8F & 0xff;
+        }
+        else
+        {    
+                TCNT1H=0xFEAB >> 8;
+                TCNT1L=0xFEAB & 0xff;
+        }
+
+        // Timer(s)/Counter(s) Interrupt(s) initialization
+        TIMSK=0x82;
+
+        // Analog Comparator initialization
+        // Analog Comparator: On
+        // Analog Comparator Input Capture by Timer/Counter 1: Off
+        ACSR=0x00;
+        // Digital input buffer on AIN0: Off
+        // Digital input buffer on AIN1: Off
+        DIDR=0x00;
+
+        // Global enable interrupts
+        #asm("sei")
+
+        while (1)
+        {
+                // Place your code here
+        }
+}
